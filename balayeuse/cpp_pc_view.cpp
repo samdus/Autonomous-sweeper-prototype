@@ -37,6 +37,32 @@
 #include <GL/glut.h>
 #endif
 
+#define IR_CAMERA_RESOLUTION_X 640
+#define IR_CAMERA_RESOLUTION_Y 480
+#define CLOUD_POINT_CIRCULAR_BUFFER 10
+#define CLOUD_POINT_SAMPLING_FREQUENCY 500 //millisecond
+
+class CircularCloudPoint
+{
+    private:
+    int index = 0;
+    std::vector<uint16_t> depth[CLOUD_POINT_CIRCULAR_BUFFER];
+    //std::vector<uint16_t> depth(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y * CLOUD_POINT_CIRCULAR_BUFFER);
+
+    public:
+    void insert(std::vector<uint16_t> buffer)//we need a copy
+    {
+        if(index >= CLOUD_POINT_CIRCULAR_BUFFER)
+            index = 0;
+        depth[index] = buffer;
+        ++index;
+    }
+
+    /*std::vector<uint16_t> GetCloudPoint()const
+    {
+        return depth;
+    }*/
+};
 
 class Mutex
 {
@@ -84,7 +110,7 @@ public:
     MyFreenectDevice(freenect_context *_ctx, int _index)
         : Freenect::FreenectDevice(_ctx, _index),
           m_buffer_video(freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, FREENECT_VIDEO_RGB).bytes),
-          m_buffer_depth(freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, FREENECT_DEPTH_REGISTERED).bytes / 2),
+          m_buffer_depth(freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, FREENECT_DEPTH_MM).bytes / 2),
           m_new_rgb_frame(false), m_new_depth_frame(false)
     {
         setDepthFormat(FREENECT_DEPTH_REGISTERED);
@@ -146,6 +172,7 @@ private:
 
 Freenect::Freenect freenect;
 MyFreenectDevice* device;
+CircularCloudPoint cloudBuffer;
 
 int window(0);                // Glut window identifier
 int mx = -1, my = -1;         // Prevous mouse coordinates
@@ -158,15 +185,12 @@ bool updateFPS = true;
 double starttime = 0;
 float fps;
 
+std::vector<uint8_t> rgb(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
+std::vector<uint16_t> depth(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
+
 
 void DrawGLScene()
 {
-    static std::vector<uint8_t> rgb(640*480*3);
-    static std::vector<uint16_t> depth(640*480);
-
-    device->getRGB(rgb);
-    device->getDepth(depth);
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPointSize(1.0f);
@@ -174,7 +198,7 @@ void DrawGLScene()
     glBegin(GL_POINTS);
 
     if (!color) glColor3ub(255, 255, 255);
-    for (int i = 0; i < 480*640; ++i)
+    for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
     {
         if (color)
             glColor3ub( rgb[3*i+0],    // R
@@ -183,8 +207,8 @@ void DrawGLScene()
 
         float f = 595.f;
         // Convert from image plane coordinates to world coordinates
-        glVertex3f( (i%640 - (640-1)/2.f) * depth[i] / f,  // X = (x - cx) * d / fx
-                    (i/640 - (480-1)/2.f) * depth[i] / f,  // Y = (y - cy) * d / fy
+        glVertex3f( (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[i] / f,  // X = (x - cx) * d / fx
+                    (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f,  // Y = (y - cy) * d / fy
                     depth[i] );                            // Z = d
     }
 
@@ -203,6 +227,17 @@ void DrawGLScene()
     glVertex3f(0, 0,   0);
     glVertex3f(0, 0,  50);
     glEnd();
+
+    //Draw a plane
+    glBegin(GL_TRIANGLES);
+		glVertex3f(0.0,0.0,0.0);
+		glVertex3f(500.0,0.0,0.0);
+		glVertex3f(0.0,0.0,500.0);
+
+        glVertex3f(0.0,0.0,500.0);
+		glVertex3f(500.0,0.0,500.0);
+		glVertex3f(500.0,0.0,0.0);
+	glEnd();
 
     // Place the camera
     glMatrixMode(GL_MODELVIEW);
@@ -288,7 +323,7 @@ void resizeGLScene(int width, int height)
 }
 
 
-void idleGLScene()
+void UpdateFPS(bool showFpsConsole, bool showFpsInScene)
 {
     if(updateFPS)
     {
@@ -303,9 +338,26 @@ void idleGLScene()
         if(now - 1 >= starttime)
         {
             updateFPS = true;
-            std::cout << "fps: " << frame << std::endl;
+
+            if(showFpsConsole)
+                std::cout << "fps: " << frame << std::endl;
         }
     }
+}
+
+void UpdateCloudOfPoint()
+{
+    device->getRGB(rgb);
+    device->getDepth(depth);
+
+    cloudBuffer.insert(depth);
+}
+
+void idleGLScene()
+{
+    UpdateFPS(true,false);
+    UpdateCloudOfPoint();
+
     glutPostRedisplay();
 }
 
@@ -330,7 +382,7 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(640, 480);
+    glutInitWindowSize(IR_CAMERA_RESOLUTION_X, IR_CAMERA_RESOLUTION_Y);
     glutInitWindowPosition(0, 0);
 
     window = glutCreateWindow("LibFreenect");
