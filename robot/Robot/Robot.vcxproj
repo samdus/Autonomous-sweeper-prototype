@@ -47,8 +47,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\duss2503\Documents\Arduino\libraries\NewliquidCrystal;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;C:\Users\duss2503\Documents\Arduino\libraries\NewPing;C:\Users\duss2503\Documents\Arduino\libraries\NewliquidCrystal\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Users\duss2503\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Users\duss2503\Documents\Projet - Repo Git\robot\ProjetVS;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>C:\Users\duss2503\OneDrive\Cours\IGL591 - Projet multidisciplinaire I\ProjetVS\ProjetVS\__vm\.ProjetVS.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>C:\Users\duss2503\Documents\Arduino\libraries\NewliquidCrystal;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;C:\Users\duss2503\Documents\Arduino\libraries\NewPing;C:\Users\duss2503\Documents\Arduino\libraries\NewliquidCrystal\utility;C:\Users\duss2503\Documents\Arduino\libraries\NewPing\utility;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Users\duss2503\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Users\duss2503\Documents\Projet - Repo Git\robot\Robot;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Users\duss2503\Documents\Arduino\libraries\NewliquidCrystal;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;C:\Users\duss2503\Documents\Arduino\libraries\NewPing;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\hquvoyrc.xo2\Micro Platforms\default\debuggers;C:\Users\duss2503\Documents\Arduino\libraries;C:\Users\duss2503\Documents\Arduino\libraries\NewliquidCrystal\utility;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>C:\Users\duss2503\Documents\Projet - Repo Git\robot\Robot\__vm\.Robot.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_ATmega328p__;__AVR_ATmega328P__;F_CPU=16000000L;ARDUINO=106011;ARDUINO_AVR_UNO;ARDUINO_ARCH_AVR;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -77,7 +77,7 @@
     <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="ProjetVS.ino">
+    <None Include="Robot.ino">
       <FileType>CppCode</FileType>
     </None>
   </ItemGroup>
@@ -85,6 +85,7 @@
     <ClInclude Include="ISonar.h" />
     <ClInclude Include="Sonar.h" />
     <ClInclude Include="__vm\.ProjetVS.vsarduino.h" />
+    <ClInclude Include="__vm\.Robot.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sonar.cpp" />
