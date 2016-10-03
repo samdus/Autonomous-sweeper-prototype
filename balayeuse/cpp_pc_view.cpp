@@ -30,6 +30,7 @@
 #include <vector>
 #include <pthread.h>
 #include "libfreenect.hpp"
+#include <math.h>
 
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
@@ -40,28 +41,84 @@
 #define IR_CAMERA_RESOLUTION_X 640
 #define IR_CAMERA_RESOLUTION_Y 480
 #define CLOUD_POINT_CIRCULAR_BUFFER 10
-#define CLOUD_POINT_SAMPLING_FREQUENCY 500 //millisecond
+#define CLOUD_POINT_SAMPLING_FREQUENCY 5 //millisecond
+
+class Camera
+{
+public:
+    float posX = 0.0, posY = 0.0, posZ = 0.0,                   //position
+          upX = 0.0, upY = 1.0, upZ = 0.0,                      //up vector
+          angleX = 0.0, angleY = 0.0,                           //absolute angle
+          deltaMove = 0.0, deltaStrafe = 0.0,                   //delta move
+          lX = 0.0, lY = 0.0, lZ = 0.0,                         //line of sight
+          zoom = 1;                                             //zoom factor
+
+    Camera(){}
+    ~Camera(){}
+
+    void update()
+    {
+        if(deltaMove)
+        {
+            posX += deltaMove * lX * 100.0;
+            //posY += deltaMove * lY * 100.0;
+            posZ += deltaMove * lZ * 100.0;
+        }
+        if(deltaStrafe)
+        {
+            posX += deltaStrafe * -lZ * 100.0;
+            posZ += deltaStrafe * lX * 100.0;
+        }
+    }
+
+    void showMeYourMove()
+    {
+        std::cout << "position " << posX << " " << posY << " " << posZ << std::endl
+                  << "angle " << lX << std::endl
+                  << "upVector " << upX << " " << upY << " " << upZ << std::endl;
+    }
+};
 
 class CircularCloudPoint
 {
     private:
     int index = 0;
+    std::vector<uint8_t> rgb[CLOUD_POINT_CIRCULAR_BUFFER];
     std::vector<uint16_t> depth[CLOUD_POINT_CIRCULAR_BUFFER];
-    //std::vector<uint16_t> depth(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y * CLOUD_POINT_CIRCULAR_BUFFER);
 
     public:
-    void insert(std::vector<uint16_t> buffer)//we need a copy
+    CircularCloudPoint()
     {
-        if(index >= CLOUD_POINT_CIRCULAR_BUFFER)
-            index = 0;
-        depth[index] = buffer;
-        ++index;
+        for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
+        {
+            rgb[i] = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3, 0);
+            depth[i] = std::vector<uint16_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y, 0);
+        }
     }
 
-    /*std::vector<uint16_t> GetCloudPoint()const
+    ~CircularCloudPoint(){}
+
+    void insert(std::vector<uint8_t> rgbBuffer, std::vector<uint16_t> depthBuffer)//we need a copy
     {
-        return depth;
-    }*/
+        if(++index >= CLOUD_POINT_CIRCULAR_BUFFER)
+        {
+            index = 0;
+        }
+
+        rgb[index] = rgbBuffer;
+        depth[index] = depthBuffer;
+
+    }
+
+    const std::vector<uint8_t> &GetCloudPointColor()const
+    {
+        return rgb[index];
+    }
+
+    const std::vector<uint16_t> &GetCloudPointDepth()const
+    {
+        return depth[index];
+    }
 };
 
 class Mutex
@@ -102,7 +159,6 @@ public:
 private:
     pthread_mutex_t m_mutex;
 };
-
 
 class MyFreenectDevice : public Freenect::FreenectDevice
 {
@@ -172,44 +228,53 @@ private:
 
 Freenect::Freenect freenect;
 MyFreenectDevice* device;
-CircularCloudPoint cloudBuffer;
+CircularCloudPoint cloudBuffer = CircularCloudPoint();
 
 int window(0);                // Glut window identifier
-int mx = -1, my = -1;         // Prevous mouse coordinates
-float anglex = 0, angley = 0; // Panning angles
-float zoom = 1;               // Zoom factor
+int mx = -1, my = -1;         // Previous mouse coordinates
 bool color = true;            // Flag to indicate to use of color in the cloud
+Camera ViewCam = Camera();    // Camera to navigate inside the generated map
 
 int frame = 0;
 bool updateFPS = true;
-double starttime = 0;
+clock_t FPSStarTime = 0;
 float fps;
+
+bool updateCloud = true;
+clock_t CloudSamplingTime = 0;
 
 std::vector<uint8_t> rgb(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
 std::vector<uint16_t> depth(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
-
 
 void DrawGLScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glPointSize(1.0f);
+    glPointSize(2.0f);
 
     glBegin(GL_POINTS);
 
-    if (!color) glColor3ub(255, 255, 255);
-    for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
-    {
-        if (color)
-            glColor3ub( rgb[3*i+0],    // R
-                        rgb[3*i+1],    // G
-                        rgb[3*i+2] );  // B
+    std::vector<uint8_t> currentRgb = cloudBuffer.GetCloudPointColor();
+    std::vector<uint16_t> currentDepth = cloudBuffer.GetCloudPointDepth();
 
-        float f = 595.f;
-        // Convert from image plane coordinates to world coordinates
-        glVertex3f( (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[i] / f,  // X = (x - cx) * d / fx
-                    (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f,  // Y = (y - cy) * d / fy
-                    depth[i] );                            // Z = d
+
+    if (!color) glColor3ub(255, 255, 255);
+
+    if(!currentRgb.empty() && !currentDepth.empty())
+    {
+        for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
+        {
+            if (color)
+                glColor3ub( currentRgb[3*i+0],    // R
+                            currentRgb[3*i+1],    // G
+                            currentRgb[3*i+2] );  // B
+
+            float f = 595.f;
+            // Convert from image plane coordinates to world coordinates
+            glVertex3f( (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * currentDepth[i] / f,  // X = (x - cx) * d / fx
+                        (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * currentDepth[i] / f,  // Y = (y - cy) * d / fy
+                        currentDepth[i] );                            // Z = d
+        }
     }
 
     glEnd();
@@ -240,21 +305,52 @@ void DrawGLScene()
 	glEnd();
 
     // Place the camera
-    glMatrixMode(GL_MODELVIEW);
+    //glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glScalef(zoom, zoom, 1);
-    gluLookAt( -7*anglex, -7*angley, -1000.0,
-                     0.0,       0.0,  2000.0,
-                     0.0,      -1.0,     0.0 );
+    glScalef(ViewCam.zoom, ViewCam.zoom, 1);
+    gluLookAt(  ViewCam.posX,               ViewCam.posY,   ViewCam.posZ,
+                ViewCam.posX + ViewCam.lX,  0.0,            ViewCam.posZ + ViewCam.lZ,
+                0.0,                        -1.0,           0.0 );
 
     glutSwapBuffers();
 }
 
+void pressKey(int key, int xx, int yy)
+{
+	switch (key) {
+		case GLUT_KEY_UP : ViewCam.deltaMove = 0.5f; break;
+		case GLUT_KEY_DOWN : ViewCam.deltaMove = -0.5f; break;
+	}
+}
+
+void releaseKey(int key, int x, int y)
+{
+	switch (key) {
+		case GLUT_KEY_UP :
+		case GLUT_KEY_DOWN : ViewCam.deltaMove = 0;break;
+	}
+}
 
 void keyPressed(unsigned char key, int x, int y)
 {
     switch (key)
     {
+        case  'W':
+        case  'w':
+            ViewCam.deltaMove = 0.5f;
+            break;
+        case  'S':
+        case  's':
+            ViewCam.deltaMove = -0.5f;
+            break;
+        case  'A':
+        case  'a':
+            ViewCam.deltaStrafe = 0.5f;
+            break;
+        case  'D':
+        case  'd':
+            ViewCam.deltaStrafe = -0.5f;
+            break;
         case  'C':
         case  'c':
             color = !color;
@@ -270,21 +366,39 @@ void keyPressed(unsigned char key, int x, int y)
     }
 }
 
+void keyUp(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+        case  'W':
+        case  'w':
+        case  'S':
+        case  's':
+            ViewCam.deltaMove = 0.0;
+            break;
+        case  'A':
+        case  'a':
+        case  'D':
+        case  'd':
+            ViewCam.deltaStrafe = 0.0;
+            break;
+    }
+}
 
-void mouseMoved(int x, int y)
+void mouseMove(int x, int y)
 {
     if (mx >= 0 && my >= 0)
     {
-        anglex += x - mx;
-        angley += y - my;
+        ViewCam.angleX -= (x - mx) * 0.005;
+        ViewCam.lX = sin(ViewCam.angleX);
+        ViewCam.lZ = -cos(ViewCam.angleX);
     }
 
     mx = x;
     my = y;
 }
 
-
-void mouseButtonPressed(int button, int state, int x, int y)
+void mouseButton(int button, int state, int x, int y)
 {
     if (state == GLUT_DOWN)
     {
@@ -296,11 +410,11 @@ void mouseButtonPressed(int button, int state, int x, int y)
                 break;
 
             case 3:
-                zoom *= 1.2f;
+                ViewCam.zoom *= 1.2f;
                 break;
 
             case 4:
-                zoom /= 1.2f;
+                ViewCam.zoom /= 1.2f;
                 break;
         }
     }
@@ -310,7 +424,6 @@ void mouseButtonPressed(int button, int state, int x, int y)
         my = -1;
     }
 }
-
 
 void resizeGLScene(int width, int height)
 {
@@ -322,25 +435,27 @@ void resizeGLScene(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-
 void UpdateFPS(bool showFpsConsole, bool showFpsInScene)
 {
     if(updateFPS)
     {
-        starttime = time(0);
+        FPSStarTime = std::clock();
         frame = 0;
         updateFPS = false;
     }
     else
     {
         frame++;
-        double now = time(0);
-        if(now - 1 >= starttime)
+        clock_t now = std::clock();
+        if(now - 1000000 >= FPSStarTime)
         {
             updateFPS = true;
 
             if(showFpsConsole)
+            {
                 std::cout << "fps: " << frame << std::endl;
+                ViewCam.showMeYourMove();
+            }
         }
     }
 }
@@ -349,18 +464,31 @@ void UpdateCloudOfPoint()
 {
     device->getRGB(rgb);
     device->getDepth(depth);
-
-    cloudBuffer.insert(depth);
+    if(updateCloud)
+    {
+        CloudSamplingTime = std::clock();
+        frame = 0;
+        updateCloud = false;
+        cloudBuffer.insert(rgb, depth);
+    }
+    else
+    {
+        frame++;
+        clock_t now = std::clock();
+        if(now - CLOUD_POINT_SAMPLING_FREQUENCY * 1000 >= CloudSamplingTime)
+        {
+            updateCloud = true;
+        }
+    }
 }
 
 void idleGLScene()
 {
     UpdateFPS(true,false);
     UpdateCloudOfPoint();
-
+    ViewCam.update();
     glutPostRedisplay();
 }
-
 
 void printInfo()
 {
@@ -371,7 +499,6 @@ void printInfo()
     std::cout << "Toggle Color :   C"                 << std::endl;
     std::cout << "Quit         :   Q or Esc\n"        << std::endl;
 }
-
 
 int main(int argc, char **argv)
 {
@@ -399,8 +526,14 @@ int main(int argc, char **argv)
     glutIdleFunc(&idleGLScene);
     glutReshapeFunc(&resizeGLScene);
     glutKeyboardFunc(&keyPressed);
-    glutMotionFunc(&mouseMoved);
-    glutMouseFunc(&mouseButtonPressed);
+    glutKeyboardUpFunc(&keyUp);
+
+	glutIgnoreKeyRepeat(1);
+	glutSpecialFunc(pressKey);
+	glutSpecialUpFunc(releaseKey);
+
+    glutMouseFunc(&mouseButton);
+    glutMotionFunc(&mouseMove);
 
     printInfo();
 
