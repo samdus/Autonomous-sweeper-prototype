@@ -1,0 +1,16 @@
+{
+  "name": "DomotiqueManager",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "chart.js": "^1.1.1",
+    "meteor-node-stubs": "~0.2.0",
+    "react": "^15.3.1",
+    "react-addons-pure-render-mixin": "^15.3.1",
+    "react-chartjs": "^0.7.3",
+    "react-d3": "^0.4.0",
+    "react-dom": "^15.3.1"
+  }
+}
