@@ -1,5 +1,9 @@
 var mongojs = require('mongojs')
+//For prod
+//var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
+//For dev
 var db = mongojs("mongodb://127.0.0.1:3001/meteor");
+
 
 function getInitialNumberData(){
     var now = Date.now();
@@ -26,6 +30,8 @@ function getInitialBoolData(){
 
 /********** STRING STATISTICS ***************/
 db.createCollection("statStringContainer", {}, function(error, value){
+    console.log(error)
+    console.log(value)
     db.collection('statStringContainer').remove({}, function(e, doc){
         db.collection('statStringContainer').insert(getInitialStringData(), function(error, value){
             setInterval(simulateTravelRoom, 6*1000);

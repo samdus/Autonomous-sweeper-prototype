@@ -212,5 +212,4 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 #Meteor
-.meteor/
 node_modules/

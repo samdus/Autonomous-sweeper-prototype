@@ -1,0 +1,7 @@
+{
+  "galaxy.meteor.com": {
+    "env": {
+      "MONGO_URL": "mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager"
+    }
+  }
+}
