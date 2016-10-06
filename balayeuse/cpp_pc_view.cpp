@@ -23,6 +23,7 @@
  * Binary distributions must follow the binary distribution requirements of
  * either License.
  */
+#pragma once
 
 #include <cstdlib>
 #include <ctime>
@@ -31,6 +32,8 @@
 #include <pthread.h>
 #include "libfreenect.hpp"
 #include <math.h>
+#include "Camera.h"
+#include "CloudPointContainer.h"
 
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
@@ -38,88 +41,8 @@
 #include <GL/glut.h>
 #endif
 
-#define IR_CAMERA_RESOLUTION_X 640
-#define IR_CAMERA_RESOLUTION_Y 480
-#define CLOUD_POINT_CIRCULAR_BUFFER 10
-#define CLOUD_POINT_SAMPLING_FREQUENCY 5 //millisecond
+#define CLOUD_POINT_SAMPLING_FREQUENCY 500 //millisecond
 
-class Camera
-{
-public:
-    float posX = 0.0, posY = 0.0, posZ = 0.0,                   //position
-          upX = 0.0, upY = 1.0, upZ = 0.0,                      //up vector
-          angleX = 0.0, angleY = 0.0,                           //absolute angle
-          deltaMove = 0.0, deltaStrafe = 0.0,                   //delta move
-          lX = 0.0, lY = 0.0, lZ = 0.0,                         //line of sight
-          zoom = 1;                                             //zoom factor
-
-    Camera(){}
-    ~Camera(){}
-
-    void update()
-    {
-        if(deltaMove)
-        {
-            posX += deltaMove * lX * 100.0;
-            //posY += deltaMove * lY * 100.0;
-            posZ += deltaMove * lZ * 100.0;
-        }
-        if(deltaStrafe)
-        {
-            posX += deltaStrafe * -lZ * 100.0;
-            posZ += deltaStrafe * lX * 100.0;
-        }
-    }
-
-    void showMeYourMove()
-    {
-        std::cout << "position " << posX << " " << posY << " " << posZ << std::endl
-                  << "angle " << lX << std::endl
-                  << "upVector " << upX << " " << upY << " " << upZ << std::endl;
-    }
-};
-
-class CircularCloudPoint
-{
-    private:
-    int index = 0;
-    std::vector<uint8_t> rgb[CLOUD_POINT_CIRCULAR_BUFFER];
-    std::vector<uint16_t> depth[CLOUD_POINT_CIRCULAR_BUFFER];
-
-    public:
-    CircularCloudPoint()
-    {
-        for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
-        {
-            rgb[i] = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3, 0);
-            depth[i] = std::vector<uint16_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y, 0);
-        }
-    }
-
-    ~CircularCloudPoint(){}
-
-    void insert(std::vector<uint8_t> rgbBuffer, std::vector<uint16_t> depthBuffer)//we need a copy
-    {
-        if(++index >= CLOUD_POINT_CIRCULAR_BUFFER)
-        {
-            index = 0;
-        }
-
-        rgb[index] = rgbBuffer;
-        depth[index] = depthBuffer;
-
-    }
-
-    const std::vector<uint8_t> &GetCloudPointColor()const
-    {
-        return rgb[index];
-    }
-
-    const std::vector<uint16_t> &GetCloudPointDepth()const
-    {
-        return depth[index];
-    }
-};
 
 class Mutex
 {
@@ -228,12 +151,12 @@ private:
 
 Freenect::Freenect freenect;
 MyFreenectDevice* device;
-CircularCloudPoint cloudBuffer = CircularCloudPoint();
+CloudPointContainer cloudBuffer = CloudPointContainer();
 
 int window(0);                // Glut window identifier
 int mx = -1, my = -1;         // Previous mouse coordinates
 bool color = true;            // Flag to indicate to use of color in the cloud
-Camera ViewCam = Camera();    // Camera to navigate inside the generated map
+SceneCamera ViewCam = SceneCamera();    // Camera to navigate inside the generated map
 
 int frame = 0;
 bool updateFPS = true;
@@ -309,8 +232,8 @@ void DrawGLScene()
     glLoadIdentity();
     glScalef(ViewCam.zoom, ViewCam.zoom, 1);
     gluLookAt(  ViewCam.posX,               ViewCam.posY,   ViewCam.posZ,
-                ViewCam.posX + ViewCam.lX,  0.0,            ViewCam.posZ + ViewCam.lZ,
-                0.0,                        -1.0,           0.0 );
+                ViewCam.posX + ViewCam.lX,  ViewCam.posY + ViewCam.lY,            ViewCam.posZ + ViewCam.lZ,
+                ViewCam.upX,                        ViewCam.upY,           ViewCam.upZ );
 
     glutSwapBuffers();
 }
@@ -392,6 +315,11 @@ void mouseMove(int x, int y)
         ViewCam.angleX -= (x - mx) * 0.005;
         ViewCam.lX = sin(ViewCam.angleX);
         ViewCam.lZ = -cos(ViewCam.angleX);
+
+        ViewCam.angleY -= (y - my) * 0.005;
+
+        ViewCam.lY = -sin(ViewCam.angleY);
+        ViewCam.upY = -cos(ViewCam.angleY);
     }
 
     mx = x;
@@ -454,7 +382,6 @@ void UpdateFPS(bool showFpsConsole, bool showFpsInScene)
             if(showFpsConsole)
             {
                 std::cout << "fps: " << frame << std::endl;
-                ViewCam.showMeYourMove();
             }
         }
     }
@@ -467,13 +394,11 @@ void UpdateCloudOfPoint()
     if(updateCloud)
     {
         CloudSamplingTime = std::clock();
-        frame = 0;
         updateCloud = false;
         cloudBuffer.insert(rgb, depth);
     }
     else
     {
-        frame++;
         clock_t now = std::clock();
         if(now - CLOUD_POINT_SAMPLING_FREQUENCY * 1000 >= CloudSamplingTime)
         {
@@ -486,7 +411,7 @@ void idleGLScene()
 {
     UpdateFPS(true,false);
     UpdateCloudOfPoint();
-    ViewCam.update();
+    ViewCam.Update();
     glutPostRedisplay();
 }
 

@@ -1,15 +1,18 @@
 # depslib dependency file v1.0
-1475425517 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1475774516 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 	<cstdlib>
 	<ctime>
 	<iostream>
 	<vector>
 	<pthread.h>
 	"libfreenect.hpp"
+	<math.h>
+	"Camera.h"
+	"CloudPointContainer.h"
 	<GLUT/glut.h>
 	<GL/glut.h>
 
-1475355727 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
+1475689923 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
 	<stdexcept>
 	<sstream>
@@ -17,7 +20,7 @@
 	<pthread.h>
 	<libusb.h>
 
-1474826173 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.h
+1475689923 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.h
 	<stdint.h>
 	<winsock.h>
 	<sys/time.h>
@@ -30,4 +33,23 @@
 	<limits.h>
 	<windows.h>
 	<winsock.h>
+
+1475773991 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Camera.cpp
+	"Camera.h"
+
+1475773991 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Camera.h
+	<iostream>
+
+1475773991 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
+	"CloudPointContainer.h"
+
+1475774585 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+	<vector>
+	<iostream>
+
+1475774514 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
+	"SceneCamera.h"
+
+1475774513 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
+	<iostream>
 
