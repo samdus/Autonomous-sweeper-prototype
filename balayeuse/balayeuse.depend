@@ -1,13 +1,12 @@
 # depslib dependency file v1.0
-1475774516 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1475862879 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 	<cstdlib>
 	<ctime>
 	<iostream>
 	<vector>
-	<pthread.h>
-	"libfreenect.hpp"
+	"MyFreenectDevice.h"
 	<math.h>
-	"Camera.h"
+	"SceneCamera.h"
 	"CloudPointContainer.h"
 	<GLUT/glut.h>
 	<GL/glut.h>
@@ -47,9 +46,23 @@
 	<vector>
 	<iostream>
 
-1475774514 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
+1475775967 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
 	"SceneCamera.h"
 
-1475774513 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
+1475775967 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
 	<iostream>
+
+1475862972 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.h
+	"libfreenect.hpp"
+	"Mutex.h"
+	<vector>
+
+1475862839 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Mutex.h
+	<pthread.h>
+
+1475862850 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Mutex.cpp
+	"Mutex.h"
+
+1475862906 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
+	"MyFreenectDevice.h"
 

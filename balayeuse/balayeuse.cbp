@@ -51,6 +51,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="CloudPointContainer.cpp" />
+		<Unit filename="CloudPointContainer.h" />
+		<Unit filename="Mutex.cpp" />
+		<Unit filename="Mutex.h" />
+		<Unit filename="MyFreenectDevice.cpp" />
+		<Unit filename="MyFreenectDevice.h" />
+		<Unit filename="SceneCamera.cpp" />
+		<Unit filename="SceneCamera.h" />
 		<Unit filename="cpp_pc_view.cpp" />
 		<Unit filename="libfreenect.h" />
 		<Unit filename="libfreenect.hpp" />
