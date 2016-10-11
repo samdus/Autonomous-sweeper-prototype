@@ -20,6 +20,7 @@ class CloudPointContainer
     ~CloudPointContainer();
 
     void insert(std::vector<uint8_t> rgbBuffer, std::vector<uint16_t> depthBuffer);//we need a copy
+    void InsertDepth(std::vector<uint16_t>& depthBuffer);
 
     const std::vector<uint8_t> &GetCloudPointColor()const;
 

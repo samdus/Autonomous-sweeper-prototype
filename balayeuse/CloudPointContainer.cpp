@@ -25,7 +25,16 @@ void CloudPointContainer::insert(std::vector<uint8_t> rgbBuffer, std::vector<uin
 
     rgb[index] = rgbBuffer;
     depth[index] = depthBuffer;
+}
 
+void CloudPointContainer::InsertDepth(std::vector<uint16_t>& depthBuffer)
+{
+    if(++index >= CLOUD_POINT_CIRCULAR_BUFFER)
+    {
+        index = 0;
+    }
+
+    depth[index].swap(depthBuffer);
 }
 
 const std::vector<uint8_t> &CloudPointContainer::GetCloudPointColor()const

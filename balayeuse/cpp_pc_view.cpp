@@ -23,8 +23,6 @@
  * Binary distributions must follow the binary distribution requirements of
  * either License.
  */
-#pragma once
-
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -52,6 +50,7 @@ bool color = true;            // Flag to indicate to use of color in the cloud
 SceneCamera ViewCam = SceneCamera();    // Camera to navigate inside the generated map
 
 int frame = 0;
+int nbEchantillonsParSecond = 0;
 bool updateFPS = true;
 clock_t FPSStarTime = 0;
 float fps;
@@ -87,9 +86,9 @@ void DrawGLScene()
 
             float f = 595.f;
             // Convert from image plane coordinates to world coordinates
-            glVertex3f( (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * currentDepth[i] / f,  // X = (x - cx) * d / fx
-                        (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * currentDepth[i] / f,  // Y = (y - cy) * d / fy
-                        currentDepth[i] );                            // Z = d
+            glVertex3f( (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * currentDepth[i] / f,
+                        (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * currentDepth[i] / f,
+                        currentDepth[i] );
         }
     }
 
@@ -262,6 +261,7 @@ void UpdateFPS(bool showFpsConsole, bool showFpsInScene)
     {
         FPSStarTime = std::clock();
         frame = 0;
+        nbEchantillonsParSecond = 0;
         updateFPS = false;
     }
     else
@@ -275,6 +275,7 @@ void UpdateFPS(bool showFpsConsole, bool showFpsInScene)
             if(showFpsConsole)
             {
                 std::cout << "fps: " << frame << std::endl;
+                std::cout << "nombre d'echantillons par seconde : " << nbEchantillonsParSecond << std::endl;
             }
         }
     }
@@ -283,7 +284,10 @@ void UpdateFPS(bool showFpsConsole, bool showFpsInScene)
 void UpdateCloudOfPoint()
 {
     device->getRGB(rgb);
-    device->getDepth(depth);
+    if(device->getDepth(depth))
+    {
+        ++nbEchantillonsParSecond;
+    }
     if(updateCloud)
     {
         CloudSamplingTime = std::clock();
