@@ -5,7 +5,6 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hardware", "Hardware\Hardware.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
 	ProjectSection(ProjectDependencies) = postProject
-		{1AEE3C09-F158-4A61-8DC7-7F437392FA46} = {1AEE3C09-F158-4A61-8DC7-7F437392FA46}
 		{CEE7CFF8-AB31-4F4F-8D93-F7A123F7C105} = {CEE7CFF8-AB31-4F4F-8D93-F7A123F7C105}
 	EndProjectSection
 EndProject
