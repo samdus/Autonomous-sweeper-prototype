@@ -31,6 +31,7 @@
 #include <math.h>
 #include "SceneCamera.h"
 #include "CloudPointContainer.h"
+#include "Matrices.h"
 
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
@@ -44,10 +45,11 @@ Freenect::Freenect freenect;
 MyFreenectDevice* device;
 CloudPointContainer cloudBuffer = CloudPointContainer();
 
-int window(0);                // Glut window identifier
-int mx = -1, my = -1;         // Previous mouse coordinates
-bool color = true;            // Flag to indicate to use of color in the cloud
+int window(0);                          // Glut window identifier
+int mx = -1, my = -1;                   // Previous mouse coordinates
+bool color = true;                      // Flag to indicate to use of color in the cloud
 SceneCamera ViewCam = SceneCamera();    // Camera to navigate inside the generated map
+SceneCamera RealCam = SceneCamera();    // Camera to simulate the kinect in the real world
 
 int frame = 0;
 int nbEchantillonsParSecond = 0;
@@ -69,29 +71,30 @@ void DrawGLScene()
 
     glBegin(GL_POINTS);
 
-    std::vector<uint8_t> currentRgb = cloudBuffer.GetCloudPointColor();
-    std::vector<uint16_t> currentDepth = cloudBuffer.GetCloudPointDepth();
+    std::vector<uint8_t> currentRgb;
+    std::vector<Vector3> currentDepth;
 
-
-    if (!color) glColor3ub(255, 255, 255);
-
-    if(!currentRgb.empty() && !currentDepth.empty())
+    for(int k = 0; k < CLOUD_POINT_CIRCULAR_BUFFER; ++k)
     {
-        for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
+        currentRgb = cloudBuffer.GetCloudPointColor(k);
+        currentDepth = cloudBuffer.GetCloudPointDepth(k);
+
+        if (!color) glColor3ub(255, 255, 255);
+
+        if(!currentRgb.empty() && !currentDepth.empty())
         {
-            if (color)
-                glColor3ub( currentRgb[3*i+0],    // R
-                            currentRgb[3*i+1],    // G
-                            currentRgb[3*i+2] );  // B
+            for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
+            {
+                if (color)
+                    glColor3ub( currentRgb[3*i+0],    // R
+                                currentRgb[3*i+1],    // G
+                                currentRgb[3*i+2]);   // B
 
-            float f = 595.f;
-            // Convert from image plane coordinates to world coordinates
-            glVertex3f( (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * currentDepth[i] / f,
-                        (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * currentDepth[i] / f,
-                        currentDepth[i] );
+                glVertex3f(currentDepth[i].x, currentDepth[i].y, currentDepth[i].z);
+            }
         }
-    }
 
+    }
     glEnd();
 
     // Draw the world coordinate frame
@@ -123,9 +126,9 @@ void DrawGLScene()
     //glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glScalef(ViewCam.zoom, ViewCam.zoom, 1);
-    gluLookAt(  ViewCam.posX,               ViewCam.posY,   ViewCam.posZ,
-                ViewCam.posX + ViewCam.lX,  ViewCam.posY + ViewCam.lY,            ViewCam.posZ + ViewCam.lZ,
-                ViewCam.upX,                        ViewCam.upY,           ViewCam.upZ );
+    gluLookAt( ViewCam.position.x,              ViewCam.position.y,              ViewCam.position.z,
+               ViewCam.position.x + ViewCam.lX, ViewCam.position.y + ViewCam.lY, ViewCam.position.z + ViewCam.lZ,
+               ViewCam.upVector.x,              ViewCam.upVector.y,              ViewCam.upVector.z );
 
     glutSwapBuffers();
 }
@@ -211,7 +214,7 @@ void mouseMove(int x, int y)
         ViewCam.angleY -= (y - my) * 0.005;
 
         ViewCam.lY = -sin(ViewCam.angleY);
-        ViewCam.upY = -cos(ViewCam.angleY);
+        ViewCam.upVector.y = -cos(ViewCam.angleY);
     }
 
     mx = x;
@@ -290,9 +293,10 @@ void UpdateCloudOfPoint()
     }
     if(updateCloud)
     {
+        RealCam.matrixToWorld = RealCam.matrixToWorld.translate(50,0,0);
         CloudSamplingTime = std::clock();
         updateCloud = false;
-        cloudBuffer.insert(rgb, depth);
+        cloudBuffer.Insert(rgb, depth);
     }
     else
     {

@@ -53,12 +53,17 @@
 		</Compiler>
 		<Unit filename="CloudPointContainer.cpp" />
 		<Unit filename="CloudPointContainer.h" />
+		<Unit filename="Decodeur.cpp" />
+		<Unit filename="Decodeur.h" />
+		<Unit filename="Matrices.cpp" />
+		<Unit filename="Matrices.h" />
 		<Unit filename="Mutex.cpp" />
 		<Unit filename="Mutex.h" />
 		<Unit filename="MyFreenectDevice.cpp" />
 		<Unit filename="MyFreenectDevice.h" />
 		<Unit filename="SceneCamera.cpp" />
 		<Unit filename="SceneCamera.h" />
+		<Unit filename="Vectors.h" />
 		<Unit filename="cpp_pc_view.cpp" />
 		<Unit filename="libfreenect.h" />
 		<Unit filename="libfreenect.hpp" />
