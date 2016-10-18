@@ -1,16 +1,5 @@
 # depslib dependency file v1.0
-1476737936 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
-	<cstdlib>
-	<ctime>
-	<iostream>
-	<vector>
-	"MyFreenectDevice.h"
-	<math.h>
-	"SceneCamera.h"
-	"CloudPointContainer.h"
-	"Matrices.h"
-	<GLUT/glut.h>
-	<GL/glut.h>
+1476808975 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 
 1475689923 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
@@ -40,10 +29,10 @@
 1475773991 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Camera.h
 	<iostream>
 
-1476738105 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
+1476806307 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
 	"CloudPointContainer.h"
 
-1476738159 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+1476808456 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
 	<vector>
 	<iostream>
 	"Vectors.h"
@@ -70,7 +59,12 @@
 1475862906 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
 	"MyFreenectDevice.h"
 
-1476204785 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+1476809099 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+	<cstdlib>
+	<ctime>
+	<iostream>
+	<vector>
+	"Decodeur.h"
 
 1461777110 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
@@ -86,5 +80,17 @@
 	<algorithm>
 	"Matrices.h"
 
-1476736337 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1476809211 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+	"Decodeur.h"
+
+1476809431 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
+	<cstdlib>
+	<ctime>
+	<iostream>
+	<vector>
+	"MyFreenectDevice.h"
+	<math.h>
+	"SceneCamera.h"
+	"CloudPointContainer.h"
+	"Matrices.h"
 

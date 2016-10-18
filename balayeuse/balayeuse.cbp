@@ -55,6 +55,7 @@
 		<Unit filename="CloudPointContainer.h" />
 		<Unit filename="Decodeur.cpp" />
 		<Unit filename="Decodeur.h" />
+		<Unit filename="Main.cpp" />
 		<Unit filename="Matrices.cpp" />
 		<Unit filename="Matrices.h" />
 		<Unit filename="Mutex.cpp" />
