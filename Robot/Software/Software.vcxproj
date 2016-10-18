@@ -110,11 +110,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CompassDriver.h" />
+    <ClInclude Include="ICompass.h" />
     <ClInclude Include="ISonar.h" />
+    <ClInclude Include="IStepper.h" />
     <ClInclude Include="SonarDriver.h" />
+    <ClInclude Include="StepperDriver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CompassDriver.cpp" />
     <ClCompile Include="SonarDriver.cpp" />
+    <ClCompile Include="StepperDriver.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
