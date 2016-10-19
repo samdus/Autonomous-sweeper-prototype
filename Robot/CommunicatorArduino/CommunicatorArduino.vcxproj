@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CEE7CFF8-AB31-4F4F-8D93-F7A123F7C105}</ProjectGuid>
-    <RootNamespace>Software</RootNamespace>
+    <ProjectGuid>{497E4AAE-5B3C-4BAE-A65C-1EE8098CC23D}</ProjectGuid>
+    <RootNamespace>CommunicatorArduino</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -110,18 +110,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CompassDriver.h" />
-    <ClInclude Include="ICompass.h" />
-    <ClInclude Include="ISonar.h" />
-    <ClInclude Include="IStepper.h" />
-    <ClInclude Include="SonarDriver.h" />
-    <ClInclude Include="StepperDriver.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="CompassDriver.cpp" />
-    <ClCompile Include="ICommunicator.cpp" />
-    <ClCompile Include="SonarDriver.cpp" />
-    <ClCompile Include="StepperDriver.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
