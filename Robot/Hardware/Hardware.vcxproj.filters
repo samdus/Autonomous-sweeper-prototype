@@ -45,6 +45,12 @@
     <ClInclude Include="Software\IStepper.h">
       <Filter>Header Files\Software</Filter>
     </ClInclude>
+    <ClInclude Include="Software\CompassDriver.h">
+      <Filter>Header Files\Software</Filter>
+    </ClInclude>
+    <ClInclude Include="Software\StepperDriver.h">
+      <Filter>Header Files\Software</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sonar.cpp">
@@ -58,6 +64,12 @@
     </ClCompile>
     <ClCompile Include="StepperMotor.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Software\CompassDriver.cpp">
+      <Filter>Source Files\Software</Filter>
+    </ClCompile>
+    <ClCompile Include="Software\StepperDriver.cpp">
+      <Filter>Source Files\Software</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

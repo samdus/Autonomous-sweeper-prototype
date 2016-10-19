@@ -5,7 +5,8 @@
 
 #define NB_MOTEUR 2 
 
-class StepperDriver {
+class StepperDriver 
+{
 private:
 	const unsigned short VITESSES[9] =
 	{
@@ -25,17 +26,20 @@ private:
 			   GAUCHE  [NB_MOTEUR] = {  1, -1 };
 
 	unsigned short _compteur;
-	const char* _direction;
-	bool _immobile;
+	char _direction;
+	bool _enMouvement;
+	unsigned short _noMoteur;
 	unsigned short _vitesse;
 	
 	IStepper*   _stepper;	
 public:
-	StepperDriver(IStepper*);
+	StepperDriver(IStepper*, unsigned short);
 	~StepperDriver();
 
+	void init(byte, byte, byte, byte);
+
 	void step();
-	void setVitesse(unsigned short vitesse);
+	void setVitesse(unsigned short);
 
 	void avant();
 	void derriere();
@@ -47,7 +51,7 @@ public:
 
 	const char getDirection();
 	const unsigned short getVitesse();
-	bool getImmobile();
+	bool isEnMouvement();
 };
 
 #endif // !STEPPER_DRIVER_H

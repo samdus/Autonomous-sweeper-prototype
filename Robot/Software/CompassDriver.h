@@ -3,7 +3,7 @@
 
 #include "ICompass.h"
 
-#define NB_READ 100
+#define NB_READ 10
 
 class CompassDriver
 {
@@ -13,6 +13,7 @@ public:
 	CompassDriver(ICompass*);
 	~CompassDriver();
 
+	void init();
 	float getOrientation();
 };
 

@@ -27,7 +27,6 @@
 //#include <cstdlib>
 //#include <iostream>
 //#include <vector>
-//#include <math.h>
 //#include "SceneCamera.h"
 //#include "Decodeur.h"
 //#include "Vectors.h"
@@ -56,6 +55,7 @@
 //
 //    std::vector<uint8_t> currentRgb;
 //    std::vector<Vector3> currentDepth;
+//    std::vector<uint16_t> realTimeDepth;
 //
 //    for(int k = 0; k < CLOUD_POINT_CIRCULAR_BUFFER; ++k)
 //    {
@@ -76,20 +76,45 @@
 //                glVertex3f(currentDepth[i].x, currentDepth[i].y, currentDepth[i].z);
 //            }
 //        }
-//
 //    }
+//
+//    //Real time cam
+//    currentRgb = DecodeurScene.rgb;
+//    realTimeDepth = DecodeurScene.depth;
+//
+//    if (!color) glColor3ub(255, 255, 255);
+//
+//    if(!currentRgb.empty() && !realTimeDepth.empty())
+//    {
+//        float f = 595.f;
+//        for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
+//        {
+//            if (color)
+//                glColor3ub( currentRgb[3*i+0],    // R
+//                            currentRgb[3*i+1],    // G
+//                            currentRgb[3*i+2]);   // B
+//
+//            Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * realTimeDepth[i] / f,
+//                                  (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * realTimeDepth[i] / f,
+//                                  realTimeDepth[i]);
+//            vec = DecodeurScene.RealCam.matrixToWorld * vec;
+//            glVertex3f(vec.x, vec.y, vec.z);
+//        }
+//    }
+//
+//
 //    glEnd();
 //
 //    // Draw the world coordinate frame
 //    glLineWidth(2.0f);
 //    glBegin(GL_LINES);
-//    glColor3ub(255, 0, 0);  // X-axis
+//    glColor3ub(255, 0, 0);  // Red   X-axis
 //    glVertex3f(  0, 0, 0);
 //    glVertex3f( 50, 0, 0);
-//    glColor3ub(0, 255, 0);  // Y-axis
+//    glColor3ub(0, 255, 0);  // Green Y-axis
 //    glVertex3f(0,   0, 0);
 //    glVertex3f(0,  50, 0);
-//    glColor3ub(0, 0, 255);  // Z-axis
+//    glColor3ub(0, 0, 255);  // Blue  Z-axis
 //    glVertex3f(0, 0,   0);
 //    glVertex3f(0, 0,  50);
 //    glEnd();
@@ -105,8 +130,19 @@
 //		glVertex3f(500.0,0.0,0.0);
 //	glEnd();
 //
+//    //Draw a wall
+//    glBegin(GL_TRIANGLES);
+//		glVertex3f(-200.0,0.0,0.0);
+//		glVertex3f(-200.0,0.0,500.0);
+//		glVertex3f(-200.0,-500.0,500.0);
+//
+//		glVertex3f(-200.0,-500.0,500.0);
+//		glVertex3f(-200.0,0.0,0.0);
+//		glVertex3f(-200.0,-500.0,0.0);
+//	glEnd();
+//
 //    // Place the camera
-//    //glMatrixMode(GL_MODELVIEW);
+//    // glMatrixMode(GL_MODELVIEW);
 //    glLoadIdentity();
 //    glScalef(ViewCam.zoom, ViewCam.zoom, 1);
 //    gluLookAt( ViewCam.position.x,              ViewCam.position.y,              ViewCam.position.z,
@@ -156,13 +192,33 @@
 //        case  'c':
 //            color = !color;
 //            break;
-//
+//        case  'I':
+//        case  'i':
+//            DecodeurScene.RealCam.Avance(100.0);
+//            break;
+//        case  'J':
+//        case  'j':
+//            DecodeurScene.RealCam.RotateY(45.0);
+//            break;
+//        case  'K':
+//        case  'k':
+//            DecodeurScene.RealCam.Avance(-100.0);
+//            break;
+//        case  'L':
+//        case  'l':
+//            DecodeurScene.RealCam.RotateY(-45.0);
+//            break;
+//        case  'P':
+//        case  'p':
+//            DecodeurScene.updateCloud = true;
+//            break;
 //        case  'Q':
 //        case  'q':
 //        case 0x1B:  // ESC
 //            glutDestroyWindow(window);
 //            exit(0);
 //    }
+//    DecodeurScene.RealCam.DebugInfo();
 //}
 //
 //void keyUp(unsigned char key, int x, int y)
@@ -252,6 +308,8 @@
 //    std::cout << "==================="                << std::endl;
 //    std::cout << "Rotate       :   Mouse Left Button" << std::endl;
 //    std::cout << "Zoom         :   Mouse Wheel"       << std::endl;
+//    std::cout << "Move         :   W A S D"           << std::endl;
+//    std::cout << "take a shot  :   P"                 << std::endl;
 //    std::cout << "Toggle Color :   C"                 << std::endl;
 //    std::cout << "Quit         :   Q or Esc\n"        << std::endl;
 //}

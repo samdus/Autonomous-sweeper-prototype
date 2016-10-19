@@ -18,5 +18,5 @@ unsigned int SonarDriver::getDist()
 
 bool SonarDriver::isObstacle()
 {
-	return (_dist < 5 || _dist > 10);
+	return (_dist < SONAR_MIN_DIST || _dist > SONAR_MAX_DIST);
 }

@@ -7,6 +7,11 @@ CompassDriver::CompassDriver(ICompass *compass)
 
 CompassDriver::~CompassDriver(){}
 
+void CompassDriver::init()
+{
+	_compass->init();
+}
+
 float CompassDriver::getOrientation()
 {
 	float avg = 0;

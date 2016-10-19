@@ -9,7 +9,7 @@ namespace SoftwareTest
 	TEST_CLASS(CompassDriverTest)
 	{
 	public:
-		TEST_METHOD(getOrientationMemeLectureChaqueFois)
+		TEST_METHOD(Compass_getOrientationMemeLectureChaqueFois)
 		{
 			static float expected = 0.75;
 			class retPoint75 : public ICompass
@@ -23,7 +23,7 @@ namespace SoftwareTest
 			Assert::IsTrue(diff > -0.0001 && diff < 0.0001);
 		}
 
-		TEST_METHOD(getOrientationAvecMoyenne)
+		TEST_METHOD(Compass_getOrientationAvecMoyenne)
 		{
 			static float expected = 0.745;
 			

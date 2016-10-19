@@ -33,8 +33,7 @@ void Decodeur::UpdateFPS(bool showFpsConsole)
 
             if(showFpsConsole)
             {
-                std::cout << "fps: " << frame << std::endl;
-                std::cout << "nombre d'echantillons par seconde : " << nbEchantillonsParSecond << std::endl;
+                std::cout << "fps: " << frame << " nombre d'echantillons par seconde : " << nbEchantillonsParSecond << std::endl;
             }
         }
     }
@@ -49,10 +48,23 @@ void Decodeur::UpdateCloudOfPoint()
     }
     if(updateCloud)
     {
-        RealCam.matrixToWorld = RealCam.matrixToWorld.translate(50,0,0);
+        std::cout << "Sauvegarde du derniere echantillon!!!!" << std::endl;
+
+        //transforme les donnees du buffer en coordonne monde
+        float f = 595.f;
+        for(int i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
+        {
+            Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[i] / f,
+                                  (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f,
+                                  depth[i]);
+
+            depthWorld[i] = RealCam.matrixToWorld * vec;
+        }
+
         CloudSamplingTime = std::clock();
         updateCloud = false;
-        cloudBuffer.Insert(rgb, depth);
+
+        cloudBuffer.Insert(rgb, depthWorld);
     }
     else
     {

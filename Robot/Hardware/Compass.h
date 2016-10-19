@@ -9,7 +9,7 @@
 #define DECLINATION_ANGLE 0.27
 #define SENSOR_ID 12345
 
-class Compass : ICompass
+class Compass : public ICompass
 {
 private:
 	Adafruit_HMC5883_Unified *_mag;

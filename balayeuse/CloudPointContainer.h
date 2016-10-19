@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <iostream>
 #include "Vectors.h"
 
 #define IR_CAMERA_RESOLUTION_X 640
@@ -20,8 +19,8 @@ class CloudPointContainer
 
     ~CloudPointContainer();
 
-    void Insert(std::vector<uint8_t>& rgbBuffer, std::vector<uint16_t>& depthBuffer);
-    void InsertDepth(std::vector<uint16_t>& depthBuffer);
+    void Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer);
+    void InsertDepth(std::vector<Vector3>& depthBuffer);
 
     const std::vector<uint8_t>& GetCloudPointColor()const;
     const std::vector<uint8_t>& GetCloudPointColor(int index)const;

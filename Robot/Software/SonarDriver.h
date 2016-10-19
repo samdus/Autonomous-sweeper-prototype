@@ -3,6 +3,9 @@
 
 #include "ISonar.h"
 
+#define SONAR_MIN_DIST 6
+#define SONAR_MAX_DIST 15
+
 class SonarDriver
 {
 private:

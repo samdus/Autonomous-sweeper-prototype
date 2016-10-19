@@ -14,27 +14,19 @@ CloudPointContainer::~CloudPointContainer()
     //clear stuff
 }
 
-void CloudPointContainer::Insert(std::vector<uint8_t>& rgbBuffer, std::vector<uint16_t>& depthBuffer)
+void CloudPointContainer::Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer)
 {
     InsertDepth(depthBuffer);
     rgb[index].swap(rgbBuffer);
 }
 
-void CloudPointContainer::InsertDepth(std::vector<uint16_t>& depthBuffer)
+void CloudPointContainer::InsertDepth(std::vector<Vector3>& depthBuffer)
 {
     if(++index >= CLOUD_POINT_CIRCULAR_BUFFER)
     {
         index = 0;
     }
-
-    //transforme les donnees du buffer en coordonne monde
-    float f = 595.f;
-    for(int i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
-    {
-        depth[index][i].x = (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depthBuffer[i] / f;
-        depth[index][i].y = (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depthBuffer[i] / f;
-        depth[index][i].z = depthBuffer[i];
-    }
+    depth[index].swap(depthBuffer);
 }
 
 const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor()const

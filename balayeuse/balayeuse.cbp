@@ -53,6 +53,8 @@
 		</Compiler>
 		<Unit filename="CloudPointContainer.cpp" />
 		<Unit filename="CloudPointContainer.h" />
+		<Unit filename="Config.cpp" />
+		<Unit filename="Config.h" />
 		<Unit filename="Decodeur.cpp" />
 		<Unit filename="Decodeur.h" />
 		<Unit filename="Main.cpp" />
