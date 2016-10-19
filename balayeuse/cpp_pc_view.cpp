@@ -23,13 +23,13 @@
  * Binary distributions must follow the binary distribution requirements of
  * either License.
  */
+
 #include <cstdlib>
-#include <ctime>
 #include <iostream>
 #include <vector>
-#include "MyFreenectDevice.h"
-#include <math.h>
 #include "SceneCamera.h"
+#include "Decodeur.h"
+#include "Vectors.h"
 #include "CloudPointContainer.h"
 
 #if defined(__APPLE__)
@@ -38,28 +38,12 @@
 #include <GL/glut.h>
 #endif
 
-#define CLOUD_POINT_SAMPLING_FREQUENCY 500 //millisecond
-
 Freenect::Freenect freenect;
-MyFreenectDevice* device;
-CloudPointContainer cloudBuffer = CloudPointContainer();
-
-int window(0);                // Glut window identifier
-int mx = -1, my = -1;         // Previous mouse coordinates
-bool color = true;            // Flag to indicate to use of color in the cloud
+int window(0);                          // Glut window identifier
+int mx = -1, my = -1;                   // Previous mouse coordinates
+bool color = true;                      // Flag to indicate to use of color in the cloud
 SceneCamera ViewCam = SceneCamera();    // Camera to navigate inside the generated map
-
-int frame = 0;
-int nbEchantillonsParSecond = 0;
-bool updateFPS = true;
-clock_t FPSStarTime = 0;
-float fps;
-
-bool updateCloud = true;
-clock_t CloudSamplingTime = 0;
-
-std::vector<uint8_t> rgb(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
-std::vector<uint16_t> depth(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
+Decodeur DecodeurScene = Decodeur();
 
 void DrawGLScene()
 {
@@ -69,41 +53,68 @@ void DrawGLScene()
 
     glBegin(GL_POINTS);
 
-    std::vector<uint8_t> currentRgb = cloudBuffer.GetCloudPointColor();
-    std::vector<uint16_t> currentDepth = cloudBuffer.GetCloudPointDepth();
+    std::vector<uint8_t> currentRgb;
+    std::vector<Vector3> currentDepth;
+    std::vector<uint16_t> realTimeDepth;
 
+    for(int k = 0; k < CLOUD_POINT_CIRCULAR_BUFFER; ++k)
+    {
+        currentRgb = DecodeurScene.cloudBuffer.GetCloudPointColor(k);
+        currentDepth = DecodeurScene.cloudBuffer.GetCloudPointDepth(k);
+
+        if (!color) glColor3ub(255, 255, 255);
+
+        if(!currentRgb.empty() && !currentDepth.empty())
+        {
+            for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
+            {
+                if (color)
+                    glColor3ub( currentRgb[3*i+0],    // R
+                                currentRgb[3*i+1],    // G
+                                currentRgb[3*i+2]);   // B
+
+                glVertex3f(currentDepth[i].x, currentDepth[i].y, currentDepth[i].z);
+            }
+        }
+    }
+
+    //Real time cam
+    currentRgb = DecodeurScene.rgb;
+    realTimeDepth = DecodeurScene.depth;
 
     if (!color) glColor3ub(255, 255, 255);
 
-    if(!currentRgb.empty() && !currentDepth.empty())
+    if(!currentRgb.empty() && !realTimeDepth.empty())
     {
+        float f = 595.f;
         for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
         {
             if (color)
                 glColor3ub( currentRgb[3*i+0],    // R
                             currentRgb[3*i+1],    // G
-                            currentRgb[3*i+2] );  // B
+                            currentRgb[3*i+2]);   // B
 
-            float f = 595.f;
-            // Convert from image plane coordinates to world coordinates
-            glVertex3f( (i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * currentDepth[i] / f,
-                        (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * currentDepth[i] / f,
-                        currentDepth[i] );
+            Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * realTimeDepth[i] / f,
+                                  (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * realTimeDepth[i] / f,
+                                  realTimeDepth[i]);
+            vec = DecodeurScene.RealCam.matrixToWorld * vec;
+            glVertex3f(vec.x, vec.y, vec.z);
         }
     }
+
 
     glEnd();
 
     // Draw the world coordinate frame
     glLineWidth(2.0f);
     glBegin(GL_LINES);
-    glColor3ub(255, 0, 0);  // X-axis
+    glColor3ub(255, 0, 0);  // Red   X-axis
     glVertex3f(  0, 0, 0);
     glVertex3f( 50, 0, 0);
-    glColor3ub(0, 255, 0);  // Y-axis
+    glColor3ub(0, 255, 0);  // Green Y-axis
     glVertex3f(0,   0, 0);
     glVertex3f(0,  50, 0);
-    glColor3ub(0, 0, 255);  // Z-axis
+    glColor3ub(0, 0, 255);  // Blue  Z-axis
     glVertex3f(0, 0,   0);
     glVertex3f(0, 0,  50);
     glEnd();
@@ -119,13 +130,24 @@ void DrawGLScene()
 		glVertex3f(500.0,0.0,0.0);
 	glEnd();
 
+    //Draw a wall
+    glBegin(GL_TRIANGLES);
+		glVertex3f(-200.0,0.0,0.0);
+		glVertex3f(-200.0,0.0,500.0);
+		glVertex3f(-200.0,-500.0,500.0);
+
+		glVertex3f(-200.0,-500.0,500.0);
+		glVertex3f(-200.0,0.0,0.0);
+		glVertex3f(-200.0,-500.0,0.0);
+	glEnd();
+
     // Place the camera
-    //glMatrixMode(GL_MODELVIEW);
+    // glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glScalef(ViewCam.zoom, ViewCam.zoom, 1);
-    gluLookAt(  ViewCam.posX,               ViewCam.posY,   ViewCam.posZ,
-                ViewCam.posX + ViewCam.lX,  ViewCam.posY + ViewCam.lY,            ViewCam.posZ + ViewCam.lZ,
-                ViewCam.upX,                        ViewCam.upY,           ViewCam.upZ );
+    gluLookAt( ViewCam.position.x,              ViewCam.position.y,              ViewCam.position.z,
+               ViewCam.position.x + ViewCam.lX, ViewCam.position.y + ViewCam.lY, ViewCam.position.z + ViewCam.lZ,
+               ViewCam.upVector.x,              ViewCam.upVector.y,              ViewCam.upVector.z );
 
     glutSwapBuffers();
 }
@@ -170,15 +192,33 @@ void keyPressed(unsigned char key, int x, int y)
         case  'c':
             color = !color;
             break;
-
+        case  'I':
+        case  'i':
+            DecodeurScene.RealCam.Avance(100.0);
+            break;
+        case  'J':
+        case  'j':
+            DecodeurScene.RealCam.RotateY(45.0);
+            break;
+        case  'K':
+        case  'k':
+            DecodeurScene.RealCam.Avance(-100.0);
+            break;
+        case  'L':
+        case  'l':
+            DecodeurScene.RealCam.RotateY(-45.0);
+            break;
+        case  'P':
+        case  'p':
+            DecodeurScene.updateCloud = true;
+            break;
         case  'Q':
         case  'q':
         case 0x1B:  // ESC
             glutDestroyWindow(window);
-            device->stopDepth();
-            device->stopVideo();
             exit(0);
     }
+    DecodeurScene.RealCam.DebugInfo();
 }
 
 void keyUp(unsigned char key, int x, int y)
@@ -211,7 +251,7 @@ void mouseMove(int x, int y)
         ViewCam.angleY -= (y - my) * 0.005;
 
         ViewCam.lY = -sin(ViewCam.angleY);
-        ViewCam.upY = -cos(ViewCam.angleY);
+        ViewCam.upVector.y = -cos(ViewCam.angleY);
     }
 
     mx = x;
@@ -255,59 +295,9 @@ void resizeGLScene(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void UpdateFPS(bool showFpsConsole, bool showFpsInScene)
-{
-    if(updateFPS)
-    {
-        FPSStarTime = std::clock();
-        frame = 0;
-        nbEchantillonsParSecond = 0;
-        updateFPS = false;
-    }
-    else
-    {
-        frame++;
-        clock_t now = std::clock();
-        if(now - 1000000 >= FPSStarTime)
-        {
-            updateFPS = true;
-
-            if(showFpsConsole)
-            {
-                std::cout << "fps: " << frame << std::endl;
-                std::cout << "nombre d'echantillons par seconde : " << nbEchantillonsParSecond << std::endl;
-            }
-        }
-    }
-}
-
-void UpdateCloudOfPoint()
-{
-    device->getRGB(rgb);
-    if(device->getDepth(depth))
-    {
-        ++nbEchantillonsParSecond;
-    }
-    if(updateCloud)
-    {
-        CloudSamplingTime = std::clock();
-        updateCloud = false;
-        cloudBuffer.insert(rgb, depth);
-    }
-    else
-    {
-        clock_t now = std::clock();
-        if(now - CLOUD_POINT_SAMPLING_FREQUENCY * 1000 >= CloudSamplingTime)
-        {
-            updateCloud = true;
-        }
-    }
-}
-
 void idleGLScene()
 {
-    UpdateFPS(true,false);
-    UpdateCloudOfPoint();
+    DecodeurScene.RunLoop();
     ViewCam.Update();
     glutPostRedisplay();
 }
@@ -318,16 +308,15 @@ void printInfo()
     std::cout << "==================="                << std::endl;
     std::cout << "Rotate       :   Mouse Left Button" << std::endl;
     std::cout << "Zoom         :   Mouse Wheel"       << std::endl;
+    std::cout << "Move         :   W A S D"           << std::endl;
+    std::cout << "take a shot  :   P"                 << std::endl;
     std::cout << "Toggle Color :   C"                 << std::endl;
     std::cout << "Quit         :   Q or Esc\n"        << std::endl;
 }
 
 int main(int argc, char **argv)
 {
-    device = &freenect.createDevice<MyFreenectDevice>(0);
-    device->startVideo();
-    device->startDepth();
-
+    DecodeurScene.Init(freenect.createDevice<MyFreenectDevice>(0));
     glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
