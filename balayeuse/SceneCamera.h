@@ -20,6 +20,9 @@ public:
     SceneCamera();
     ~SceneCamera();
 
+    void RotateY(float angle);
+    void Avance(float dist);
+
     void Update();
 
     void DebugInfo();

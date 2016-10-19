@@ -3,12 +3,11 @@
 #include <iostream>
 #include <vector>
 #include "MyFreenectDevice.h"
-#include <math.h>
 #include "SceneCamera.h"
 #include "CloudPointContainer.h"
 #include "Matrices.h"
 
-#define CLOUD_POINT_SAMPLING_FREQUENCY 500 //millisecond
+#define CLOUD_POINT_SAMPLING_FREQUENCY 5000 //millisecond
 
 class Decodeur
 {
@@ -32,6 +31,7 @@ class Decodeur
 
     std::vector<uint8_t> rgb = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
     std::vector<uint16_t> depth = std::vector<uint16_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
+    std::vector<Vector3> depthWorld = std::vector<Vector3>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
 
     Decodeur();
     ~Decodeur();
