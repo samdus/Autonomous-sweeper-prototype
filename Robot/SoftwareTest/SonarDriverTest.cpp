@@ -10,7 +10,7 @@ namespace SoftwareTest
 	{
 	public:
 		
-		TEST_METHOD(UpdateAndGetDist)
+		TEST_METHOD(Sonar_UpdateAndGetDist)
 		{
 			static unsigned int expected1 = 0,
 								expected2 = 100;
@@ -26,7 +26,7 @@ namespace SoftwareTest
 			Assert::AreEqual(expected2, driver.getDist());
 		}
 
-		TEST_METHOD(Obstacle)
+		TEST_METHOD(Sonar_Obstacle)
 		{
 			bool expected = true;
 			static unsigned int distance = 4;
@@ -41,10 +41,10 @@ namespace SoftwareTest
 			Assert::AreEqual(expected, driver.isObstacle());
 		}
 
-		TEST_METHOD(PasObstacle)
+		TEST_METHOD(Sonar_PasObstacle)
 		{
 			bool expected = false;
-			static unsigned int distance = 5;
+			static unsigned int distance = 8;
 			class ret100 : public ISonar
 			{
 				virtual unsigned int ping_cm() { return distance; }
@@ -56,7 +56,7 @@ namespace SoftwareTest
 			Assert::AreEqual(expected, driver.isObstacle());
 		}
 
-		TEST_METHOD(Escalier)
+		TEST_METHOD(Sonar_Escalier)
 		{
 			bool expected = true;
 			static unsigned int distance = 100;

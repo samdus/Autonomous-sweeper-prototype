@@ -1,53 +1,13 @@
+#include <TimerOne.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
+
+#include "Software\CompassDriver.h"
 #include "Software\SonarDriver.h"
+#include "Software\StepperDriver.h"
 
 #include "Sonar.h"
 #include "Compass.h"
-/*
-SonarDriver sonarDriver(new Sonar());
-Compass compass;
-
-void setup()
-{
-	Serial.begin(9600);
-	compass.init();
-}
-
-void loop()
-{
-	/*
-	TEST pour le sonar
-	-------------------------------------------------
-	Serial.print("Distance: ");
-
-	sonarDriver.updateDist();
-
-	if (sonarDriver.getDist() < 10)
-		Serial.print(0);
-
-	Serial.print(sonarDriver.getDist());
-	Serial.println(" cm.");
-
-	if (sonarDriver.isObstacle())
-	{
-		Serial.println("STOP!!!");
-	}
-	
-	delay(10);
-	/
-
-	/*
-	TEST pour le compass
-	-------------------------------------------------
-	Serial.print("Orientation: ");
-	Serial.print(compass.read());
-	Serial.println(" degres.");
-	/
-}
-*/
-
-#include <TimerOne.h>
 #include "StepperMotor.h"
 
 #define NB_MOTEUR 2 
@@ -57,95 +17,193 @@ void loop()
 #define TEMPS_TIMER1 3250
 
 byte pinsMoteurs[NB_MOTEUR][4] = {
-	{ 2,3,4,5 },
-	{ 6,7,8,9 }
+	{ 6,7,8,9 },
+	{ 2,3,4,5 }
 };
-unsigned short vitesses[9] =
-{
-	43690, //1010 1010 1010 1010 ( 8/16)
-	54618, //1101 0101 0101 1010 ( 9/16)
-	54966, //1101 0110 1011 0110 (10/16)
-	56173, //1101 1011 0110 1101 (11/16)
-	61166, //1110 1110 1110 1110 (12/16)
-	61309, //1110 1111 0111 1101 (13/16)
-	61423, //1110 1111 1110 1111 (14/16)
-	65407, //1111 1111 0111 1111 (15/16)
-	65535, //1111 1111 1111 1111 (16/16)
-};
-StepperMotor moteurs[NB_MOTEUR];
+StepperDriver moteursDrivers[NB_MOTEUR] = { StepperDriver(new StepperMotor(), GAUCHE), StepperDriver(new StepperMotor(), DROIT) };
 
-char avant[NB_MOTEUR] = { -1,-1 },
-derriere[NB_MOTEUR] = { 1, 1 },
-gauche[NB_MOTEUR] = { 1,-1 },
-droite[NB_MOTEUR] = { -1, 1 };
+SonarDriver sonarDriver(new Sonar());
+CompassDriver compassDriver(new Compass());
 
-char* directionActuelle = avant;
-
-unsigned short vitesseMoteurs[NB_MOTEUR] = { vitesses[8], vitesses[8] };
-unsigned short compteursMoteur[NB_MOTEUR] = { 1, 1 };
-
-byte i;
+float orientation, nouvOrientation;
 
 void stepMoteur() {
-	for (i = 0; i < NB_MOTEUR; ++i) {
-		if ((vitesseMoteurs[i] & compteursMoteur[i]) > 0)
-		{
-			moteurs[i].nextStep(directionActuelle[i]);
-		}
-
-		if ((compteursMoteur[i] <<= 1) == 0) {
-			compteursMoteur[i] = 1;
-		}
-	}
+	moteursDrivers[GAUCHE].step();
+	moteursDrivers[DROIT].step();
 }
 
 void setup() {
 	Serial.begin(9600);
-	moteurs[GAUCHE].init(pinsMoteurs[GAUCHE][0], pinsMoteurs[GAUCHE][2], pinsMoteurs[GAUCHE][1], pinsMoteurs[GAUCHE][3]);
-	moteurs[DROIT].init(pinsMoteurs[DROIT][0], pinsMoteurs[DROIT][2], pinsMoteurs[DROIT][1], pinsMoteurs[DROIT][3]);
+	
+	moteursDrivers[GAUCHE].init(pinsMoteurs[GAUCHE][0], pinsMoteurs[GAUCHE][2], pinsMoteurs[GAUCHE][1], pinsMoteurs[GAUCHE][3]);
+	moteursDrivers[DROIT].init(pinsMoteurs[DROIT][0], pinsMoteurs[DROIT][2], pinsMoteurs[DROIT][1], pinsMoteurs[DROIT][3]);
+
+	compassDriver.init();
 
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
+
+	orientation = compassDriver.getOrientation();
+
+	moteursDrivers[GAUCHE].gauche();
+	moteursDrivers[DROIT].gauche();
+
+	moteursDrivers[GAUCHE].avance();
+	moteursDrivers[DROIT].avance();
 }
 
-char m, v[1];
-void loop() {
-	if (Serial.available() > 0) {
+char moteur, nouvelleVitesse[1];
+
+float getDestination(float depart, float angle, bool gauche)
+{
+	float resultat;
+
+	if (gauche)
+	{
+		resultat = depart + angle;
+
+		if (resultat > 360)
+			resultat -= 360;
+	}
+	else
+	{
+		resultat = depart - angle;
+
+		if (resultat < 0)
+			resultat += 360;
+	}
+
+	return resultat;
+}
+
+void loop() 
+{
+	nouvOrientation = compassDriver.getOrientation();
+	Serial.print("Orientation: ");
+	Serial.print(nouvOrientation);
+	Serial.println(" degres.");
+
+	//Si on va vers la gauche
+	if (moteursDrivers[GAUCHE].getDirection() == 1 && moteursDrivers[DROIT].getDirection() == -1)
+	{
+		if (nouvOrientation >= getDestination(orientation, 90, true))
+		{
+			moteursDrivers[GAUCHE].droite();
+			moteursDrivers[DROIT].droite();
+
+			orientation = nouvOrientation;
+		}
+	}
+	else
+	{
+		if (nouvOrientation <= getDestination(orientation, 90, false))
+		{
+			moteursDrivers[GAUCHE].gauche();
+			moteursDrivers[DROIT].gauche();
+
+			orientation = nouvOrientation;
+		}
+	}
+	/*if (nouvOrientation >= orientation + 89  ||
+		nouvOrientation > orientation - 271 && nouvOrientation < orientation - 269 ||
+		nouvOrientation > orientation - 89 && nouvOrientation < orientation - 91 ||
+		nouvOrientation > orientation + 271 && nouvOrientation < orientation + 269)
+	{
+		if (moteursDrivers[GAUCHE].getDirection() == 1 && moteursDrivers[DROIT].getDirection() == -1)
+		{
+			moteursDrivers[GAUCHE].droite();
+			moteursDrivers[DROIT].droite();
+		}
+		else
+		{
+			moteursDrivers[GAUCHE].gauche();
+			moteursDrivers[DROIT].gauche();
+		}
+		orientation = nouvOrientation;
+	}*/
+	/*if (Serial.available() > 0) {
 		switch (Serial.read())
 		{
 		case 'A':
 			Serial.println("Avance!");
-			directionActuelle = avant;
+
+			moteursDrivers[GAUCHE].avant();
+			moteursDrivers[DROIT].avant();
+						
+			moteursDrivers[GAUCHE].avance();
+			moteursDrivers[DROIT].avance();
 			break;
 		case 'R':
 			Serial.println("Recule!");
-			directionActuelle = derriere;
+			moteursDrivers[GAUCHE].derriere();
+			moteursDrivers[DROIT].derriere();
+
+			moteursDrivers[GAUCHE].avance();
+			moteursDrivers[DROIT].avance();
 			break;
 		case 'D':
 			Serial.println("Droite!");
-			directionActuelle = droite;
+			moteursDrivers[GAUCHE].droite();
+			moteursDrivers[DROIT].droite();
+
+			moteursDrivers[GAUCHE].avance();
+			moteursDrivers[DROIT].avance();
 			break;
 		case 'G':
 			Serial.println("Gauche!");
-			directionActuelle = gauche;
+			moteursDrivers[GAUCHE].gauche();
+			moteursDrivers[DROIT].gauche();
+
+			moteursDrivers[GAUCHE].avance();
+			moteursDrivers[DROIT].avance();
+			break; 
+		case 'S':
+			Serial.println("STOP!");
+			moteursDrivers[GAUCHE].stop();
+			moteursDrivers[DROIT].stop();
 			break;
 		case 'V':
 			delay(2);
-			m = Serial.read();
+			moteur = Serial.read();
 			delay(2);
-			v[0] = Serial.read();
+			nouvelleVitesse[0] = Serial.read();
 
 			Serial.print("Moteur: ");
-			Serial.print(m);
+			Serial.print(moteur);
 			Serial.print(" --> Vitesse: ");
-			Serial.println(atoi(v));
+			Serial.println(atoi(nouvelleVitesse));
 
-			vitesseMoteurs[m == 'D'] = vitesses[atoi(v)];
+			moteursDrivers[moteur == 'D'].setVitesse(atoi(nouvelleVitesse));
 			break;
 		default:
 			Serial.println("Comprends pas...");
 		}
 	}
+	
+	Serial.print("Distance: ");
+	
+	sonarDriver.updateDist();
+	
+	if (sonarDriver.getDist() < 10)
+		Serial.print(0);
 
-	delay(1000);
+	Serial.print(sonarDriver.getDist());
+	Serial.println(" cm.");
+	
+	if (sonarDriver.isObstacle())
+	{
+		//Serial.println("STOP!!!");
+		moteursDrivers[GAUCHE].stop();
+		moteursDrivers[DROIT].stop();
+	}
+
+	/*Serial.print("Orientation: ");
+	Serial.print(compassDriver.getOrientation());
+	Serial.println(" degres.");
+
+	Serial.println();
+
+	Serial.flush();*/
+
+
 }

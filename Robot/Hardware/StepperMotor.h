@@ -31,7 +31,7 @@
 #include <Arduino.h>
 #include "Software\IStepper.h"
 
-class StepperMotor : IStepper
+class StepperMotor : public IStepper
 {
   public:
 	StepperMotor();

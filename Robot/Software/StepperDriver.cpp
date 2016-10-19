@@ -1,22 +1,28 @@
 #include "StepperDriver.h"
 
-StepperDriver::StepperDriver(IStepper* stepper)
+StepperDriver::StepperDriver(IStepper* stepper, unsigned short noMoteur)
 {
+	_noMoteur = noMoteur;
 	_stepper = stepper;
 	_compteur = 1;
-	_immobile = true;
-	_direction = AVANT;
+	_enMouvement = false;
+	_direction = AVANT[_noMoteur];
 	_vitesse = VITESSES[8];
 }
 
 StepperDriver::~StepperDriver(){}
 
+void StepperDriver::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4) 
+{
+	_stepper->init(mPin_1, mPin_2, mPin_3, mPin_4);
+}
+
 void StepperDriver::step()
 {
-	if (!_immobile)
+	if (_enMouvement)
 	{
 		if ((_vitesse & _compteur) > 0)
-			_stepper->nextStep(*_direction);
+			_stepper->nextStep(_direction);
 
 		if ((_compteur <<= 1) == 0)
 			_compteur = 1;
@@ -32,47 +38,37 @@ void StepperDriver::setVitesse(unsigned short vitesse)
 
 void StepperDriver::avant()
 {
-	_direction = AVANT;
+	_direction = AVANT[_noMoteur];
 }
 
 void StepperDriver::derriere()
 {
-	_direction = DERRIERE;
+	_direction = DERRIERE[_noMoteur];
 }
 
 void StepperDriver::gauche()
 {
-	_direction = GAUCHE;
+	_direction = GAUCHE[_noMoteur];
 }
 
 void StepperDriver::droite()
 {
-	_direction = DROITE;
+	_direction = DROITE[_noMoteur];
 }
 
 void StepperDriver::avance()
 {
-	_immobile = false;
+	_enMouvement = true;
 }
 
 void StepperDriver::stop()
 {
-	_immobile = true;
+	_enMouvement = false;
 }
 
 const char StepperDriver::getDirection()
 {
-	if (_direction[0] > 0 && _direction[1] > 0)
-		return 'R';
-	
-	if (_direction[0] > 0 && _direction[1] < 0)
-		return 'G';
-
-	if (_direction[0] < 0 && _direction[1] > 0)
-		return 'D';
-
-	if (_direction[0] < 0 && _direction[1] < 0)
-		return 'A';
+	return _direction;
 }
 
 const unsigned short StepperDriver::getVitesse()
@@ -83,7 +79,7 @@ const unsigned short StepperDriver::getVitesse()
 	return 8;
 }
 
-bool StepperDriver::getImmobile()
+bool StepperDriver::isEnMouvement()
 {
-	return _immobile;
+	return _enMouvement;
 }

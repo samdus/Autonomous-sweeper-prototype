@@ -10,70 +10,90 @@ namespace SoftwareTest
 	{
 	public:
 
-		TEST_METHOD(SetVitesse)
+		TEST_METHOD(Stepper_SetVitesse)
 		{
 			const unsigned short expected = 2;
 
-			StepperDriver driver(NULL);
+			StepperDriver driver(NULL, 0);
 			driver.setVitesse(expected);
 			Assert::IsTrue(expected == driver.getVitesse());
 		}
 
-		TEST_METHOD(SetAvant)
+		TEST_METHOD(Stepper_SetAvant)
 		{
-			const char expected = 'A';
+			const char expected[2] = { -1 , -1 };
 
-			StepperDriver driver(NULL);
-			driver.avant();
-			Assert::AreEqual(expected, driver.getDirection());
+			StepperDriver driver1(NULL, 0);
+			StepperDriver driver2(NULL, 1);
+
+			driver1.avant();
+			driver2.avant();
+
+			Assert::AreEqual(expected[0], driver1.getDirection());
+			Assert::AreEqual(expected[1], driver2.getDirection());
 		}
 
-		TEST_METHOD(SetArriere)
+		TEST_METHOD(Stepper_SetArriere)
 		{
-			const char expected = 'R';
+			const char expected[2] = { 1 , 1 };
 
-			StepperDriver driver(NULL);
-			driver.derriere();
-			Assert::AreEqual(expected, driver.getDirection());
+			StepperDriver driver1(NULL, 0);
+			StepperDriver driver2(NULL, 1);
+
+			driver1.derriere();
+			driver2.derriere();
+
+			Assert::AreEqual(expected[0], driver1.getDirection());
+			Assert::AreEqual(expected[1], driver2.getDirection());
 		}
 
-		TEST_METHOD(SetGauche)
+		TEST_METHOD(Stepper_SetGauche)
 		{
-			const char expected = 'G';
+			const char expected[2] = { 1 , -1 };
 
-			StepperDriver driver(NULL);
-			driver.gauche();
-			Assert::AreEqual(expected, driver.getDirection());
+			StepperDriver driver1(NULL, 0);
+			StepperDriver driver2(NULL, 1);
+
+			driver1.gauche();
+			driver2.gauche();
+
+			Assert::AreEqual(expected[0], driver1.getDirection());
+			Assert::AreEqual(expected[1], driver2.getDirection());
 		}
 
-		TEST_METHOD(SetDroite)
+		TEST_METHOD(Stepper_SetDroite)
 		{
-			const char expected = 'D';
+			const char expected[2] = { -1 , 1 };
 
-			StepperDriver driver(NULL);
-			driver.droite();
-			Assert::AreEqual(expected, driver.getDirection());
+			StepperDriver driver1(NULL, 0);
+			StepperDriver driver2(NULL, 1);
+
+			driver1.droite();
+			driver2.droite();
+
+			Assert::AreEqual(expected[0], driver1.getDirection());
+			Assert::AreEqual(expected[1], driver2.getDirection());
 		}
 
-		TEST_METHOD(SetAvance)
-		{
-			const bool expected = false;
-
-			StepperDriver driver(NULL);
-			driver.avance();
-			Assert::AreEqual(expected, driver.getImmobile());
-		}
-
-		TEST_METHOD(SetStop)
+		TEST_METHOD(Stepper_SetAvance)
 		{
 			const bool expected = true;
 
-			StepperDriver driver(NULL);
-			driver.stop();
-			Assert::AreEqual(expected, driver.getImmobile());
+			StepperDriver driver(NULL, 0);
+			driver.avance();
+			Assert::AreEqual(expected, driver.isEnMouvement());
 		}
 
-		TEST_METHOD(StepImmobile)
+		TEST_METHOD(Stepper_SetStop)
+		{
+			const bool expected = false;
+
+			StepperDriver driver(NULL, 0);
+			driver.stop();
+			Assert::AreEqual(expected, driver.isEnMouvement());
+		}
+
+		TEST_METHOD(Stepper_StepImmobile)
 		{
 			class Stepp : public IStepper
 			{
@@ -85,14 +105,14 @@ namespace SoftwareTest
 			} stepper;
 
 			int expected = 0;
-			StepperDriver driver(&stepper);
+			StepperDriver driver(&stepper, 0);
 
 			driver.step();
 
 			Assert::AreEqual(expected, stepper.compte);
 		}
 
-		TEST_METHOD(StepVitesseMax)
+		TEST_METHOD(Stepper_StepVitesseMax)
 		{
 			class Stepp : public IStepper
 			{
@@ -106,7 +126,7 @@ namespace SoftwareTest
 			int nbTour = 32;
 			int expected = nbTour;
 
-			StepperDriver driver(&stepper);
+			StepperDriver driver(&stepper, 0);
 			driver.avance();
 
 			for (int i = 0; i < nbTour; ++i)
@@ -115,7 +135,7 @@ namespace SoftwareTest
 			Assert::AreEqual(expected, stepper.compte);
 		}
 
-		TEST_METHOD(StepVitesseMin)
+		TEST_METHOD(Stepper_StepVitesseMin)
 		{
 			class Stepp : public IStepper
 			{
@@ -129,7 +149,7 @@ namespace SoftwareTest
 			int nbTour = 32;
 			int expected = nbTour / 2;
 
-			StepperDriver driver(&stepper);
+			StepperDriver driver(&stepper, 0);
 
 			driver.setVitesse(0);
 			driver.avance();
