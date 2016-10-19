@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <iostream>
 #include "Vectors.h"
 
 #define IR_CAMERA_RESOLUTION_X 640

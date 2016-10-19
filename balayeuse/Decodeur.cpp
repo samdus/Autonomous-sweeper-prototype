@@ -33,8 +33,7 @@ void Decodeur::UpdateFPS(bool showFpsConsole)
 
             if(showFpsConsole)
             {
-                std::cout << "fps: " << frame << std::endl;
-                std::cout << "nombre d'echantillons par seconde : " << nbEchantillonsParSecond << std::endl;
+                std::cout << "fps: " << frame << " nombre d'echantillons par seconde : " << nbEchantillonsParSecond << std::endl;
             }
         }
     }
@@ -49,7 +48,7 @@ void Decodeur::UpdateCloudOfPoint()
     }
     if(updateCloud)
     {
-        std::cout << "Sauvegarde du derniere echantillon!!!! maintenant : " << depthWorld.size() << " donnees" << std::endl;
+        std::cout << "Sauvegarde du derniere echantillon!!!!" << std::endl;
 
         //transforme les donnees du buffer en coordonne monde
         float f = 595.f;
@@ -72,13 +71,13 @@ void Decodeur::UpdateCloudOfPoint()
         clock_t now = std::clock();
         if(now - CLOUD_POINT_SAMPLING_FREQUENCY * 1000 >= CloudSamplingTime)
         {
-        //    updateCloud = true;
+            updateCloud = true;
         }
     }
 }
 
 void Decodeur::RunLoop()
 {
-    UpdateFPS(false);
+    UpdateFPS(true);
     UpdateCloudOfPoint();
 }
