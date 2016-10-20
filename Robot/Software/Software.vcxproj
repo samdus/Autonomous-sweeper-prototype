@@ -111,7 +111,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CompassDriver.h" />
+    <ClInclude Include="ControlleurPrincipal.h" />
     <ClInclude Include="ICompass.h" />
+    <ClInclude Include="IControlleurPrincipal.h" />
     <ClInclude Include="ISonar.h" />
     <ClInclude Include="IStepper.h" />
     <ClInclude Include="SonarDriver.h" />
@@ -119,7 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CompassDriver.cpp" />
-    <ClCompile Include="ICommunicator.cpp" />
+    <ClCompile Include="ControlleurPrincipal.cpp" />
     <ClCompile Include="SonarDriver.cpp" />
     <ClCompile Include="StepperDriver.cpp" />
   </ItemGroup>

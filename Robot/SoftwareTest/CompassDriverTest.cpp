@@ -25,13 +25,13 @@ namespace SoftwareTest
 
 		TEST_METHOD(Compass_getOrientationAvecMoyenne)
 		{
-			static float expected = 0.745;
+			static float expected = 0.745f;
 			
 			class retPoint75 : public ICompass
 			{
-				float retour = expected - 0.005 - (NB_READ / 200.);
+				float retour = expected - 0.005f - (NB_READ / 200.f);
 				virtual void init() {}
-				virtual float read() { retour += 0.01; return retour; }
+				virtual float read() { retour += 0.01f; return retour; }
 			} compas;
 
 			CompassDriver driver(&compas);

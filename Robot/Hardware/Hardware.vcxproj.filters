@@ -51,6 +51,15 @@
     <ClInclude Include="Software\StepperDriver.h">
       <Filter>Header Files\Software</Filter>
     </ClInclude>
+    <ClInclude Include="Software\ICommunicator.h">
+      <Filter>Header Files\Software</Filter>
+    </ClInclude>
+    <ClInclude Include="Software\IControlleurPrincipal.h">
+      <Filter>Header Files\Software</Filter>
+    </ClInclude>
+    <ClInclude Include="Software\ControlleurPrincipal.h">
+      <Filter>Header Files\Software</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sonar.cpp">
@@ -69,6 +78,9 @@
       <Filter>Source Files\Software</Filter>
     </ClCompile>
     <ClCompile Include="Software\StepperDriver.cpp">
+      <Filter>Source Files\Software</Filter>
+    </ClCompile>
+    <ClCompile Include="Software\ControlleurPrincipal.cpp">
       <Filter>Source Files\Software</Filter>
     </ClCompile>
   </ItemGroup>

@@ -33,6 +33,12 @@
     <ClInclude Include="StepperDriver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IControlleurPrincipal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlleurPrincipal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SonarDriver.cpp">
@@ -42,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StepperDriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlleurPrincipal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

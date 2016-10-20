@@ -1,7 +1,8 @@
-#include <TimerOne.h>
-#include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
+#include <Adafruit_Sensor.h>
+#include <TimerOne.h>
 
+#include "Software\ControlleurPrincipal.h"
 #include "Software\CompassDriver.h"
 #include "Software\SonarDriver.h"
 #include "Software\StepperDriver.h"
@@ -10,86 +11,109 @@
 #include "Compass.h"
 #include "StepperMotor.h"
 
-#define NB_MOTEUR 2 
-#define GAUCHE 0
-#define DROIT 1
-
 #define TEMPS_TIMER1 3250
+#define TEMPS_TIMER2 200
 
-byte pinsMoteurs[NB_MOTEUR][4] = {
+byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
 	{ 6,7,8,9 },
 	{ 2,3,4,5 }
 };
-StepperDriver moteursDrivers[NB_MOTEUR] = { StepperDriver(new StepperMotor(), GAUCHE), StepperDriver(new StepperMotor(), DROIT) };
+StepperDriver moteurGauche(new StepperMotor(), STEPPER_GAUCHE),
+              moteurDroit(new StepperMotor(), STEPPER_DROIT);
 
 SonarDriver sonarDriver(new Sonar());
 CompassDriver compassDriver(new Compass());
+ControlleurPrincipal controlleur(&moteurGauche, &moteurDroit, &sonarDriver, &compassDriver);
 
-float orientation, nouvOrientation;
-
-void stepMoteur() {
-	moteursDrivers[GAUCHE].step();
-	moteursDrivers[DROIT].step();
+void transmettreDonnee(int donnee)
+{
+    Serial.write(donnee);
 }
 
-void setup() {
+void attendre(unsigned long duree)
+{
+    delay(duree);
+}
+
+void stepMoteur() 
+{
+    controlleur.stepMoteur();
+}
+
+void validation()
+{
+    controlleur.verifierObstacle();
+    controlleur.calibrerMoteur();
+}
+
+void setup() 
+{
 	Serial.begin(9600);
-	
-	moteursDrivers[GAUCHE].init(pinsMoteurs[GAUCHE][0], pinsMoteurs[GAUCHE][2], pinsMoteurs[GAUCHE][1], pinsMoteurs[GAUCHE][3]);
-	moteursDrivers[DROIT].init(pinsMoteurs[DROIT][0], pinsMoteurs[DROIT][2], pinsMoteurs[DROIT][1], pinsMoteurs[DROIT][3]);
-
-	compassDriver.init();
-
+    
+    controlleur.init(transmettreDonnee, attendre, pinsMoteurs[STEPPER_GAUCHE], pinsMoteurs[STEPPER_DROIT]);
+    
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
-
-	orientation = compassDriver.getOrientation();
-
-	moteursDrivers[GAUCHE].gauche();
-	moteursDrivers[DROIT].gauche();
-
-	moteursDrivers[GAUCHE].avance();
-	moteursDrivers[DROIT].avance();
+    
+    Timer1.initialize(TEMPS_TIMER2);
+    Timer1.attachInterrupt(validation);
 }
 
-char moteur, nouvelleVitesse[1];
-
-float getDestination(float depart, float angle, bool gauche)
+void loop()
 {
-	float resultat;
+    if (Serial.available() > 0) {
+        switch (Serial.read())
+        {
+        case ControlleurPrincipal::Fonction::Avance:
+            Serial.write(controlleur.avancePendantXDixiemeSec(Serial.read()));
+            break;
 
-	if (gauche)
-	{
-		resultat = depart + angle;
+        case ControlleurPrincipal::Fonction::Recule:
+            Serial.write(controlleur.reculePendantXDixiemeSec(Serial.read()));
+            break;
 
-		if (resultat > 360)
-			resultat -= 360;
-	}
-	else
-	{
-		resultat = depart - angle;
+        case ControlleurPrincipal::Fonction::Stop:
+            Serial.write(controlleur.stop());
+            break;
 
-		if (resultat < 0)
-			resultat += 360;
-	}
+        case ControlleurPrincipal::Fonction::Tourne:
+            Serial.write(controlleur.tourneAuDegresX(Serial.read()));
+            break;
 
-	return resultat;
-}
+        case ControlleurPrincipal::Fonction::Orientation:
+            Serial.write(controlleur.tourneAuDegresX(Serial.read()));
+            break;
 
-void loop() 
-{
+        case ControlleurPrincipal::Fonction::Gauche:
+            Serial.write(controlleur.tourneGauche(Serial.read()));
+            break;
+            
+        case ControlleurPrincipal::Fonction::Droite:
+            Serial.write(controlleur.tourneDroite(Serial.read()));
+            break;
+
+        case ControlleurPrincipal::Fonction::SetDebug:
+            controlleur.setDebug();
+            break;
+            
+        case ControlleurPrincipal::Fonction::StopDebug:
+            controlleur.stopDebug();
+            break;
+        }
+    }
+    /*
 	nouvOrientation = compassDriver.getOrientation();
 	Serial.print("Orientation: ");
 	Serial.print(nouvOrientation);
 	Serial.println(" degres.");
 
 	//Si on va vers la gauche
-	if (moteursDrivers[GAUCHE].getDirection() == 1 && moteursDrivers[DROIT].getDirection() == -1)
+	if (moteurGauche.getDirection() == 1 && moteurDroit.getDirection() == -1)
 	{
 		if (nouvOrientation >= getDestination(orientation, 90, true))
 		{
-			moteursDrivers[GAUCHE].droite();
-			moteursDrivers[DROIT].droite();
+			moteurGauche.droite();
+			moteurDroit.droite();
 
 			orientation = nouvOrientation;
 		}
@@ -98,26 +122,27 @@ void loop()
 	{
 		if (nouvOrientation <= getDestination(orientation, 90, false))
 		{
-			moteursDrivers[GAUCHE].gauche();
-			moteursDrivers[DROIT].gauche();
+			moteurGauche.gauche();
+			moteurDroit.gauche();
 
 			orientation = nouvOrientation;
 		}
 	}
+    */
 	/*if (nouvOrientation >= orientation + 89  ||
 		nouvOrientation > orientation - 271 && nouvOrientation < orientation - 269 ||
 		nouvOrientation > orientation - 89 && nouvOrientation < orientation - 91 ||
 		nouvOrientation > orientation + 271 && nouvOrientation < orientation + 269)
 	{
-		if (moteursDrivers[GAUCHE].getDirection() == 1 && moteursDrivers[DROIT].getDirection() == -1)
+		if (moteurGauche.getDirection() == 1 && moteurDroit.getDirection() == -1)
 		{
-			moteursDrivers[GAUCHE].droite();
-			moteursDrivers[DROIT].droite();
+			moteurGauche.droite();
+			moteurDroit.droite();
 		}
 		else
 		{
-			moteursDrivers[GAUCHE].gauche();
-			moteursDrivers[DROIT].gauche();
+			moteurGauche.gauche();
+			moteurDroit.gauche();
 		}
 		orientation = nouvOrientation;
 	}*/
@@ -127,40 +152,40 @@ void loop()
 		case 'A':
 			Serial.println("Avance!");
 
-			moteursDrivers[GAUCHE].avant();
-			moteursDrivers[DROIT].avant();
+			moteurGauche.avant();
+			moteurDroit.avant();
 						
-			moteursDrivers[GAUCHE].avance();
-			moteursDrivers[DROIT].avance();
+			moteurGauche.avance();
+			moteurDroit.avance();
 			break;
 		case 'R':
 			Serial.println("Recule!");
-			moteursDrivers[GAUCHE].derriere();
-			moteursDrivers[DROIT].derriere();
+			moteurGauche.derriere();
+			moteurDroit.derriere();
 
-			moteursDrivers[GAUCHE].avance();
-			moteursDrivers[DROIT].avance();
+			moteurGauche.avance();
+			moteurDroit.avance();
 			break;
 		case 'D':
 			Serial.println("Droite!");
-			moteursDrivers[GAUCHE].droite();
-			moteursDrivers[DROIT].droite();
+			moteurGauche.droite();
+			moteurDroit.droite();
 
-			moteursDrivers[GAUCHE].avance();
-			moteursDrivers[DROIT].avance();
+			moteurGauche.avance();
+			moteurDroit.avance();
 			break;
 		case 'G':
 			Serial.println("Gauche!");
-			moteursDrivers[GAUCHE].gauche();
-			moteursDrivers[DROIT].gauche();
+			moteurGauche.gauche();
+			moteurDroit.gauche();
 
-			moteursDrivers[GAUCHE].avance();
-			moteursDrivers[DROIT].avance();
+			moteurGauche.avance();
+			moteurDroit.avance();
 			break; 
 		case 'S':
 			Serial.println("STOP!");
-			moteursDrivers[GAUCHE].stop();
-			moteursDrivers[DROIT].stop();
+			moteurGauche.stop();
+			moteurDroit.stop();
 			break;
 		case 'V':
 			delay(2);
@@ -193,8 +218,8 @@ void loop()
 	if (sonarDriver.isObstacle())
 	{
 		//Serial.println("STOP!!!");
-		moteursDrivers[GAUCHE].stop();
-		moteursDrivers[DROIT].stop();
+		moteurGauche.stop();
+		moteurDroit.stop();
 	}
 
 	/*Serial.print("Orientation: ");
