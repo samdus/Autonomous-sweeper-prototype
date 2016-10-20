@@ -14,6 +14,13 @@ function getInitialNumberData(){
         {statIdentifier:"forcedStop", statNiceName:"Forced Stop", statValue:0, statMesure:"stops", history:[{value:0, createdAt:now}]},
     ]
 }
+function getInitialConsoleData(){
+    var now = Date.now();
+    return [
+        //Levels : warning, sucess, error, ''
+        {messageValue:"This is the first message of the simulation", messageLevel:"", createdAt:now},
+    ]
+}
 function getInitialStringData(){
     var now = Date.now();
     return [
@@ -26,7 +33,20 @@ function getInitialBoolData(){
         {statIdentifier:"working", statNiceName:"Working", statValue:true, history:[{value:true, createdAt:now}]}
     ]
 }
-    
+
+
+/********** STRING STATISTICS ***************/
+db.createCollection("consoleContainer", {}, function(error, value){
+    db.collection('consoleContainer').remove({}, function(e, doc){
+        console.log('REMOVE CONSOLE')
+        console.log(e)
+        console.log(doc)
+        db.collection('consoleContainer').insert(getInitialConsoleData(), function(error, value){
+            setInterval(simulateConsole, 6*1000);
+        })
+    });
+});
+
 
 /********** STRING STATISTICS ***************/
 db.createCollection("statStringContainer", {}, function(error, value){
@@ -108,4 +128,16 @@ function simulateWorking(){
     /*Live value*/
     db.collection('statBoolContainer').update({statIdentifier: "forcedStop"},  {$set:{statValue:workingstatValue}, $push:{history:{value:workingstatValue, createdAt:now}}}, function () {
     });
+}
+
+function simulateConsole(){
+    var now = Date.now();
+    var values= [['This is a message', ''],
+                ['This is a sucess message', 'success'],
+                ['This is an error message', 'error'],
+                ['This is an info message', 'info'],
+                ['This is a warning message', 'warning']];
+   var currentMessage= values[Math.floor(Math.random()*values.length)];
+    db.collection('consoleContainer').insert(  {messageValue:currentMessage[0], messageLevel:currentMessage[1], createdAt:now}, function(error, value){
+    })
 }
