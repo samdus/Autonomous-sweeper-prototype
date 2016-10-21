@@ -39,10 +39,12 @@
 #include <GL/glut.h>
 #endif
 
-Freenect::Freenect freenect;            //
+Freenect::Freenect freenect;            // Freenect adapteur
 int window(0);                          // Glut window identifier
 int mx = -1, my = -1;                   // Previous mouse coordinates
 bool color = true;                      // Flag to indicate to use of color in the cloud
+bool CarteVisible = true;               // Flag to show the map or not
+bool RobotVisible = true;               // Flag to show the map or not
 SceneCamera ViewCam = SceneCamera();    // Camera to navigate inside the generated map
 Decodeur DecodeurScene = Decodeur();    // Decodeur de la scene (intelligence du robot)
 Vector3 robot[47];                      // Modele du robot
@@ -181,6 +183,7 @@ void InitRobotMesh()
 
 void DrawGLScene()
 {
+    InitRobotMesh();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPointSize(2.0f);
@@ -190,8 +193,6 @@ void DrawGLScene()
     std::vector<uint8_t> currentRgb;
     std::vector<Vector3> currentDepth;
     std::vector<uint16_t> realTimeDepth;
-    float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
-    float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
 
     for(int k = 0; k < CLOUD_POINT_CIRCULAR_BUFFER; ++k)
     {
@@ -202,13 +203,8 @@ void DrawGLScene()
 
         if(!currentRgb.empty() && !currentDepth.empty())
         {
-            for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
+            for (int i = 0; i < currentDepth.size(); ++i)
             {
-
-                if(currentDepth[i].y > HauteurMax || currentDepth[i].y < HauteurMin )
-                {
-                    continue;
-                }
                 if (color)
                     glColor3ub( currentRgb[3*i+0],    // R
                                 currentRgb[3*i+1],    // G
@@ -227,17 +223,20 @@ void DrawGLScene()
 
     if(!currentRgb.empty() && !realTimeDepth.empty())
     {
+        float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
+        float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
+        float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
         float f = 595.f;
-        for (int i = 0; i < IR_CAMERA_RESOLUTION_Y*IR_CAMERA_RESOLUTION_X; ++i)
+        for (int i = 0; i < realTimeDepth.size(); ++i)
         {
             Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * realTimeDepth[i] / f,
-                                  -(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * realTimeDepth[i] / f,
+                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * realTimeDepth[i] / f) - HauteurKin,
                                   -realTimeDepth[i]);
+
             if(vec.y > HauteurMax || vec.y < HauteurMin )
             {
                 continue;
             }
-
             if (color)
                 glColor3ub( currentRgb[3*i+0],    // R
                             currentRgb[3*i+1],    // G
@@ -265,58 +264,60 @@ void DrawGLScene()
     glVertex3f(0, 0,  50);
     glEnd();
 
-    //Draw a plane
-    glBegin(GL_TRIANGLES);
-    glColor3ub(125, 125, 125);
-		glVertex3f( 5000.0,-1000.0, 5000.0);
-		glVertex3f(-5000.0,-1000.0, 5000.0);
-		glVertex3f( 5000.0,-1000.0,-5000.0);
+    if(CarteVisible) //Draw a plane
+    {
+        glBegin(GL_TRIANGLES);
+            glColor4f(0.5, 0.5, 0.5, 0.5);
+            glVertex3f( 5000.0,-1000.0, 5000.0);
+            glVertex3f(-5000.0,-1000.0, 5000.0);
+            glVertex3f( 5000.0,-1000.0,-5000.0);
 
-		glVertex3f(-5000.0,-1000.0, 5000.0);
-		glVertex3f( 5000.0,-1000.0,-5000.0);
-		glVertex3f(-5000.0,-1000.0,-5000.0);
-	glEnd();
+            glVertex3f(-5000.0,-1000.0, 5000.0);
+            glVertex3f( 5000.0,-1000.0,-5000.0);
+            glVertex3f(-5000.0,-1000.0,-5000.0);
+        glEnd();
+    }
 
+    if(RobotVisible) //Draw ROBOT and Kinect
+    {
+        glBegin(GL_TRIANGLES);
+            glColor4f(0.75, 0.75, 0.75, 0.5);
+            for(int i = 0; i < 36; ++i)
+            {
+                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robot[i];
+                glVertex3f(vec.x, vec.y, vec.z);
+            }
+            glEnd();
 
-    //Draw ROBOT
-    glBegin(GL_TRIANGLES);
-        glColor4f(0.75, 0.75, 0.75, 0.5);
-        for(int i = 0; i < 36; ++i)
-        {
-            Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robot[i];
-            glVertex3f(vec.x, vec.y, vec.z);
-        }
+            glLineWidth(3.0f);
+            glBegin(GL_LINES);
+            glColor3ub(0, 0, 0);
+            for(int i = 0; i < 24; ++i)
+            {
+                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robotMesh[i];
+                glVertex3f(vec.x, vec.y, vec.z);
+            }
         glEnd();
 
-        glLineWidth(3.0f);
-        glBegin(GL_LINES);
-        glColor3ub(0, 0, 0);
-        for(int i = 0; i < 24; ++i)
-        {
-            Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robotMesh[i];
-            glVertex3f(vec.x, vec.y, vec.z);
-        }
-    glEnd();
+        glBegin(GL_TRIANGLES);
+            glColor4f(0.75, 0.75, 0.0, 0.5);
+            for(int i = 36; i < 48; ++i)
+            {
+                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robot[i];
+                glVertex3f(vec.x, vec.y, vec.z);
+            }
+            glEnd();
 
-    //Draw Kinect
-    glBegin(GL_TRIANGLES);
-        glColor4f(0.75, 0.75, 0.0, 0.5);
-        for(int i = 36; i < 48; ++i)
-        {
-            Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robot[i];
-            glVertex3f(vec.x, vec.y, vec.z);
-        }
+            glLineWidth(1.0f);
+            glBegin(GL_LINES);
+            glColor3ub(0, 0, 0);
+            for(int i = 0; i < 24; ++i)
+            {
+                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * kinectFOV[i];
+                glVertex3f(vec.x, vec.y, vec.z);
+            }
         glEnd();
-
-        glLineWidth(1.0f);
-        glBegin(GL_LINES);
-        glColor3ub(0, 0, 0);
-        for(int i = 0; i < 24; ++i)
-        {
-            Vector3 vec = DecodeurScene.RealCam.matrixToWorld * kinectFOV[i];
-            glVertex3f(vec.x, vec.y, vec.z);
-        }
-    glEnd();
+    }
 
     // Place the camera
     // glMatrixMode(GL_MODELVIEW);
@@ -365,10 +366,6 @@ void keyPressed(unsigned char key, int x, int y)
         case  'd':
             ViewCam.deltaStrafe = 0.5f;
             break;
-        case  'C':
-        case  'c':
-            color = !color;
-            break;
         case  'I':
         case  'i':
             DecodeurScene.RealCam.Avance(100.0);
@@ -388,6 +385,15 @@ void keyPressed(unsigned char key, int x, int y)
         case  'P':
         case  'p':
             DecodeurScene.updateCloud = true;
+            break;
+        case  '1':
+            DecodeurScene.SaveCarte();
+            break;
+        case  '2':
+            CarteVisible = !CarteVisible;
+            break;
+        case  '3':
+            RobotVisible = !RobotVisible;
             break;
         case  'Q':
         case  'q':
@@ -485,11 +491,13 @@ void printInfo()
     std::cout << "==================="                << std::endl;
     std::cout << "Rotate       :   Mouse Left Button" << std::endl;
     std::cout << "Zoom         :   Mouse Wheel"       << std::endl;
-    std::cout << "Move         :   W A S D"           << std::endl;
+    std::cout << "Move cam     :   W A S D"           << std::endl;
+    std::cout << "Move Kinect  :   I J K L"           << std::endl;
     std::cout << "take a shot  :   P"                 << std::endl;
-    std::cout << "Toggle Color :   C"                 << std::endl;
+    std::cout << "Save carte   :   1"                 << std::endl;
+    std::cout << "Toggle carte :   2"                 << std::endl;
+    std::cout << "Toggle robot :   3"                 << std::endl;
     std::cout << "Quit         :   Q or Esc"          << std::endl;
-    std::cout << "Config value :   " << std::stof(Config::Instance().GetString("HAUTEUR_MAX")) << std::endl;
 }
 
 int main(int argc, char **argv)

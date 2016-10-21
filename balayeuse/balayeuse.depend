@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1477006961 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1477091885 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 	<cstdlib>
 	<iostream>
 	<vector>
@@ -11,7 +11,7 @@
 	<GLUT/glut.h>
 	<GL/glut.h>
 
-1475689923 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
+1477059958 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
 	<stdexcept>
 	<sstream>
@@ -39,14 +39,14 @@
 1475773991 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Camera.h
 	<iostream>
 
-1476827326 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
+1477082554 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
 	"CloudPointContainer.h"
 
-1477006992 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+1477082510 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
 	<vector>
 	"Vectors.h"
 
-1476985354 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
+1477007823 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
 	"SceneCamera.h"
 
 1476837133 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
@@ -54,7 +54,7 @@
 	"Vectors.h"
 	"Matrices.h"
 
-1476748227 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.h
+1477060751 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.h
 	"libfreenect.hpp"
 	"Mutex.h"
 	<vector>
@@ -65,10 +65,10 @@
 1475862850 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Mutex.cpp
 	"Mutex.h"
 
-1475862906 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
+1477060752 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
 	"MyFreenectDevice.h"
 
-1476919132 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+1477007823 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
 
 1461777110 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
@@ -84,10 +84,10 @@
 	<algorithm>
 	"Matrices.h"
 
-1477006455 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1477091491 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
-1476987970 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
+1477093209 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
 	<iostream>
 	<vector>
 	"MyFreenectDevice.h"
@@ -95,12 +95,28 @@
 	"CloudPointContainer.h"
 	"Matrices.h"
 	"Config.h"
+	"Carte.h"
 
-1476980984 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
+1477007823 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
 	"Config.h"
 
-1476988276 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.h
+1477007823 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.h
 	<iostream>
 	<fstream>
 	<string>
+
+1477090473 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
+	"Carte.h"
+
+1477090462 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
+	<iostream>
+	<fstream>
+	"Vectors.h"
+	<string>
+	<vector>
+
+1477070056 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
+	"Convertisseur.h"
+
+1477083509 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
 

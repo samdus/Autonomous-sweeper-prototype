@@ -6,6 +6,7 @@ Decodeur::~Decodeur()
 {
     device->stopDepth();
     device->stopVideo();
+
 }
 
 void Decodeur::Init(MyFreenectDevice& freenectSingleton)
@@ -13,7 +14,10 @@ void Decodeur::Init(MyFreenectDevice& freenectSingleton)
     device = &freenectSingleton;
     device->startVideo();
     device->startDepth();
+    //pthread_t convertisseur;
+    //pthread_create(&convertisseur, NULL, convertir, this);
 }
+
 void Decodeur::UpdateFPS(bool showFpsConsole)
 {
     if(updateFPS)
@@ -48,17 +52,25 @@ void Decodeur::UpdateCloudOfPoint()
     }
     if(updateCloud)
     {
-        std::cout << "Sauvegarde du derniere echantillon!!!!" << std::endl;
+        std::cout << "Echantillonnage!!!!" << std::endl;
 
+        depthWorld.clear();
+        float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
+        float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
+        float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
         //transforme les donnees du buffer en coordonne monde
         float f = 595.f;
         for(int i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
         {
             Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[i] / f,
-                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f) - std::stof(Config::Instance().GetString("HAUTEUR_KINECT")),
+                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f) - HauteurKin,
                                   -depth[i]);
 
-            depthWorld[i] = RealCam.matrixToWorld * vec;
+            if(vec.y > HauteurMax || vec.y < HauteurMin )
+            {
+                continue;
+            }
+            depthWorld.push_back(RealCam.matrixToWorld * vec);
         }
 
         CloudSamplingTime = std::clock();
@@ -69,15 +81,22 @@ void Decodeur::UpdateCloudOfPoint()
     else
     {
         clock_t now = std::clock();
-        if(now - CLOUD_POINT_SAMPLING_FREQUENCY * 1000 >= CloudSamplingTime)
+        if(now - nextSmapling * 1000 >= CloudSamplingTime)
         {
             //updateCloud = true;
         }
     }
 }
 
+void Decodeur::SaveCarte()
+{
+    Environnement.SaveCarte();
+}
+
 void Decodeur::RunLoop()
 {
+    device->setTiltDegrees(0.0);
     UpdateFPS(true);
     UpdateCloudOfPoint();
+
 }

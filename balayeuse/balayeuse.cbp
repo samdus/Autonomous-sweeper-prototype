@@ -51,6 +51,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Carte.cpp" />
+		<Unit filename="Carte.h" />
+		<Unit filename="Carte.txt" />
 		<Unit filename="CloudPointContainer.cpp" />
 		<Unit filename="CloudPointContainer.h" />
 		<Unit filename="Config.cpp" />
@@ -64,6 +67,7 @@
 		<Unit filename="Mutex.h" />
 		<Unit filename="MyFreenectDevice.cpp" />
 		<Unit filename="MyFreenectDevice.h" />
+		<Unit filename="Robot.config" />
 		<Unit filename="SceneCamera.cpp" />
 		<Unit filename="SceneCamera.h" />
 		<Unit filename="Vectors.h" />

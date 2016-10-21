@@ -10,21 +10,24 @@
 class CloudPointContainer
 {
     private:
-    int index = 0;
+    int indexInsertion = 0;
     std::vector<uint8_t> rgb[CLOUD_POINT_CIRCULAR_BUFFER];
     std::vector<Vector3> depth[CLOUD_POINT_CIRCULAR_BUFFER];
+    bool Converted[CLOUD_POINT_CIRCULAR_BUFFER];
 
     public:
     CloudPointContainer();
 
     ~CloudPointContainer();
 
-    void Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer);
-    void InsertDepth(std::vector<Vector3>& depthBuffer);
+    bool Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer);
+    bool InsertDepth(std::vector<Vector3>& depthBuffer);
 
     const std::vector<uint8_t>& GetCloudPointColor()const;
     const std::vector<uint8_t>& GetCloudPointColor(int index)const;
 
     const std::vector<Vector3>& GetCloudPointDepth()const;
     const std::vector<Vector3>& GetCloudPointDepth(int idx)const;
+
+    bool GetCloudPointToConvert(std::vector<Vector3>& outPoints);
 };
