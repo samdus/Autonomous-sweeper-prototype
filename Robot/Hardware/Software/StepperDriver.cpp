@@ -33,8 +33,6 @@ void StepperDriver::setVitesse(unsigned short vitesse)
 {
     if (vitesse > 8)
         vitesse = 8;
-    else if (vitesse < 0)
-        vitesse = 0;
 
 	_vitesse = VITESSES[vitesse];
 }

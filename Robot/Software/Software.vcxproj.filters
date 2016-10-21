@@ -13,31 +13,34 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Interfaces">
+      <UniqueIdentifier>{c0250944-fe04-4f46-90b8-fe5d04f43b75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SonarDriver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISonar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ICompass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CompassDriver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IStepper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StepperDriver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IControlleurPrincipal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ControlleurPrincipal.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICompass.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IControlleurPrincipal.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ISonar.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IStepper.h">
+      <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

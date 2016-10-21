@@ -79,6 +79,9 @@
     <Lib>
       <AdditionalDependencies> pthreadVC2.lib</AdditionalDependencies>
     </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -115,9 +118,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ArduinoCommunicator.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ArduinoCommunicator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
