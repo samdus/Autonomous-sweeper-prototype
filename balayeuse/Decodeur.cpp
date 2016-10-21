@@ -55,8 +55,8 @@ void Decodeur::UpdateCloudOfPoint()
         for(int i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
         {
             Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[i] / f,
-                                  (i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f,
-                                  depth[i]);
+                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f) - std::stof(Config::Instance().GetString("HAUTEUR_KINECT")),
+                                  -depth[i]);
 
             depthWorld[i] = RealCam.matrixToWorld * vec;
         }
@@ -71,7 +71,7 @@ void Decodeur::UpdateCloudOfPoint()
         clock_t now = std::clock();
         if(now - CLOUD_POINT_SAMPLING_FREQUENCY * 1000 >= CloudSamplingTime)
         {
-            updateCloud = true;
+            //updateCloud = true;
         }
     }
 }

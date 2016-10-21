@@ -1,5 +1,15 @@
 # depslib dependency file v1.0
-1476891742 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1477006961 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+	<cstdlib>
+	<iostream>
+	<vector>
+	"SceneCamera.h"
+	"Decodeur.h"
+	"Vectors.h"
+	"CloudPointContainer.h"
+	"Config.h"
+	<GLUT/glut.h>
+	<GL/glut.h>
 
 1475689923 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
@@ -32,11 +42,11 @@
 1476827326 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
 	"CloudPointContainer.h"
 
-1476892001 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+1477006992 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
 	<vector>
 	"Vectors.h"
 
-1476891983 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
+1476985354 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
 	"SceneCamera.h"
 
 1476837133 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
@@ -58,12 +68,7 @@
 1475862906 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
 	"MyFreenectDevice.h"
 
-1476891742 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
-	<cstdlib>
-	<ctime>
-	<iostream>
-	<vector>
-	"Decodeur.h"
+1476919132 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
 
 1461777110 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
@@ -79,16 +84,23 @@
 	<algorithm>
 	"Matrices.h"
 
-1476892053 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1477006455 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
-1476892055 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
+1476987970 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
 	<iostream>
 	<vector>
 	"MyFreenectDevice.h"
 	"SceneCamera.h"
 	"CloudPointContainer.h"
 	"Matrices.h"
+	"Config.h"
 
-1476817288 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
+1476980984 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
+	"Config.h"
+
+1476988276 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.h
+	<iostream>
+	<fstream>
+	<string>
 

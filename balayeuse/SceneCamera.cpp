@@ -3,7 +3,7 @@
 SceneCamera::SceneCamera()
 {
     position = Vector3(0.0,  0.0, 0.0);
-    upVector = Vector3(0.0, -1.0, 0.0);
+    upVector = Vector3(0.0, 1.0, 0.0);
     angleX = 0;
     angleY = 0;
     lX = sin(angleX * DEG2RAD);
