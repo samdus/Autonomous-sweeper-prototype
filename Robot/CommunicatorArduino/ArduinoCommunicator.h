@@ -21,13 +21,15 @@ class ArduinoCommunicator : public IControlleurPrincipal
 private:
     FILE *_fichier = NULL;
     pthread_t _thread;
-    void(* _callback)(int[4]);
+    bool _stopFonctionLectureFlag = true;
 
-    void ecrire(int message);
-    int lire();
+    void(*_callback)(int[4]);
 
-    static void *appliquerFonctionLecture(void* self);
-public:
+    virtual void ecrire(int message);
+    virtual int lire();
+    static void *appliquerFonctionLecture(void* s);
+
+public: 
     ~ArduinoCommunicator();
 
     /// \overload
@@ -59,7 +61,7 @@ public:
 
     /// \overload
     virtual void resetErreur();
-    
+
     /// \brief Défini la fonction qui sera appelé lorsque le périphérique
     ///        recevra des données
     //         (Boucle exécutée en parallèle)
@@ -71,5 +73,4 @@ public:
     /// \brief Arrête le processus de lecture
     void stopFonctionLecture();
 };
-
 #endif // !ARDUINO_COMUNICATOR_H

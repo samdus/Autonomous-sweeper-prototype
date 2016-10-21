@@ -159,5 +159,21 @@ namespace SoftwareTest
 
 			Assert::AreEqual(expected, stepper.compte);
 		}
+
+        TEST_METHOD(Stepper_StepVitesseLimites)
+        {
+            class Stepp : public IStepper
+            {
+            public:
+                virtual void init(byte, byte, byte, byte) {}
+                virtual void nextStep(char direction) {}
+                virtual	void motorPinsOut(byte pins) {}
+            } stepper;
+
+            StepperDriver driver(&stepper, 0);
+
+            driver.setVitesse(10);
+            Assert::IsTrue(driver.getVitesse() == 8);
+        }
 	};
 }
