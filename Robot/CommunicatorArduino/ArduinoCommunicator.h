@@ -21,142 +21,56 @@ class ArduinoCommunicator : public IControlleurPrincipal
 private:
     FILE *_fichier = NULL;
     pthread_t _thread;
-
-    virtual void ecrire(int message) 
-    {
-        if (_fichier == NULL)
-            _fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
-        fputc(message, _fichier);
-    };
-    virtual int lire() 
-    {
-        if (_fichier == NULL)
-            _fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
-        return fgetc(_fichier);
-    };
+    bool _stopFonctionLectureFlag = true;
 
     void(*_callback)(int[4]);
-    static void *appliquerFonctionLecture(void* s) 
-    {
-        ArduinoCommunicator* self = (ArduinoCommunicator*)s;
 
-        while (1) {
-            int lecture[4] = { 0 };
-
-            lecture[0] = self->lire();
-
-            if (lecture[0] == Fonction::Erreur ||
-                lecture[0] == Fonction::InfoDistanceObjet ||
-                lecture[0] == Fonction::InfoOrientation ||
-                lecture[0] == Fonction::InfoVitesseMoteur)
-            {
-                lecture[1] = self->lire();
-            }
-
-            self->_callback(lecture);
-        }
-    };
+    virtual void ecrire(int message);
+    virtual int lire();
+    static void *appliquerFonctionLecture(void* s);
 
 public: 
-        ~ArduinoCommunicator() 
-        {
-            if (_fichier != NULL)
-                fclose(_fichier);
-        }
-        /// \overload
-        virtual bool avancePendantXDixiemeSec(int dixiemeSec) 
-        {
-            ecrire(Fonction::Avance);
-            ecrire(dixiemeSec);
+    ~ArduinoCommunicator();
 
-            return lire() == 1;
-        }
+    /// \overload
+    virtual bool avancePendantXDixiemeSec(int dixiemeSec);
 
-        /// \overload
-        virtual bool reculePendantXDixiemeSec(int dixiemeSec) 
-        {
-            ecrire(Fonction::Recule);
-            ecrire(dixiemeSec);
+    /// \overload
+    virtual bool reculePendantXDixiemeSec(int dixiemeSec);
 
-            return lire() == 1;
-        }
+    /// \overload
+    virtual bool stop();
 
-        /// \overload
-        virtual bool stop() 
-        {
-            ecrire(Fonction::Stop);
-            return lire() == 1;
-        }
+    /// \overload
+    virtual bool tourneAuDegresX(int degres);
 
-        /// \overload
-        virtual bool tourneAuDegresX(int degres) 
-        {
-            ecrire(Fonction::Tourne);
-            ecrire(degres);
+    /// \overload
+    virtual bool tourneGauche(int degres);
 
-            return lire() == 1;
-        }
+    /// \overload
+    virtual bool tourneDroite(int degres);
 
-        /// \overload
-        virtual bool tourneGauche(int degres) {
-            ecrire(Fonction::Gauche);
-            ecrire(degres);
+    /// \overload
+    virtual int obtenirOrientation();
 
-            return lire() == 1;
-        }
+    /// \overload
+    virtual void setDebug();
 
-        /// \overload
-        virtual bool tourneDroite(int degres) 
-        {
-            ecrire(Fonction::Droite);
-            ecrire(degres);
+    /// \overload
+    virtual void stopDebug();
 
-            return lire() == 1;
-        }
+    /// \overload
+    virtual void resetErreur();
 
-        /// \overload
-        virtual int obtenirOrientation() 
-        {
-            ecrire(Fonction::Orientation);
-            return lire();
-        }
+    /// \brief Défini la fonction qui sera appelé lorsque le périphérique
+    ///        recevra des données
+    //         (Boucle exécutée en parallèle)
+    /// \param fonction La fonction callback 
+    ///                 Elle possède le paramètre message int[4] qui
+    ///                 contiendra jusqu'à 4 messages lues sur le port série
+    void setFonctionLecture(void fonction(int[4]));
 
-        /// \overload
-        virtual void setDebug() 
-        { 
-            ecrire(Fonction::SetDebug); 
-        }
-
-        /// \overload
-        virtual void stopDebug() 
-        { 
-            ecrire(Fonction::StopDebug); 
-        }
-
-        /// \overload
-        virtual void resetErreur() 
-        { 
-            ecrire(Fonction::ResetErreur); 
-        }
-
-        /// \brief Défini la fonction qui sera appelé lorsque le périphérique
-        ///        recevra des données
-        //         (Boucle exécutée en parallèle)
-        /// \param fonction La fonction callback 
-        ///                 Elle possède le paramètre message int[4] qui
-        ///                 contiendra jusqu'à 4 messages lues sur le port série
-        void setFonctionLecture(void fonction(int[4])) 
-        {
-            _callback = fonction;
-            pthread_create(&_thread, NULL, appliquerFonctionLecture, this);
-        }
-
-        /// \brief Arrête le processus de lecture
-        void stopFonctionLecture() 
-        {
-            void* status;
-            pthread_kill(_thread, 9);
-            pthread_join(_thread, &status);
-        }
+    /// \brief Arrête le processus de lecture
+    void stopFonctionLecture();
 };
 #endif // !ARDUINO_COMUNICATOR_H

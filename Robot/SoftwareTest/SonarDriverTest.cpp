@@ -16,7 +16,7 @@ namespace SoftwareTest
 								expected2 = 100;
 			class ret100 : public ISonar
 			{
-				virtual unsigned int ping_cm() { return expected2; }
+                virtual unsigned int ping_cm() { return expected2; }
 			} sonar;
 
 			SonarDriver driver(&sonar);
