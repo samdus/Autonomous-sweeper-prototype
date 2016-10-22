@@ -3,18 +3,18 @@
 
 #include "ICompass.h"
 
-#define NB_READ 10
+#define COMPAS_NB_READ 10
 
 class CompassDriver
 {
 private:
-	ICompass *_compass;
+	volatile ICompass *_compass;
 public:
-	CompassDriver(ICompass*);
+	CompassDriver(volatile ICompass*);
 	~CompassDriver();
-
-	void init();
-	float getOrientation();
+	
+	volatile virtual void init()volatile;
+	volatile virtual float getOrientation()volatile;
 };
 
 #endif // !COMPASS_DRIVER_H

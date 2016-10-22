@@ -1,3 +1,4 @@
+// Classe modifiée par Samuel Dussault, mais inspiré de :
 // ---------------------------------------------------------------------------
 // Stepper Robot Library - v1.03 - 06/04/2014
 //
@@ -17,12 +18,6 @@
 // This software is furnished "as is", without technical support, and with no 
 // warranty, express or implied, as to its usefulness for any purpose.
 // ---------------------------------------------------------------------------
-//
-// Esta biblioteca � parte do projeto de desenvolvimento de
-// rob�s m�veis desenvolvido por Francesco A. Perrotti na
-// Fatec Americana.
-// Pode ser usada para fins comerciais ou pessoais livremente,
-// apenas deixe citado o autor.
 //
 
 #ifndef STEPPERMOTOR_cpp
@@ -50,12 +45,8 @@ StepperMotor::StepperMotor()
   stepNumber = 0;
 }
 
-void StepperMotor::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4)
+volatile void StepperMotor::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4)volatile
 {
-  // A invers�o de pinos aqui � para que a pinagem fique compat�vel
-  // com a biblioteca Stepper.h. Assim a subtitui��o de uma biblioteca
-  // por outra n�o exige mudan�as no hardware.
-
   this->mPin_1 = mPin_2;
   this->mPin_2 = mPin_3;
   this->mPin_3 = mPin_1;
@@ -66,13 +57,12 @@ void StepperMotor::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4)
   pinMode(this->mPin_3, OUTPUT);
   pinMode(this->mPin_4, OUTPUT);
 
-  // posiciona o rotor do motor
   motorPinsOut(1);
   delay(10);
   motorPinsOut(0);
 }
 
-void StepperMotor::motorPinsOut(byte pins)
+volatile void StepperMotor::motorPinsOut(byte pins)volatile
 {
   digitalWrite(mPin_1, pins & 1);
   digitalWrite(mPin_2, (pins>>1) & 1);
@@ -80,7 +70,7 @@ void StepperMotor::motorPinsOut(byte pins)
   digitalWrite(mPin_4, (pins>>3) & 1);
 }
 
-void StepperMotor::nextStep(char direction)
+volatile void StepperMotor::nextStep(char direction)volatile
 { 
   stepNumber = (stepNumber + 8 + direction*stepInc) % 8;
   motorPinsOut(mPins[stepNumber]);

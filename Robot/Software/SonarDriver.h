@@ -9,17 +9,17 @@
 class SonarDriver
 {
 private:
-	ISonar *_sonar;
-	unsigned int _dist = 0;
+	volatile ISonar *_sonar;
+	volatile unsigned int _dist = 0;
 
 public:
 	SonarDriver(ISonar*);
 	~SonarDriver();
 
-	void updateDist();
+	volatile virtual void updateDist()volatile;
 
-	unsigned int getDist();
-	bool isObstacle();
+	volatile virtual unsigned int getDist()volatile const;
+	volatile virtual bool isObstacle()volatile const;
 };
 
 #endif // !SONAR_DRIVER_H

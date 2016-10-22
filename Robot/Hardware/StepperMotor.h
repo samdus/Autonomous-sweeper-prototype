@@ -1,3 +1,4 @@
+// Classe modifiée par Samuel Dussault, mais inspiré de :
 // ---------------------------------------------------------------------------
 // Stepper Robot Library - v1.03 - 06/04/2014
 //
@@ -17,13 +18,6 @@
 // This software is furnished "as is", without technical support, and with no 
 // warranty, express or implied, as to its usefulness for any purpose.
 // ---------------------------------------------------------------------------
-//
-// Esta biblioteca � parte do projeto de desenvolvimento de
-// rob�s m�veis desenvolvido por Francesco A. Perrotti na
-// Fatec Americana.
-// Pode ser usada para fins comerciais ou pessoais livremente,
-// apenas deixe citado o autor.
-//
 
 #ifndef STEPPER_MOTOR_H
 #define STEPPER_MOTOR_H
@@ -35,10 +29,10 @@ class StepperMotor : public IStepper
 {
   public:
 	StepperMotor();
-	virtual void init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4);
+	volatile virtual void init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4)volatile;
 
-	virtual void nextStep(char direction);
-	virtual void motorPinsOut(byte pins);
+	volatile virtual void nextStep(char direction)volatile;
+	volatile virtual void motorPinsOut(byte pins)volatile;
 
   private:
 	byte stepNumber;

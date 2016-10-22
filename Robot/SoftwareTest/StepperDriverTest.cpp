@@ -99,9 +99,9 @@ namespace SoftwareTest
 			{
 			public:
 				int compte = 0;
-				virtual void init(byte, byte, byte, byte) {}
-				virtual void nextStep(char direction) { compte++; }
-				virtual	void motorPinsOut(byte pins) {}
+				volatile virtual void init(byte, byte, byte, byte)volatile {}
+				volatile virtual void nextStep(char direction)volatile { compte++; }
+				volatile virtual	void motorPinsOut(byte pins)volatile {}
 			} stepper;
 
 			int expected = 0;
@@ -118,9 +118,9 @@ namespace SoftwareTest
 			{
 			public:
 				int compte = 0;
-				virtual void init(byte, byte, byte, byte) {}
-				virtual void nextStep(char direction) { compte++; }
-				virtual	void motorPinsOut(byte pins) {}
+				volatile virtual void init(byte, byte, byte, byte)volatile {}
+				volatile virtual void nextStep(char direction)volatile { compte++; }
+				volatile virtual	void motorPinsOut(byte pins)volatile {}
 			} stepper;
 
 			int nbTour = 32;
@@ -141,9 +141,9 @@ namespace SoftwareTest
 			{
 			public:
 				int compte = 0;
-				virtual void init(byte, byte, byte, byte) {}
-				virtual void nextStep(char direction) { compte++; }
-				virtual	void motorPinsOut(byte pins) {}
+				volatile virtual void init(byte, byte, byte, byte)volatile {}
+				volatile virtual void nextStep(char direction)volatile { compte++; }
+				volatile virtual	void motorPinsOut(byte pins)volatile {}
 			} stepper;
 
 			int nbTour = 32;
@@ -165,9 +165,9 @@ namespace SoftwareTest
             class Stepp : public IStepper
             {
             public:
-                virtual void init(byte, byte, byte, byte) {}
-                virtual void nextStep(char direction) {}
-                virtual	void motorPinsOut(byte pins) {}
+				volatile virtual void init(byte, byte, byte, byte)volatile {}
+				volatile virtual void nextStep(char direction)volatile {}
+				volatile virtual	void motorPinsOut(byte pins)volatile {}
             } stepper;
 
             StepperDriver driver(&stepper, 0);

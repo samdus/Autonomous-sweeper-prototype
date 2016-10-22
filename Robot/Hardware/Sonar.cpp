@@ -10,7 +10,7 @@ Sonar::~Sonar()
 	delete _sonar;
 }
 
-unsigned int Sonar::ping_cm()
+volatile unsigned int Sonar::ping_cm()volatile
 {
 	return _sonar->convert_cm(_sonar->ping_median(NB_PING));
 }

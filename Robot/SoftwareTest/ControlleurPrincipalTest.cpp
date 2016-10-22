@@ -1,4 +1,3 @@
-
 #include <functional>
 #include "stdafx.h"
 #include "CppUnitTest.h"
@@ -9,49 +8,55 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace SoftwareTest
 {
-
     TEST_CLASS(ControlleurPrincipalTest)
     {
     public:
 
-        static class DummyStepper : public IStepper
+        class DummyStepper : public IStepper
         {
         public:
-            virtual void init(byte, byte, byte, byte) {}
-            virtual void nextStep(char direction) {}
-            virtual	void motorPinsOut(byte pins) {}
-        } dummyStepper;
+			volatile virtual void init(byte, byte, byte, byte)volatile {}
+			volatile virtual void nextStep(char direction) volatile {}
+			volatile virtual void motorPinsOut(byte pins)volatile {}
+        };
 
-        static class DummySonar : public ISonar
+        class DummySonar : public ISonar
         {
         public:
             int sonarPing = 8;
-            virtual unsigned int ping_cm() { return sonarPing; }
-        } dummySonnar;
+			volatile virtual unsigned int ping_cm()volatile { return sonarPing; }
+        };
 
-        static class DummyCompas : public ICompass
+        class DummyCompas : public ICompass
         {
-            int compasOrientation = 0;
-            virtual void init() {}
-            virtual float read() { return compasOrientation; }
-        } dummyCompas;
+            float compasOrientation = 0;
+			volatile virtual void init()volatile {}
+			volatile virtual float read()volatile { return compasOrientation; }
+        };
 
-        class DummyStepperDriver : public StepperDriver
-        {
-        public:
-            DummyStepperDriver(int m) : StepperDriver(&dummyStepper, m) { };
+		class DummyStepperDriver : public StepperDriver
+		{
+		public:
+			unsigned short vitesse = 8;
+
+			DummyStepperDriver(int m) : StepperDriver(new DummyStepper(), m) { };
+
+			volatile virtual void setVitesse(unsigned short v)volatile {
+				vitesse = v; 
+			}
+			volatile virtual const unsigned short getVitesse()volatile const { return vitesse; }
         };
 
         class DummySonarDriver : public SonarDriver
         {
         public:
-            DummySonarDriver() : SonarDriver(&dummySonnar) { };
+            DummySonarDriver() : SonarDriver(new DummySonar()) { };
         };
 
         class DummyCompasDriver : public CompassDriver
         {
         public:
-            DummyCompasDriver() : CompassDriver(&dummyCompas) { };
+            DummyCompasDriver() : CompassDriver(new DummyCompas()) { };
         };
 
         byte pinsMoteurGauche[4] = { 0 };
@@ -68,227 +73,443 @@ namespace SoftwareTest
         TEST_METHOD(ControlleurPrincipal_AvancePendantXDixiemeSec)
         {
             ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, compasDriver);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
 
-            auto att  = [controlleur](unsigned long temp) {
-                
+            auto att  = [](unsigned long temp) {
+				Assert::AreEqual(-1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(-1, (int)stepperDroit->getDirection());
+
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
+
+				Assert::AreEqual(10000UL,temp);
             };
 
-            controlleur.init(transmettreDonnee, reinterpret_cast<std::function<void()>*>(att), pinsMoteurGauche, pinsMoteurDroit);
-            controlleur.avancePendantXDixiemeSec(100);
-/*
-            bool retour = communicator.avancePendantXDixiemeSec(100);
+            controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+            Assert::IsTrue(controlleur.avancePendantXDixiemeSec(100));
 
-            Assert::IsTrue(communicator.itEcrire == 2);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::Avance);
-            Assert::IsTrue(communicator.ecriture[1] == 100);
-            Assert::IsTrue(retour);*/
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
         }
-
+		
         TEST_METHOD(ControlleurPrincipal_ReculePendantXDixiemeSec)
         {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, compasDriver);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
 
-            bool retour = communicator.reculePendantXDixiemeSec(100);
+			auto att = [](unsigned long temp) {
+				Assert::AreEqual(1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(1, (int)stepperDroit->getDirection());
 
-            Assert::IsTrue(communicator.itEcrire == 2);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::Recule);
-            Assert::IsTrue(communicator.ecriture[1] == 100);
-            Assert::IsTrue(retour);
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
+
+				Assert::AreEqual(10000UL, temp);
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			Assert::IsTrue(controlleur.reculePendantXDixiemeSec(100));
+
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
         }
 
-        TEST_METHOD(ControlleurPrincipal_Stop)
+        TEST_METHOD(ControlleurPrincipal_TourneAuDegresXVersLaGauche)
         {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture = message; itEcrire++; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture;
-            } communicator;
+			static float angleDepart = 60, 
+						 angleFin = 180;
 
-            bool retour = communicator.stop();
+			class CompasDriverCustom : public CompassDriver
+			{
+			public:
+				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+				volatile virtual float getOrientation()volatile {
+					return ++angleDepart;
+				}
+			} compasDriverCustom;
 
-            Assert::IsTrue(communicator.itEcrire == 1);
-            Assert::IsTrue(communicator.ecriture == ControlleurPrincipal::Fonction::Stop);
-            Assert::IsTrue(retour);
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
+
+			auto att = [](unsigned long temp) {
+				Assert::AreEqual(1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(-1, (int)stepperDroit->getDirection());
+
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
+
+				Assert::AreEqual(10UL, temp);
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			Assert::IsTrue(controlleur.tourneAuDegresX(angleFin));
+
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
+
+			Assert::AreEqual(angleFin, angleDepart);
         }
+		
+		TEST_METHOD(ControlleurPrincipal_TourneAuDegresXVersLaDroite)
+		{
+			static float angleDepart = 180,
+						 angleFin = 60;
 
-        TEST_METHOD(ControlleurPrincipal_TourneAuDegresX)
+			class CompasDriverCustom : public CompassDriver
+			{
+			public:
+				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+				volatile virtual float getOrientation()volatile {
+					return --angleDepart;
+				}
+			} compasDriverCustom;
+
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
+
+			auto att = [](unsigned long temp) {
+				Assert::AreEqual(-1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(1, (int)stepperDroit->getDirection());
+
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
+
+				Assert::AreEqual(10UL, temp);
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			Assert::IsTrue(controlleur.tourneAuDegresX(angleFin));
+
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
+
+			Assert::AreEqual(angleFin, angleDepart);
+		}
+
+        TEST_METHOD(ControlleurPrincipal_TourneGauche_ReelGauche)
         {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+			static float angleDepart = 60,
+						 angleFin = 180;
 
-            bool retour = communicator.tourneAuDegresX(150);
+			class CompasDriverCustom : public CompassDriver
+			{
+			public:
+				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+				volatile virtual float getOrientation()volatile {
+					return ++angleDepart;
+				}
+			} compasDriverCustom;
 
-            Assert::IsTrue(communicator.itEcrire == 2);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::Tourne);
-            Assert::IsTrue(communicator.ecriture[1] == 150);
-            Assert::IsTrue(retour);
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
+
+			auto att = [](unsigned long temp) {
+				Assert::AreEqual(1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(-1, (int)stepperDroit->getDirection());
+
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
+
+				Assert::AreEqual(10UL, temp);
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			Assert::IsTrue(controlleur.tourneGauche(angleFin - angleDepart));
+
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
+
+			Assert::AreEqual(angleFin, angleDepart - 1);
         }
 
-        TEST_METHOD(ControlleurPrincipal_TourneGauche)
-        {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+		TEST_METHOD(ControlleurPrincipal_TourneGauche_ReelDroite)
+		{
+			static float angleDepart = 180,
+						 angleFin = 60;
 
-            bool retour = communicator.tourneGauche(150);
+			class CompasDriverCustom : public CompassDriver
+			{
+			public:
+				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+				volatile virtual float getOrientation()volatile {
+					return --angleDepart;
+				}
+			} compasDriverCustom;
 
-            Assert::IsTrue(communicator.itEcrire == 2);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::Gauche);
-            Assert::IsTrue(communicator.ecriture[1] == 150);
-            Assert::IsTrue(retour);
-        }
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
 
-        TEST_METHOD(ControlleurPrincipal_TourneDroite)
-        {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+			auto att = [](unsigned long temp) {
+				Assert::AreEqual(-1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(1, (int)stepperDroit->getDirection());
 
-            bool retour = communicator.tourneDroite(150);
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
 
-            Assert::IsTrue(communicator.itEcrire == 2);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::Droite);
-            Assert::IsTrue(communicator.ecriture[1] == 150);
-            Assert::IsTrue(retour);
-        }
+				Assert::AreEqual(10UL, temp);
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			Assert::IsTrue(controlleur.tourneGauche(angleFin + angleDepart));
+
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
+
+			Assert::AreEqual(angleFin, angleDepart + 3);
+		}
+
+		TEST_METHOD(ControlleurPrincipal_TourneDroite_ReelGauche)
+		{
+			static float angleDepart = 60,
+						 angleFin = 180;
+
+			class CompasDriverCustom : public CompassDriver
+			{
+			public:
+				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+				volatile virtual float getOrientation()volatile {
+					return ++angleDepart;
+				}
+			} compasDriverCustom;
+
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
+
+			auto att = [](unsigned long temp) {
+				Assert::AreEqual(1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(-1, (int)stepperDroit->getDirection());
+
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
+
+				Assert::AreEqual(10UL, temp);
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			Assert::IsTrue(controlleur.tourneDroite(angleDepart + angleFin));
+
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
+
+			Assert::AreEqual(angleFin, angleDepart - 1);
+		}
+
+		TEST_METHOD(ControlleurPrincipal_TourneDroite_ReelDroite)
+		{
+			static float angleDepart = 180,
+						 angleFin = 60;
+
+			class CompasDriverCustom : public CompassDriver
+			{
+			public:
+				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+				volatile virtual float getOrientation()volatile {
+					return --angleDepart;
+				}
+			} compasDriverCustom;
+
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
+
+			auto att = [](unsigned long temp) {
+				Assert::AreEqual(-1, (int)stepperGauche->getDirection());
+				Assert::AreEqual(1, (int)stepperDroit->getDirection());
+
+				Assert::IsTrue(stepperGauche->isEnMouvement());
+				Assert::IsTrue(stepperDroit->isEnMouvement());
+
+				Assert::AreEqual(10UL, temp);
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			Assert::IsTrue(controlleur.tourneDroite(angleDepart - angleFin));
+
+			Assert::IsFalse(stepperGauche->isEnMouvement());
+			Assert::IsFalse(stepperDroit->isEnMouvement());
+
+			Assert::AreEqual(angleFin, angleDepart + 1);
+		}
 
         TEST_METHOD(ControlleurPrincipal_ObtenirOrientation)
         {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 234;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+			static float expected = 90;
 
-            int retour = communicator.obtenirOrientation();
+			class CompasDriverCustom : public CompassDriver
+			{
+			public:
+				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+				volatile virtual float getOrientation()volatile {
+					return expected;
+				}
+			} compasDriverCustom;
 
-            Assert::IsTrue(communicator.itEcrire == 1);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::Orientation);
-            Assert::IsTrue(retour == 234);
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+			Assert::AreEqual((int)expected, controlleur.obtenirOrientation());
         }
 
         TEST_METHOD(ControlleurPrincipal_SetDebug)
         {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, compasDriver);
+			controlleur.setDebug();
 
-            communicator.setDebug();
-
-            Assert::IsTrue(communicator.itEcrire == 1);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::SetDebug);
+			Assert::IsTrue(controlleur.isDebug());
         }
 
         TEST_METHOD(ControlleurPrincipal_StopDebug)
         {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, compasDriver);
+			controlleur.setDebug();
 
-            communicator.stopDebug();
-
-            Assert::IsTrue(communicator.itEcrire == 1);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::StopDebug);
+			Assert::IsTrue(controlleur.isDebug());
         }
 
-        TEST_METHOD(ControlleurPrincipal_ResetErreur)
+        TEST_METHOD(ControlleurPrincipal_VerifierObstacleEtResetErreur)
         {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture[2];
-            } communicator;
+			class TestSonarDriver : public SonarDriver
+			{
+			public:
+				TestSonarDriver() : SonarDriver(new DummySonar()) { };
 
-            communicator.resetErreur();
+				volatile virtual bool isObstacle()volatile const { return true; }
+			} testSonarDriver;
 
-            Assert::IsTrue(communicator.itEcrire == 1);
-            Assert::IsTrue(communicator.ecriture[0] == ControlleurPrincipal::Fonction::ResetErreur);
+			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, &testSonarDriver, compasDriver);
+
+			static ControlleurPrincipal* ctrl = &controlleur;
+			auto att = [](unsigned long) 
+			{
+				ctrl->verifierObstacle();
+			};
+
+			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+			
+			Assert::IsFalse(controlleur.avancePendantXDixiemeSec(5));
+			Assert::IsTrue(controlleur.isErreur());
+
+			controlleur.resetErreur();
+			Assert::IsFalse(controlleur.isErreur());
         }
 
-        static void verifierLectureErreur(int param[4])
-        {
-            Assert::IsTrue(param[0] == ControlleurPrincipal::Fonction::Erreur);
-            Assert::IsTrue(param[1] == 25);
-        }
+		TEST_METHOD(ControlleurPrincipal_StepMoteur)
+		{
+			class TestStepperDriver : public StepperDriver
+			{
+			public:
+				int nbCall = 0;
+				TestStepperDriver(int m) : StepperDriver(new DummyStepper(), m) { };
+				volatile void step()volatile { nbCall++; }
+			};
+			TestStepperDriver testDriverGauche(STEPPER_GAUCHE),
+							  testDriverDroit(STEPPER_DROIT);
 
-        TEST_METHOD(ControlleurPrincipal_SetEtStopFonctionLecture)
-        {
-            class ArduinoControlleurPrincipal_tst : public ControlleurPrincipal
-            {
-                virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-                virtual int lire() {
-                    return itLecture++ % 2 ? Fonction::Erreur : 25;
-                }
-            public:
-                int itEcrire = 0;
-                int itLecture = 0;
-                int ecriture[2];
-            } communicator;
+			ControlleurPrincipal controlleur(&testDriverGauche, &testDriverDroit, sonarDriver, compasDriver);
+			controlleur.stepMoteur();
 
-            communicator.setFonctionLecture(verifierLectureErreur);
-            communicator.stopFonctionLecture();
+			Assert::AreEqual(1, testDriverGauche.nbCall);
+			Assert::AreEqual(1, testDriverDroit.nbCall);
+		}
 
-            Assert::IsTrue(communicator.itEcrire == 0);
-        }
+		TEST_METHOD(ControlleurPrincipal_CalibrerMoteur)
+		{
+			struct test_case
+			{
+				float orientationDepart,
+					orientationEnsuite;
+				int forceGaucheDepart,
+					forceDroitDepart,
+					forceGaucheEnsuite,
+					forceDroitEnsuite;
+				bool avant;
+				test_case() {};
+				test_case(float od, float oe, int fgd, int fge, int fdd, int fde, bool a)
+				{
+					orientationDepart = od;
+					orientationEnsuite = oe;
+					forceGaucheDepart = fgd;
+					forceGaucheEnsuite = fge;
+					forceDroitDepart = fdd;
+					forceDroitEnsuite = fde;
+					avant = a;
+				}
+			};
+
+			test_case cases[8] = {
+				test_case(60,61.1,8,8,8,8, true),  //AvantErreurMineure
+				test_case(60,61.1,8,8,8,8, false), //DerriereErreurMineure
+				test_case(90,95,8,8,8,7, true),    //AvantErreurVersGauche
+				test_case(95,90,8,7,8,8, true),    //AvantErreurVersDroite
+				test_case(90,95,8,7,8,8, false),   //DerriereErreurVersGauche
+				test_case(95,90,8,8,8,7, false),   //DerriereErreurVerDroite
+				test_case(90,95,7,8,8,8, true),	   //AvantErreurVersGauche_MonterMoteur
+				test_case(95,90,8,8,7,8, true)	   //AvantErreurVersDroite_MonterMoteur
+			};
+
+			static int nbCallGetOrientation = 0;
+			static test_case* test = nullptr;
+			static ControlleurPrincipal* ctrl = nullptr;
+			static StepperDriver* stepperGauche = nullptr;
+			static StepperDriver* stepperDroit = nullptr;
+
+			for (test_case t : cases)
+			{
+				test = &t;
+				nbCallGetOrientation = 1;
+
+				class TestCompassDriver : public CompassDriver
+				{
+				public:
+					int compteur = 1;
+					TestCompassDriver() : CompassDriver(new DummyCompas()) { };
+
+					volatile virtual float getOrientation()volatile {
+						if (compteur++ == 1)
+						{
+							return test->orientationDepart;
+						}
+						else
+						{
+							return test->orientationEnsuite;
+						}
+					}
+				} testCompasDriver;
+
+				DummyStepperDriver testStepperDriverGauche(STEPPER_GAUCHE),
+								   testStepperDriverDroit(STEPPER_DROIT);
+
+				ControlleurPrincipal controlleur(&testStepperDriverGauche, &testStepperDriverDroit, sonarDriver, &testCompasDriver);
+
+				testStepperDriverGauche.setVitesse(test->forceGaucheDepart);
+				testStepperDriverDroit.setVitesse(test->forceDroitDepart);
+
+				ctrl = &controlleur;
+				stepperGauche = &testStepperDriverGauche;
+				stepperDroit = &testStepperDriverDroit;
+
+				auto att = [](unsigned long temp) {
+					Assert::IsTrue(stepperGauche->getVitesse() == (unsigned short)test->forceGaucheDepart);
+					Assert::IsTrue(stepperDroit->getVitesse() == (unsigned short)test->forceDroitDepart);
+
+					ctrl->calibrerMoteur();
+				};
+
+				controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+
+				if(test->avant)
+					Assert::IsTrue(controlleur.avancePendantXDixiemeSec(100));
+				else
+					Assert::IsTrue(controlleur.reculePendantXDixiemeSec(100));
+
+				Assert::AreEqual(test->forceGaucheEnsuite, (int)testStepperDriverGauche.getVitesse());
+				Assert::AreEqual(test->forceDroitEnsuite, (int)testStepperDriverDroit.getVitesse());
+			}
+		}
     };
 }

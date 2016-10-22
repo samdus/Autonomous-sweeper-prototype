@@ -6,9 +6,9 @@ typedef unsigned char byte;
 class IStepper
 {
 public:
-	virtual void init(byte, byte, byte, byte) = 0;
-	virtual void nextStep(char direction) = 0;
-	virtual	void motorPinsOut(byte pins) = 0;
+	volatile virtual void init(byte, byte, byte, byte)volatile = 0;
+	volatile virtual void nextStep(char direction)volatile = 0;
+	volatile virtual void motorPinsOut(byte pins)volatile = 0;
 };
 
 #endif // !ISTEPPER_H

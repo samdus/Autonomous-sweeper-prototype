@@ -4,7 +4,7 @@
 class ISonar
 {
 public:
-	virtual unsigned int ping_cm() = 0;
+	volatile virtual unsigned int ping_cm()volatile = 0;
 };
 
 #endif // !ISONAR_H

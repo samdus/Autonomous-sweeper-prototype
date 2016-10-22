@@ -25,42 +25,42 @@ private:
 
     void(*_callback)(int[4]);
 
-    virtual void ecrire(int message);
-    virtual int lire();
-    static void *appliquerFonctionLecture(void* s);
+	volatile virtual void ecrire(int message)volatile;
+	volatile virtual int lire()volatile;
+	static void *appliquerFonctionLecture(void* s);
 
 public: 
     ~ArduinoCommunicator();
 
     /// \overload
-    virtual bool avancePendantXDixiemeSec(int dixiemeSec);
+	volatile virtual bool avancePendantXDixiemeSec(int dixiemeSec)volatile;
 
     /// \overload
-    virtual bool reculePendantXDixiemeSec(int dixiemeSec);
+	volatile virtual bool reculePendantXDixiemeSec(int dixiemeSec)volatile;
 
     /// \overload
-    virtual bool stop();
+	volatile virtual bool stop()volatile;
 
     /// \overload
-    virtual bool tourneAuDegresX(int degres);
+	volatile virtual bool tourneAuDegresX(int degres)volatile;
 
     /// \overload
-    virtual bool tourneGauche(int degres);
+	volatile virtual bool tourneGauche(int degres)volatile;
 
     /// \overload
-    virtual bool tourneDroite(int degres);
+	volatile virtual bool tourneDroite(int degres)volatile;
 
     /// \overload
-    virtual int obtenirOrientation();
+	volatile virtual int obtenirOrientation()volatile;
 
     /// \overload
-    virtual void setDebug();
+	volatile virtual void setDebug()volatile;
 
     /// \overload
-    virtual void stopDebug();
+	volatile virtual void stopDebug()volatile;
 
     /// \overload
-    virtual void resetErreur();
+	volatile virtual void resetErreur()volatile;
 
     /// \brief Défini la fonction qui sera appelé lorsque le périphérique
     ///        recevra des données

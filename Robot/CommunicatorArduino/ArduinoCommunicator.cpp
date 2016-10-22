@@ -1,13 +1,13 @@
 #include "ArduinoCommunicator.h"
 
-void ArduinoCommunicator::ecrire(int message)
+volatile void ArduinoCommunicator::ecrire(int message)volatile
 {
     if (_fichier == NULL)
         _fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
     fputc(message, _fichier);
 };
 
-int ArduinoCommunicator::lire()
+volatile int ArduinoCommunicator::lire()volatile
 {
     if (_fichier == NULL)
         _fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
@@ -49,7 +49,7 @@ ArduinoCommunicator::~ArduinoCommunicator()
         fclose(_fichier);
 }
 
-bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)
+volatile bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)volatile
 {
     ecrire(Fonction::Avance);
     ecrire(dixiemeSec);
@@ -57,7 +57,7 @@ bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)
     return lire() == 1;
 }
 
-bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)
+volatile bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)volatile
 {
     ecrire(Fonction::Recule);
     ecrire(dixiemeSec);
@@ -65,13 +65,13 @@ bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)
     return lire() == 1;
 }
 
-bool ArduinoCommunicator::stop()
+volatile bool ArduinoCommunicator::stop()volatile
 {
     ecrire(Fonction::Stop);
     return lire() == 1;
 }
 
-bool ArduinoCommunicator::tourneAuDegresX(int degres)
+volatile bool ArduinoCommunicator::tourneAuDegresX(int degres)volatile
 {
     ecrire(Fonction::Tourne);
     ecrire(degres);
@@ -79,14 +79,15 @@ bool ArduinoCommunicator::tourneAuDegresX(int degres)
     return lire() == 1;
 }
 
-bool ArduinoCommunicator::tourneGauche(int degres) {
+volatile bool ArduinoCommunicator::tourneGauche(int degres)volatile
+{
     ecrire(Fonction::Gauche);
     ecrire(degres);
 
     return lire() == 1;
 }
 
-bool ArduinoCommunicator::tourneDroite(int degres)
+volatile bool ArduinoCommunicator::tourneDroite(int degres)volatile
 {
     ecrire(Fonction::Droite);
     ecrire(degres);
@@ -94,21 +95,21 @@ bool ArduinoCommunicator::tourneDroite(int degres)
     return lire() == 1;
 }
 
-int ArduinoCommunicator::obtenirOrientation()
+volatile int ArduinoCommunicator::obtenirOrientation()volatile
 {
     ecrire(Fonction::Orientation);
     return lire();
 }
 
-void ArduinoCommunicator::setDebug()
+volatile void ArduinoCommunicator::setDebug()volatile
 {
     ecrire(Fonction::SetDebug);
 }
-void ArduinoCommunicator::stopDebug()
+volatile void ArduinoCommunicator::stopDebug()volatile
 {
     ecrire(Fonction::StopDebug);
 }
-void ArduinoCommunicator::resetErreur()
+volatile void ArduinoCommunicator::resetErreur()volatile
 {
     ecrire(Fonction::ResetErreur);
 }

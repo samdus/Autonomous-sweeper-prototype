@@ -10,12 +10,12 @@ Compass::~Compass()
 	delete _mag;
 }
 
-void Compass::init()
+volatile void Compass::init()volatile
 {
 	_mag->begin();
 }
 
-float Compass::read()
+volatile float Compass::read()volatile
 {
 	sensors_event_t event;
 	_mag->getEvent(&event);
