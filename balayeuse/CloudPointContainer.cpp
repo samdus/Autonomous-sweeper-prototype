@@ -4,8 +4,8 @@ CloudPointContainer::CloudPointContainer()
 {
     for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {
-        rgb[i] = std::vector<uint8_t>();
-        depth[i] = std::vector<Vector3>();
+        rgb[i] = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
+        depth[i] = std::vector<Vector3>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
         Converted[i] = true;
     }
 }
@@ -69,15 +69,15 @@ const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth(int idx)cons
     return depth[indexInsertion];
 }
 
-bool CloudPointContainer::GetCloudPointToConvert(std::vector<Vector3>& outPoints)
+int CloudPointContainer::GetCloudPointToConvert(std::vector<Vector3>& outPoints)
 {
     for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {
         if(Converted[i] == false)
         {
             depth[i].swap(outPoints);
-            return true;
+            return i;
         }
     }
-    return false;
+    return -1;
 }

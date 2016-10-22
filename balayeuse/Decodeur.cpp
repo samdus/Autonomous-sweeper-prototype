@@ -6,7 +6,7 @@ Decodeur::~Decodeur()
 {
     device->stopDepth();
     device->stopVideo();
-
+    DecodeurEnMarche = false;
 }
 
 void Decodeur::Init(MyFreenectDevice& freenectSingleton)
@@ -14,8 +14,8 @@ void Decodeur::Init(MyFreenectDevice& freenectSingleton)
     device = &freenectSingleton;
     device->startVideo();
     device->startDepth();
-    //pthread_t convertisseur;
-    //pthread_create(&convertisseur, NULL, convertir, this);
+    pthread_t convertisseur;
+    pthread_create(&convertisseur, NULL, Convertir, this);
 }
 
 void Decodeur::UpdateFPS(bool showFpsConsole)
@@ -53,8 +53,7 @@ void Decodeur::UpdateCloudOfPoint()
     if(updateCloud)
     {
         std::cout << "Echantillonnage!!!!" << std::endl;
-
-        depthWorld.clear();
+        //std::vector<Vector3> snapshot = std::vector<Vector3>();
         float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
         float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
         float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
@@ -69,14 +68,17 @@ void Decodeur::UpdateCloudOfPoint()
             if(vec.y > HauteurMax || vec.y < HauteurMin )
             {
                 continue;
-            }
-            depthWorld.push_back(RealCam.matrixToWorld * vec);
+            };
+            depthWorld[i] = RealCam.matrixToWorld * vec;
+            //snapshot.push_back(vec);
+
         }
+
 
         CloudSamplingTime = std::clock();
         updateCloud = false;
-
         cloudBuffer.Insert(rgb, depthWorld);
+        std::cout << "fin blabalabalbalbababablaballbabaablabablabablbl!!!!" << std::endl;
     }
     else
     {
@@ -98,5 +100,21 @@ void Decodeur::RunLoop()
     device->setTiltDegrees(0.0);
     UpdateFPS(true);
     UpdateCloudOfPoint();
+}
 
+void* Decodeur::Convertir(void* parent)
+{
+    Decodeur* decodeur = (Decodeur*)parent;
+    std::vector<Vector3> points = std::vector<Vector3>();
+    int indiceTraite = -1;
+    while(decodeur->DecodeurEnMarche)
+    {
+        indiceTraite = decodeur->cloudBuffer.GetCloudPointToConvert(points);
+        if(indiceTraite != -1)
+        {
+            //algorithme de regression lineaire
+
+            decodeur->cloudBuffer.Converted[indiceTraite] = true;
+        }
+    }
 }

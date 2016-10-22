@@ -24,10 +24,11 @@ class Decodeur
     float fps = 0.0;
     bool updateCloud = false;
     clock_t CloudSamplingTime = 0;
+    bool DecodeurEnMarche = true;
 
     std::vector<uint8_t> rgb = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
     std::vector<uint16_t> depth = std::vector<uint16_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
-    std::vector<Vector3> depthWorld = std::vector<Vector3>();
+    std::vector<Vector3> depthWorld = std::vector<Vector3>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
 
     Decodeur();
     ~Decodeur();
@@ -37,6 +38,7 @@ class Decodeur
 
     void UpdateCloudOfPoint();
     void SaveCarte();
+    static void* Convertir(void* decodeur);
 
     void RunLoop();
 };
