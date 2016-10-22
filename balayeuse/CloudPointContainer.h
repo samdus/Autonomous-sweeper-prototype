@@ -5,26 +5,31 @@
 
 #define IR_CAMERA_RESOLUTION_X 640
 #define IR_CAMERA_RESOLUTION_Y 480
-#define CLOUD_POINT_CIRCULAR_BUFFER 3
+#define CLOUD_POINT_CIRCULAR_BUFFER 2
 
 class CloudPointContainer
 {
     private:
-    int index = 0;
+    int indexInsertion = 0;
     std::vector<uint8_t> rgb[CLOUD_POINT_CIRCULAR_BUFFER];
     std::vector<Vector3> depth[CLOUD_POINT_CIRCULAR_BUFFER];
 
+
     public:
+    bool Converted[CLOUD_POINT_CIRCULAR_BUFFER];
+
     CloudPointContainer();
 
     ~CloudPointContainer();
 
-    void Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer);
-    void InsertDepth(std::vector<Vector3>& depthBuffer);
+    bool Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer);
+    bool InsertDepth(std::vector<Vector3>& depthBuffer);
 
     const std::vector<uint8_t>& GetCloudPointColor()const;
     const std::vector<uint8_t>& GetCloudPointColor(int index)const;
 
     const std::vector<Vector3>& GetCloudPointDepth()const;
     const std::vector<Vector3>& GetCloudPointDepth(int idx)const;
+
+    int GetCloudPointToConvert(std::vector<Vector3>& outPoints);
 };

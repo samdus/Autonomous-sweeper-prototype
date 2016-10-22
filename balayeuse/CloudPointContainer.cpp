@@ -6,6 +6,7 @@ CloudPointContainer::CloudPointContainer()
     {
         rgb[i] = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
         depth[i] = std::vector<Vector3>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
+        Converted[i] = true;
     }
 }
 
@@ -14,24 +15,35 @@ CloudPointContainer::~CloudPointContainer()
     //clear stuff
 }
 
-void CloudPointContainer::Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer)
+bool CloudPointContainer::Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer)
 {
-    InsertDepth(depthBuffer);
-    rgb[index].swap(rgbBuffer);
+    if(InsertDepth(depthBuffer))
+    {
+        rgb[indexInsertion].swap(rgbBuffer);
+        return true;
+    }
+    return false;
 }
 
-void CloudPointContainer::InsertDepth(std::vector<Vector3>& depthBuffer)
+bool CloudPointContainer::InsertDepth(std::vector<Vector3>& depthBuffer)
 {
-    if(++index >= CLOUD_POINT_CIRCULAR_BUFFER)
+    if(++indexInsertion >= CLOUD_POINT_CIRCULAR_BUFFER)
     {
-        index = 0;
+        indexInsertion = 0;
     }
-    depth[index].swap(depthBuffer);
+    if(Converted[indexInsertion] == false)
+    {
+        --indexInsertion;
+        return false;
+    }
+    depth[indexInsertion].swap(depthBuffer);
+    Converted[indexInsertion] = false;
+    return true;
 }
 
 const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor()const
 {
-    return rgb[index];
+    return rgb[indexInsertion];
 }
 
 const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor(int idx)const
@@ -40,12 +52,12 @@ const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor(int idx)cons
     {
         return rgb[idx];
     }
-    return rgb[index];
+    return rgb[indexInsertion];
 }
 
 const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth()const
 {
-    return depth[index];
+    return depth[indexInsertion];
 }
 
 const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth(int idx)const
@@ -54,5 +66,18 @@ const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth(int idx)cons
     {
         return depth[idx];
     }
-    return depth[index];
+    return depth[indexInsertion];
+}
+
+int CloudPointContainer::GetCloudPointToConvert(std::vector<Vector3>& outPoints)
+{
+    for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
+    {
+        if(Converted[i] == false)
+        {
+            depth[i].swap(outPoints);
+            return i;
+        }
+    }
+    return -1;
 }
