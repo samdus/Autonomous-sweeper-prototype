@@ -25,8 +25,8 @@ void SceneCamera::RotateY(float angle)
 void SceneCamera::Avance(float dist)
 {
     Vector3 deplacement = Vector3(dist * lX, dist * lY, dist * lZ);
-    position.x += deplacement.x;
-    position.y += deplacement.y;
+    position.x -= deplacement.x;
+    position.y -= deplacement.y;
     position.z += deplacement.z;
 
     matrixToWorld = Matrix4().rotateY(angleX).translate(position);

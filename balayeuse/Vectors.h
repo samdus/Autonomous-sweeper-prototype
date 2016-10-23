@@ -78,6 +78,7 @@ struct Vector3
     void        set(float x, float y, float z);
     float       length() const;                         //
     float       distance(const Vector3& vec) const;     // distance between two vectors
+    float       distanceXZ(const Vector3& vec) const;   // distance between two vectors
     float       angle(const Vector3& vec) const;        // angle between two vectors
     Vector3&    normalize();                            //
     float       dot(const Vector3& vec) const;          // dot product
@@ -367,6 +368,10 @@ inline float Vector3::length() const {
 
 inline float Vector3::distance(const Vector3& vec) const {
     return sqrtf((vec.x-x)*(vec.x-x) + (vec.y-y)*(vec.y-y) + (vec.z-z)*(vec.z-z));
+}
+
+inline float Vector3::distanceXZ(const Vector3& vec) const {
+    return sqrtf((vec.x-x)*(vec.x-x) + (vec.z-z)*(vec.z-z));
 }
 
 inline float Vector3::angle(const Vector3& vec) const {

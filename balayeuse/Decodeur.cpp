@@ -62,7 +62,7 @@ void Decodeur::UpdateCloudOfPoint()
         for(int i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
         {
             Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[i] / f,
-                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f) - HauteurKin,
+                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f) + HauteurKin,
                                   -depth[i]);
 
             if(vec.y > HauteurMax || vec.y < HauteurMin )
@@ -82,7 +82,7 @@ void Decodeur::UpdateCloudOfPoint()
     else
     {
         clock_t now = std::clock();
-        if(now - nextSmapling * 1000 >= CloudSamplingTime)
+        if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
             //updateCloud = true;
         }
