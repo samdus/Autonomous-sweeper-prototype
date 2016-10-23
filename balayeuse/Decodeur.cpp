@@ -53,7 +53,7 @@ void Decodeur::UpdateCloudOfPoint()
     if(updateCloud)
     {
         std::cout << "Echantillonnage!!!!" << std::endl;
-        //std::vector<Vector3> snapshot = std::vector<Vector3>();
+        std::vector<Vector3> snapshot = std::vector<Vector3>();
         float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
         float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
         float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
@@ -69,16 +69,15 @@ void Decodeur::UpdateCloudOfPoint()
             {
                 continue;
             };
-            depthWorld[i] = RealCam.matrixToWorld * vec;
-            //snapshot.push_back(vec);
+            snapshot.push_back(RealCam.matrixToWorld * vec);
 
         }
 
 
         CloudSamplingTime = std::clock();
         updateCloud = false;
-        cloudBuffer.Insert(rgb, depthWorld);
-        std::cout << "fin blabalabalbalbababablaballbabaablabablabablbl!!!!" << std::endl;
+
+        cloudBuffer.Insert(rgb, snapshot);
     }
     else
     {
@@ -109,7 +108,7 @@ void* Decodeur::Convertir(void* parent)
     int indiceTraite = -1;
     while(decodeur->DecodeurEnMarche)
     {
-        indiceTraite = decodeur->cloudBuffer.GetCloudPointToConvert(points);
+        indiceTraite = decodeur->cloudBuffer.GetCopyCloudPointToConvert(points);
         if(indiceTraite != -1)
         {
             //algorithme de regression lineaire
