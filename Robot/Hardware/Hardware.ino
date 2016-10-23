@@ -1,4 +1,4 @@
-#include <MsTimer2.h>
+#include <elapsedMillis.h>
 #include <Adafruit_HMC5883_U.h>
 #include <Adafruit_Sensor.h>
 #include <TimerOne.h>
@@ -33,19 +33,25 @@ void transmettreDonnee(int donnee)
 
 void attendre(unsigned long duree)
 {
-    delay(duree);
+    elapsedMillis timeElapsed;
+    while (timeElapsed < duree)
+    {
+        controlleur.verifierObstacle();
+        controlleur.calibrerMoteur();
+    }
+    //delay(duree);
 }
 
 void stepMoteur() 
 {
     controlleur.stepMoteur();
 }
-
-void validation()
-{
-	controlleur.verifierObstacle();
-	controlleur.calibrerMoteur();
-}
+//
+//void validation()
+//{
+//	controlleur.verifierObstacle();
+//	controlleur.calibrerMoteur();
+//}
 
 void setup() 
 {
@@ -56,8 +62,8 @@ void setup()
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
 
-	MsTimer2::set(TEMPS_TIMER2, validation);
-	MsTimer2::start();
+	/*MsTimer2::set(TEMPS_TIMER2, validation);
+	MsTimer2::start();*/
 
 	Serial.println(controlleur.obtenirOrientation());
 }
