@@ -1,22 +1,39 @@
 #include "ArduinoCommunicator.h"
 
-volatile void ArduinoCommunicator::ecrire(int message)volatile
+ArduinoCommunicator::ArduinoCommunicator()
 {
-    if (_fichier == NULL)
-        _fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
+	pthread_mutex_init(&_mutexFichier, NULL);
+	_fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
+}
+
+ArduinoCommunicator::~ArduinoCommunicator()
+{
+	if (_fichier != NULL)
+		fclose(_fichier);
+}
+
+void ArduinoCommunicator::ecrire(int message)
+{
+	pthread_mutex_lock(&_mutexFichier);
     fputc(message, _fichier);
+	pthread_mutex_unlock(&_mutexFichier);
 };
 
-volatile int ArduinoCommunicator::lire()volatile
+int ArduinoCommunicator::lire()
 {
-    if (_fichier == NULL)
-        _fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
+	return lire(false);
+}
 
+int ArduinoCommunicator::lire(bool verifierFlag)
+{
     int retour;
+
     do
     {
+		pthread_mutex_lock(&_mutexFichier);
         retour = fgetc(_fichier);
-    } while (retour <= 0 && !_stopFonctionLectureFlag);
+		pthread_mutex_unlock(&_mutexFichier);
+    } while (retour <= 0 || (verifierFlag && _stopFonctionLectureFlag) || retour == 205);
 
     return retour;
 };
@@ -28,14 +45,14 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     while (!self->_stopFonctionLectureFlag) {
         int lecture[4] = { 0 };
 
-        lecture[0] = self->lire();
+        lecture[0] = self->lire(true);
 
         if (lecture[0] == Fonction::Erreur ||
             lecture[0] == Fonction::InfoDistanceObjet ||
             lecture[0] == Fonction::InfoOrientation ||
             lecture[0] == Fonction::InfoVitesseMoteur)
         {
-            lecture[1] = self->lire();
+            lecture[1] = self->lire(true);
         }
 
         self->_callback(lecture);
@@ -43,13 +60,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     return s;
 };
 
-ArduinoCommunicator::~ArduinoCommunicator()
-{
-    if (_fichier != NULL)
-        fclose(_fichier);
-}
-
-volatile bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)volatile
+ bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)
 {
     ecrire(Fonction::Avance);
     ecrire(dixiemeSec);
@@ -57,7 +68,7 @@ volatile bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)volat
     return lire() == 1;
 }
 
-volatile bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)volatile
+ bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)
 {
     ecrire(Fonction::Recule);
     ecrire(dixiemeSec);
@@ -65,13 +76,13 @@ volatile bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)volat
     return lire() == 1;
 }
 
-volatile bool ArduinoCommunicator::stop()volatile
+ bool ArduinoCommunicator::stop()
 {
     ecrire(Fonction::Stop);
     return lire() == 1;
 }
 
-volatile bool ArduinoCommunicator::tourneAuDegresX(int degres)volatile
+ bool ArduinoCommunicator::tourneAuDegresX(int degres)
 {
     ecrire(Fonction::Tourne);
     ecrire(degres);
@@ -79,7 +90,7 @@ volatile bool ArduinoCommunicator::tourneAuDegresX(int degres)volatile
     return lire() == 1;
 }
 
-volatile bool ArduinoCommunicator::tourneGauche(int degres)volatile
+ bool ArduinoCommunicator::tourneGauche(int degres)
 {
     ecrire(Fonction::Gauche);
     ecrire(degres);
@@ -87,7 +98,7 @@ volatile bool ArduinoCommunicator::tourneGauche(int degres)volatile
     return lire() == 1;
 }
 
-volatile bool ArduinoCommunicator::tourneDroite(int degres)volatile
+ bool ArduinoCommunicator::tourneDroite(int degres)
 {
     ecrire(Fonction::Droite);
     ecrire(degres);
@@ -95,21 +106,21 @@ volatile bool ArduinoCommunicator::tourneDroite(int degres)volatile
     return lire() == 1;
 }
 
-volatile int ArduinoCommunicator::obtenirOrientation()volatile
+ int ArduinoCommunicator::obtenirOrientation()
 {
     ecrire(Fonction::Orientation);
-    return lire();
+	return lire();
 }
 
-volatile void ArduinoCommunicator::setDebug()volatile
+ void ArduinoCommunicator::setDebug()
 {
     ecrire(Fonction::SetDebug);
 }
-volatile void ArduinoCommunicator::stopDebug()volatile
+ void ArduinoCommunicator::stopDebug()
 {
     ecrire(Fonction::StopDebug);
 }
-volatile void ArduinoCommunicator::resetErreur()volatile
+ void ArduinoCommunicator::resetErreur()
 {
     ecrire(Fonction::ResetErreur);
 }

@@ -29,10 +29,10 @@ class StepperMotor : public IStepper
 {
   public:
 	StepperMotor();
-	volatile virtual void init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4)volatile;
+	 virtual void init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4);
 
-	volatile virtual void nextStep(char direction)volatile;
-	volatile virtual void motorPinsOut(byte pins)volatile;
+	 virtual void nextStep(char direction);
+	 virtual void motorPinsOut(byte pins);
 
   private:
 	byte stepNumber;

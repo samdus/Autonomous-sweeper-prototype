@@ -6,17 +6,17 @@ SonarDriver::SonarDriver(ISonar* sonar)
 }
 SonarDriver::~SonarDriver() {}
 
-volatile void SonarDriver::updateDist()volatile
+ void SonarDriver::updateDist()
 {
 	_dist = _sonar->ping_cm();
 }
 
-volatile unsigned int SonarDriver::getDist()volatile const
+ unsigned int SonarDriver::getDist() const
 {
 	return _dist;
 }
 
-volatile bool SonarDriver::isObstacle()volatile const
+ bool SonarDriver::isObstacle() const
 {
 	return (_dist < SONAR_MIN_DIST || _dist > SONAR_MAX_DIST);
 }

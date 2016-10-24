@@ -1,18 +1,18 @@
 #include "CompassDriver.h"
 
-CompassDriver::CompassDriver(volatile ICompass *compass)
+CompassDriver::CompassDriver( ICompass *compass)
 {
 	_compass = compass;
 }
 
 CompassDriver::~CompassDriver(){}
 
-volatile void CompassDriver::init()volatile
+ void CompassDriver::init()
 {
 	_compass->init();
 }
 
-volatile float CompassDriver::getOrientation()volatile
+ float CompassDriver::getOrientation()
 {
 	float avg = 0;
 

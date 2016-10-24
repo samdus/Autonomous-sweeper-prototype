@@ -27,33 +27,33 @@ private:
 			   DROITE  [STEPPER_NB_MOTEUR] = { -1,  1 },
 			   GAUCHE  [STEPPER_NB_MOTEUR] = {  1, -1 };
 
-	volatile unsigned short _compteur;
-	volatile char _direction;
-	volatile bool _enMouvement;
-	volatile unsigned short _noMoteur;
-	volatile unsigned short _vitesse;
+	 unsigned short _compteur;
+	 char _direction;
+	 bool _enMouvement;
+	 unsigned short _noMoteur;
+	 unsigned short _vitesse;
 	
-	volatile IStepper*   _stepper;
+	 IStepper*   _stepper;
 public:
-	StepperDriver(volatile IStepper*, unsigned short);
+	StepperDriver( IStepper*, unsigned short);
 	~StepperDriver();
 
-	volatile virtual void init(byte, byte, byte, byte)volatile;
+	 virtual void init(byte, byte, byte, byte);
 
-	volatile virtual void step()volatile;
-	volatile virtual void setVitesse(unsigned short)volatile;
+	 virtual void step();
+	 virtual void setVitesse(unsigned short);
 
-	volatile virtual void avant()volatile;
-	volatile virtual void derriere()volatile;
-	volatile virtual void gauche()volatile;
-	volatile virtual void droite()volatile;
+	 virtual void avant();
+	 virtual void derriere();
+	 virtual void gauche();
+	 virtual void droite();
 
-	volatile virtual void avance()volatile;
-	volatile virtual void stop()volatile;
+	 virtual void avance();
+	 virtual void stop();
 
-	volatile virtual const char getDirection()volatile const;
-	volatile virtual const unsigned short getVitesse()volatile const;
-	volatile virtual bool isEnMouvement()volatile const;
+	 virtual const char getDirection() const;
+	 virtual const unsigned short getVitesse() const;
+	 virtual bool isEnMouvement() const;
 };
 
 #endif // !STEPPER_DRIVER_H

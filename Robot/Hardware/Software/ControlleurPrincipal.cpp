@@ -1,6 +1,6 @@
 #include "ControlleurPrincipal.h"
 
-ControlleurPrincipal::ControlleurPrincipal(volatile StepperDriver *moteurGauche, volatile StepperDriver *moteurDroit, volatile SonarDriver *sonarDriver, volatile CompassDriver *compassDriver)
+ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  StepperDriver *moteurDroit,  SonarDriver *sonarDriver,  CompassDriver *compassDriver)
 {
     _moteurGauche = moteurGauche;
     _moteurDroit = moteurDroit;
@@ -12,7 +12,7 @@ ControlleurPrincipal::ControlleurPrincipal(volatile StepperDriver *moteurGauche,
     _recule = false;
 }
 
-volatile void ControlleurPrincipal::init(void(*transmettreDonnee)(int), void(*attendre)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])volatile
+ void ControlleurPrincipal::init(void(*transmettreDonnee)(int), void(*attendre)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])
 {
     _transmettreDonnee = transmettreDonnee;
     _attendre = attendre;
@@ -27,13 +27,13 @@ volatile void ControlleurPrincipal::init(void(*transmettreDonnee)(int), void(*at
     _derniereOrientation = _compassDriver->getOrientation();
 }
 
-volatile void ControlleurPrincipal::stepMoteur()volatile
+ void ControlleurPrincipal::stepMoteur()
 {
     _moteurGauche->step();
     _moteurDroit->step();
 }
 
-volatile void ControlleurPrincipal::calibrerMoteur()volatile
+ void ControlleurPrincipal::calibrerMoteur()
 {
 	if (_avance || _recule)
 	{
@@ -56,7 +56,7 @@ volatile void ControlleurPrincipal::calibrerMoteur()volatile
 			}
 		}
 		else if ((difference >  1.5 && _recule) ||
-			(difference < -1.5 && _avance))
+			    (difference < -1.5 && _avance))
 		{
 			if (vitesseGauche == 8)
 			{
@@ -84,7 +84,7 @@ volatile void ControlleurPrincipal::calibrerMoteur()volatile
 	}
 }
 
-volatile void ControlleurPrincipal::verifierObstacle()volatile
+ void ControlleurPrincipal::verifierObstacle()
 {
 	if (_avance)
 	{
@@ -108,17 +108,17 @@ volatile void ControlleurPrincipal::verifierObstacle()volatile
 	}
 }
 
-volatile bool ControlleurPrincipal::isErreur() volatile const
+ bool ControlleurPrincipal::isErreur()  const
 {
 	return _erreur;
 }
 
-volatile bool ControlleurPrincipal::isDebug()volatile const
+ bool ControlleurPrincipal::isDebug() const
 {
 	return _modeDebug;
 }
 
-volatile bool ControlleurPrincipal::avancePendantXDixiemeSec(int dixiemeSec)volatile
+ bool ControlleurPrincipal::avancePendantXDixiemeSec(int dixiemeSec)
 {
     _moteurGauche->avant();
     _moteurDroit->avant();
@@ -133,7 +133,7 @@ volatile bool ControlleurPrincipal::avancePendantXDixiemeSec(int dixiemeSec)vola
     return stop();
 }
 
-volatile bool ControlleurPrincipal::reculePendantXDixiemeSec(int dixiemeSec)volatile
+ bool ControlleurPrincipal::reculePendantXDixiemeSec(int dixiemeSec)
 {
     _moteurGauche->derriere();
     _moteurDroit->derriere();
@@ -148,7 +148,7 @@ volatile bool ControlleurPrincipal::reculePendantXDixiemeSec(int dixiemeSec)vola
     return stop();
 }
 
-volatile bool ControlleurPrincipal::stop()volatile
+ bool ControlleurPrincipal::stop()
 {
     _avance = false;
     _recule = false;
@@ -159,7 +159,7 @@ volatile bool ControlleurPrincipal::stop()volatile
     return !_erreur;
 }
 
-volatile bool ControlleurPrincipal::tourneAuDegresX(int degres)volatile
+ bool ControlleurPrincipal::tourneAuDegresX(int degres)
 {
     if (_compassDriver->getOrientation() > degres)
     {
@@ -194,41 +194,41 @@ volatile bool ControlleurPrincipal::tourneAuDegresX(int degres)volatile
     return !_erreur;
 }
 
-volatile bool ControlleurPrincipal::tourneGauche(int degres)volatile
+ bool ControlleurPrincipal::tourneGauche(int degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, true);
     return tourneAuDegresX((int) angleFinal);
 }
 
-volatile bool ControlleurPrincipal::tourneDroite(int degres)volatile
+ bool ControlleurPrincipal::tourneDroite(int degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, false);
     return tourneAuDegresX((int)angleFinal);
 }
 
-volatile int ControlleurPrincipal::obtenirOrientation()volatile
+ int ControlleurPrincipal::obtenirOrientation()
 {
     return (int)_compassDriver->getOrientation();
 }
 
-volatile void ControlleurPrincipal::setDebug()volatile
+ void ControlleurPrincipal::setDebug()
 {
     _modeDebug = true;
 }
 
-volatile void ControlleurPrincipal::stopDebug()volatile
+ void ControlleurPrincipal::stopDebug()
 {
     _modeDebug = false;
 }
 
-volatile void ControlleurPrincipal::resetErreur()volatile
+ void ControlleurPrincipal::resetErreur()
 {
     _erreur = false;
     _avance = false;
     _recule = false;
 }
 
-volatile float ControlleurPrincipal::getAngleResultant(float depart, float angle, bool gauche)volatile
+ float ControlleurPrincipal::getAngleResultant(float depart, float angle, bool gauche)
 {
     float resultat;
 

@@ -15,63 +15,63 @@
 class ControlleurPrincipal : public IControlleurPrincipal
 {
 private:
-	volatile StepperDriver *_moteurGauche,
-						   *_moteurDroit;
-	volatile SonarDriver   *_sonarDriver;
-	volatile CompassDriver *_compassDriver;
+	 StepperDriver *_moteurGauche,
+				   *_moteurDroit;
+	 SonarDriver   *_sonarDriver;
+	 CompassDriver *_compassDriver;
 
-	volatile bool _modeDebug;
-	volatile bool _erreur;
-	volatile bool _avance;
-	volatile bool _recule;
-	volatile float _derniereOrientation;
+	 bool _modeDebug;
+	 bool _erreur;
+	 bool _avance;
+	 bool _recule;
+	 float _derniereOrientation;
 
     void(*_transmettreDonnee)(int);
     void(*_attendre)(unsigned long);
 
-	volatile float getAngleResultant(float depart, float angle, bool gauche)volatile;
+	 float getAngleResultant(float depart, float angle, bool gauche);
 
 public:
-    ControlleurPrincipal(volatile StepperDriver*, volatile StepperDriver*, volatile SonarDriver*, volatile CompassDriver*);
+    ControlleurPrincipal( StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*);
 
-	volatile void init(void(*)(int), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])volatile;
+	 void init(void(*)(int), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
 
-	volatile void stepMoteur()volatile;
-	volatile void calibrerMoteur()volatile;
-	volatile void verifierObstacle()volatile;
+	 void stepMoteur();
+	 void calibrerMoteur();
+	 void verifierObstacle();
 
-	volatile bool isErreur()volatile const;
-	volatile bool isDebug()volatile const;
-
-    /// \overload
-	volatile virtual bool avancePendantXDixiemeSec(int dixiemeSec)volatile;
+	 bool isErreur() const;
+	 bool isDebug() const;
 
     /// \overload
-	volatile virtual bool reculePendantXDixiemeSec(int dixiemeSec)volatile;
+	 virtual bool avancePendantXDixiemeSec(int dixiemeSec);
 
     /// \overload
-	volatile virtual bool stop()volatile;
+	 virtual bool reculePendantXDixiemeSec(int dixiemeSec);
 
     /// \overload
-	volatile virtual bool tourneAuDegresX(int degres)volatile;
+	 virtual bool stop();
 
     /// \overload
-	volatile virtual bool tourneGauche(int degres)volatile;
+	 virtual bool tourneAuDegresX(int degres);
 
     /// \overload
-	volatile virtual bool tourneDroite(int degres)volatile;
+	 virtual bool tourneGauche(int degres);
 
     /// \overload
-	volatile virtual int obtenirOrientation()volatile;
+	 virtual bool tourneDroite(int degres);
 
     /// \overload
-	volatile virtual void setDebug()volatile;
+	 virtual int obtenirOrientation();
 
     /// \overload
-	volatile virtual void stopDebug()volatile;
+	 virtual void setDebug();
 
     /// \overload
-	volatile virtual void resetErreur()volatile;
+	 virtual void stopDebug();
+
+    /// \overload
+	 virtual void resetErreur();
 };
 
 

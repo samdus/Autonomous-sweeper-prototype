@@ -45,7 +45,7 @@ StepperMotor::StepperMotor()
   stepNumber = 0;
 }
 
-volatile void StepperMotor::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4)volatile
+ void StepperMotor::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4)
 {
   this->mPin_1 = mPin_2;
   this->mPin_2 = mPin_3;
@@ -62,7 +62,7 @@ volatile void StepperMotor::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPi
   motorPinsOut(0);
 }
 
-volatile void StepperMotor::motorPinsOut(byte pins)volatile
+ void StepperMotor::motorPinsOut(byte pins)
 {
   digitalWrite(mPin_1, pins & 1);
   digitalWrite(mPin_2, (pins>>1) & 1);
@@ -70,7 +70,7 @@ volatile void StepperMotor::motorPinsOut(byte pins)volatile
   digitalWrite(mPin_4, (pins>>3) & 1);
 }
 
-volatile void StepperMotor::nextStep(char direction)volatile
+ void StepperMotor::nextStep(char direction)
 { 
   stepNumber = (stepNumber + 8 + direction*stepInc) % 8;
   motorPinsOut(mPins[stepNumber]);

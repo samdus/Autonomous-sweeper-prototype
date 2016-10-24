@@ -8,13 +8,13 @@
 class CompassDriver
 {
 private:
-	volatile ICompass *_compass;
+	 ICompass *_compass;
 public:
-	CompassDriver(volatile ICompass*);
+	CompassDriver( ICompass*);
 	~CompassDriver();
 	
-	volatile virtual void init()volatile;
-	volatile virtual float getOrientation()volatile;
+	 virtual void init();
+	 virtual float getOrientation();
 };
 
 #endif // !COMPASS_DRIVER_H

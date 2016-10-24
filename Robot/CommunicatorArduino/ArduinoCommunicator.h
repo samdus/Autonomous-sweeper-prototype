@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <stdio.h>
 
+#include "../Serial_wjwwood/include/serial/serial.h"
 #include "../Software/IControlleurPrincipal.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
@@ -16,51 +17,71 @@
 #define ARDUINO_COMUNICATOR_NOM_FICHIER "/dev/ttyACM0"
 #endif
 
+#include <iostream>
+
 class ArduinoCommunicator : public IControlleurPrincipal
 {
 private:
     FILE *_fichier = NULL;
     pthread_t _thread;
-    bool _stopFonctionLectureFlag = true;
+    bool _stopFonctionLectureFlag;
+	pthread_mutex_t _mutexFichier = PTHREAD_MUTEX_INITIALIZER;
 
     void(*_callback)(int[4]);
 
-	volatile virtual void ecrire(int message)volatile;
-	volatile virtual int lire()volatile;
-	static void *appliquerFonctionLecture(void* s);
+	 virtual void ecrire(int message);
+	 virtual int lire();
+	 virtual int lire(bool);
+	 static void *appliquerFonctionLecture(void* s);
 
 public: 
+	ArduinoCommunicator();
     ~ArduinoCommunicator();
 
-    /// \overload
-	volatile virtual bool avancePendantXDixiemeSec(int dixiemeSec)volatile;
+	void afficherPortsDisponibles()
+	{
+		std::vector<serial::PortInfo> devices_found = serial::list_ports();
+
+		std::vector<serial::PortInfo>::iterator iter = devices_found.begin();
+
+		while (iter != devices_found.end())
+		{
+			serial::PortInfo device = *iter++;
+
+			printf("(%s, %s, %s)\n", device.port.c_str(), device.description.c_str(),
+				device.hardware_id.c_str());
+		}
+	}
 
     /// \overload
-	volatile virtual bool reculePendantXDixiemeSec(int dixiemeSec)volatile;
+	 virtual bool avancePendantXDixiemeSec(int dixiemeSec);
 
     /// \overload
-	volatile virtual bool stop()volatile;
+	 virtual bool reculePendantXDixiemeSec(int dixiemeSec);
 
     /// \overload
-	volatile virtual bool tourneAuDegresX(int degres)volatile;
+	 virtual bool stop();
 
     /// \overload
-	volatile virtual bool tourneGauche(int degres)volatile;
+	 virtual bool tourneAuDegresX(int degres);
 
     /// \overload
-	volatile virtual bool tourneDroite(int degres)volatile;
+	 virtual bool tourneGauche(int degres);
 
     /// \overload
-	volatile virtual int obtenirOrientation()volatile;
+	 virtual bool tourneDroite(int degres);
 
     /// \overload
-	volatile virtual void setDebug()volatile;
+	 virtual int obtenirOrientation();
 
     /// \overload
-	volatile virtual void stopDebug()volatile;
+	 virtual void setDebug();
 
     /// \overload
-	volatile virtual void resetErreur()volatile;
+	 virtual void stopDebug();
+
+    /// \overload
+	 virtual void resetErreur();
 
     /// \brief Défini la fonction qui sera appelé lorsque le périphérique
     ///        recevra des données

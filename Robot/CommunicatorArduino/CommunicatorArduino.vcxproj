@@ -75,6 +75,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../Serial_wjwwood/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
       <AdditionalDependencies> pthreadVC2.lib</AdditionalDependencies>
@@ -124,6 +125,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArduinoCommunicator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Serial_wjwwood\Serial_wjwwood.vcxproj">
+      <Project>{9a0a4a79-1dbc-4cf2-806d-325307b61245}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

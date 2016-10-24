@@ -18,8 +18,8 @@ public:
 	Compass();
 	~Compass();
 
-	volatile virtual void init()volatile;
-	volatile virtual float read()volatile;
+	 virtual void init();
+	 virtual float read();
 };
 
 #endif // !COMPASS_H

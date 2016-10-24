@@ -16,7 +16,7 @@ namespace SoftwareTest
 								expected2 = 100;
 			class ret100 : public ISonar
 			{
-				volatile virtual unsigned int ping_cm()volatile { return expected2; }
+				 virtual unsigned int ping_cm() { return expected2; }
 			} sonar;
 
 			SonarDriver driver(&sonar);
@@ -32,7 +32,7 @@ namespace SoftwareTest
 			static unsigned int distance = 4;
 			class ret100 : public ISonar
 			{
-				volatile virtual unsigned int ping_cm()volatile { return distance; }
+				 virtual unsigned int ping_cm() { return distance; }
 			} sonar;
 
 			SonarDriver driver(&sonar);
@@ -47,7 +47,7 @@ namespace SoftwareTest
 			static unsigned int distance = 8;
 			class ret100 : public ISonar
 			{
-				volatile virtual unsigned int ping_cm()volatile { return distance; }
+				 virtual unsigned int ping_cm() { return distance; }
 			} sonar;
 
 			SonarDriver driver(&sonar);
@@ -62,7 +62,7 @@ namespace SoftwareTest
 			static unsigned int distance = 100;
 			class ret100 : public ISonar
 			{
-				volatile virtual unsigned int ping_cm()volatile { return distance; }
+				 virtual unsigned int ping_cm() { return distance; }
 			} sonar;
 
 			SonarDriver driver(&sonar);

@@ -1,6 +1,6 @@
 #include "StepperDriver.h"
 
-StepperDriver::StepperDriver(volatile IStepper* stepper, unsigned short noMoteur)
+StepperDriver::StepperDriver( IStepper* stepper, unsigned short noMoteur)
 {
 	_noMoteur = noMoteur;
 	_stepper = stepper;
@@ -12,12 +12,12 @@ StepperDriver::StepperDriver(volatile IStepper* stepper, unsigned short noMoteur
 
 StepperDriver::~StepperDriver(){}
 
-volatile void StepperDriver::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4) volatile
+ void StepperDriver::init(byte mPin_1, byte mPin_2, byte mPin_3, byte mPin_4) 
 {
 	_stepper->init(mPin_1, mPin_2, mPin_3, mPin_4);
 }
 
-volatile void StepperDriver::step()volatile
+ void StepperDriver::step()
 {
 	if (_enMouvement)
 	{
@@ -29,7 +29,7 @@ volatile void StepperDriver::step()volatile
 	}
 }
 
-volatile void StepperDriver::setVitesse(unsigned short vitesse)volatile
+ void StepperDriver::setVitesse(unsigned short vitesse)
 {
     if (vitesse > 8)
         vitesse = 8;
@@ -37,42 +37,42 @@ volatile void StepperDriver::setVitesse(unsigned short vitesse)volatile
 	_vitesse = VITESSES[vitesse];
 }
 
-volatile void StepperDriver::avant()volatile
+ void StepperDriver::avant()
 {
 	_direction = AVANT[_noMoteur];
 }
 
-volatile void StepperDriver::derriere()volatile
+ void StepperDriver::derriere()
 {
 	_direction = DERRIERE[_noMoteur];
 }
 
-volatile void StepperDriver::gauche()volatile
+ void StepperDriver::gauche()
 {
 	_direction = GAUCHE[_noMoteur];
 }
 
-volatile void StepperDriver::droite()volatile
+ void StepperDriver::droite()
 {
 	_direction = DROITE[_noMoteur];
 }
 
-volatile void StepperDriver::avance()volatile
+ void StepperDriver::avance()
 {
 	_enMouvement = true;
 }
 
-volatile void StepperDriver::stop()volatile
+ void StepperDriver::stop()
 {
 	_enMouvement = false;
 }
 
-volatile const char StepperDriver::getDirection()volatile const
+ const char StepperDriver::getDirection() const
 {
 	return _direction;
 }
 
-volatile const unsigned short StepperDriver::getVitesse()volatile const
+ const unsigned short StepperDriver::getVitesse() const
 {
 	for (unsigned short i = 0; i < 7; ++i)
 		if (_vitesse == VITESSES[i])
@@ -80,7 +80,7 @@ volatile const unsigned short StepperDriver::getVitesse()volatile const
 	return 8;
 }
 
-volatile bool StepperDriver::isEnMouvement()volatile const
+ bool StepperDriver::isEnMouvement() const
 {
 	return _enMouvement;
 }

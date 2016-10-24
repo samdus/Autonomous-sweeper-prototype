@@ -15,23 +15,23 @@ namespace SoftwareTest
         class DummyStepper : public IStepper
         {
         public:
-			volatile virtual void init(byte, byte, byte, byte)volatile {}
-			volatile virtual void nextStep(char direction) volatile {}
-			volatile virtual void motorPinsOut(byte pins)volatile {}
+			 virtual void init(byte, byte, byte, byte) {}
+			 virtual void nextStep(char direction)  {}
+			 virtual void motorPinsOut(byte pins) {}
         };
 
         class DummySonar : public ISonar
         {
         public:
             int sonarPing = 8;
-			volatile virtual unsigned int ping_cm()volatile { return sonarPing; }
+			 virtual unsigned int ping_cm() { return sonarPing; }
         };
 
         class DummyCompas : public ICompass
         {
             float compasOrientation = 0;
-			volatile virtual void init()volatile {}
-			volatile virtual float read()volatile { return compasOrientation; }
+			 virtual void init() {}
+			 virtual float read() { return compasOrientation; }
         };
 
 		class DummyStepperDriver : public StepperDriver
@@ -41,10 +41,10 @@ namespace SoftwareTest
 
 			DummyStepperDriver(int m) : StepperDriver(new DummyStepper(), m) { };
 
-			volatile virtual void setVitesse(unsigned short v)volatile {
+			 virtual void setVitesse(unsigned short v) {
 				vitesse = v; 
 			}
-			volatile virtual const unsigned short getVitesse()volatile const { return vitesse; }
+			 virtual const unsigned short getVitesse() const { return vitesse; }
         };
 
         class DummySonarDriver : public SonarDriver
@@ -125,7 +125,7 @@ namespace SoftwareTest
 			{
 			public:
 				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				volatile virtual float getOrientation()volatile {
+				 virtual float getOrientation() {
 					return ++angleDepart;
 				}
 			} compasDriverCustom;
@@ -162,7 +162,7 @@ namespace SoftwareTest
 			{
 			public:
 				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				volatile virtual float getOrientation()volatile {
+				 virtual float getOrientation() {
 					return --angleDepart;
 				}
 			} compasDriverCustom;
@@ -199,7 +199,7 @@ namespace SoftwareTest
 			{
 			public:
 				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				volatile virtual float getOrientation()volatile {
+				 virtual float getOrientation() {
 					return ++angleDepart;
 				}
 			} compasDriverCustom;
@@ -236,7 +236,7 @@ namespace SoftwareTest
 			{
 			public:
 				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				volatile virtual float getOrientation()volatile {
+				 virtual float getOrientation() {
 					return --angleDepart;
 				}
 			} compasDriverCustom;
@@ -273,7 +273,7 @@ namespace SoftwareTest
 			{
 			public:
 				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				volatile virtual float getOrientation()volatile {
+				 virtual float getOrientation() {
 					return ++angleDepart;
 				}
 			} compasDriverCustom;
@@ -310,7 +310,7 @@ namespace SoftwareTest
 			{
 			public:
 				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				volatile virtual float getOrientation()volatile {
+				 virtual float getOrientation() {
 					return --angleDepart;
 				}
 			} compasDriverCustom;
@@ -346,7 +346,7 @@ namespace SoftwareTest
 			{
 			public:
 				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				volatile virtual float getOrientation()volatile {
+				 virtual float getOrientation() {
 					return expected;
 				}
 			} compasDriverCustom;
@@ -378,7 +378,7 @@ namespace SoftwareTest
 			public:
 				TestSonarDriver() : SonarDriver(new DummySonar()) { };
 
-				volatile virtual bool isObstacle()volatile const { return true; }
+				 virtual bool isObstacle() const { return true; }
 			} testSonarDriver;
 
 			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, &testSonarDriver, compasDriver);
@@ -405,7 +405,7 @@ namespace SoftwareTest
 			public:
 				int nbCall = 0;
 				TestStepperDriver(int m) : StepperDriver(new DummyStepper(), m) { };
-				volatile void step()volatile { nbCall++; }
+				 void step() { nbCall++; }
 			};
 			TestStepperDriver testDriverGauche(STEPPER_GAUCHE),
 							  testDriverDroit(STEPPER_DROIT);
@@ -469,7 +469,7 @@ namespace SoftwareTest
 					int compteur = 1;
 					TestCompassDriver() : CompassDriver(new DummyCompas()) { };
 
-					volatile virtual float getOrientation()volatile {
+					 virtual float getOrientation() {
 						if (compteur++ == 1)
 						{
 							return test->orientationDepart;

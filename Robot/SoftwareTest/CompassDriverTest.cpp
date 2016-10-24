@@ -14,8 +14,8 @@ namespace SoftwareTest
 			static float expected = 0.75;
 			class retPoint75 : public ICompass
 			{
-				volatile virtual void init()volatile {}
-				volatile virtual float read()volatile { return expected; }
+				 virtual void init() {}
+				 virtual float read() { return expected; }
 			} compas;
 
 			CompassDriver driver(&compas);
@@ -30,8 +30,8 @@ namespace SoftwareTest
 			class retPoint75 : public ICompass
 			{
 				float retour = expected - 0.005f - (COMPAS_NB_READ / 200.f);
-				volatile virtual void init()volatile {}
-				volatile virtual float read()volatile { retour += 0.01f; return retour; }
+				 virtual void init() {}
+				 virtual float read() { retour += 0.01f; return retour; }
 			} compas;
 
 			CompassDriver driver(&compas);

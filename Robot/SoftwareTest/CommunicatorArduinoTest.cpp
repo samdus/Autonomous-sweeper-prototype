@@ -15,8 +15,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -36,8 +36,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -57,8 +57,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture = message; itEcrire++; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture = message; itEcrire++; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -77,8 +77,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -98,8 +98,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-                volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire() volatile {
+                 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire()  {
                     return 1;
                 }
             public:
@@ -119,8 +119,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -140,8 +140,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 234;
                 }
             public:
@@ -160,8 +160,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -179,8 +179,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -198,8 +198,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return 1;
                 }
             public:
@@ -223,8 +223,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				volatile virtual void ecrire(int message)volatile { ecriture[itEcrire++] = message; }
-				volatile virtual int lire()volatile {
+				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
+				 virtual int lire() {
                     return itLecture++ % 2 ? Fonction::Erreur : 25;
                 }
             public:

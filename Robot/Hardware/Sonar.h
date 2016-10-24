@@ -18,7 +18,7 @@ public:
 	Sonar();
 	~Sonar();
 
-	volatile virtual unsigned int ping_cm()volatile;
+	 virtual unsigned int ping_cm();
 };
 
 #endif // SONAR_H

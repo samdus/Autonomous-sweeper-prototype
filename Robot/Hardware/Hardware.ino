@@ -13,45 +13,61 @@
 #include "StepperMotor.h"
 
 #define TEMPS_TIMER1 3250
-#define TEMPS_TIMER2 500
 
 byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
 	{ 6,7,8,9 },
 	{ 2,3,4,5 }
 };
-volatile StepperDriver moteurGauche(new StepperMotor(), STEPPER_GAUCHE),
-                       moteurDroit(new StepperMotor(), STEPPER_DROIT);
+StepperDriver moteurGauche(new StepperMotor(), STEPPER_GAUCHE),
+            moteurDroit(new StepperMotor(), STEPPER_DROIT);
+SonarDriver sonarDriver(new Sonar());
+CompassDriver compassDriver(new Compass());
+ControlleurPrincipal controlleur(&moteurGauche, &moteurDroit, &sonarDriver, &compassDriver);
 
-volatile SonarDriver sonarDriver(new Sonar());
-volatile CompassDriver compassDriver(new Compass());
-volatile ControlleurPrincipal controlleur(&moteurGauche, &moteurDroit, &sonarDriver, &compassDriver);
+void ecrireInt(int aEcrire)
+{
+	uint8_t *donnees = new uint8_t[2];
+
+	donnees[0] = (aEcrire << 8) >> 8;
+	donnees[1] = aEcrire >> 8;
+
+	Serial.write(donnees, 2);
+
+	delete donnees;
+}
+
+int lireInt()
+{
+	uint8_t *donnees = new uint8_t[2];
+	int resultat;
+
+	Serial.readBytes(donnees, 2);
+
+	resultat = (donnees[1] << 8) | donnees[0];
+
+	delete donnees;
+	return resultat;
+}
 
 void transmettreDonnee(int donnee)
 {
-    Serial.write(donnee);
+	ecrireInt(donnee);
 }
 
 void attendre(unsigned long duree)
 {
-    elapsedMillis timeElapsed;
+    elapsedMillis timeElapsed = 0;
     while (timeElapsed < duree)
     {
         controlleur.verifierObstacle();
         controlleur.calibrerMoteur();
     }
-    //delay(duree);
 }
 
 void stepMoteur() 
 {
     controlleur.stepMoteur();
 }
-//
-//void validation()
-//{
-//	controlleur.verifierObstacle();
-//	controlleur.calibrerMoteur();
-//}
 
 void setup() 
 {
@@ -61,11 +77,6 @@ void setup()
     
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
-
-	/*MsTimer2::set(TEMPS_TIMER2, validation);
-	MsTimer2::start();*/
-
-	Serial.println(controlleur.obtenirOrientation());
 }
 
 void loop()
@@ -74,11 +85,11 @@ void loop()
         switch (Serial.read())
         {
         case ControlleurPrincipal::Fonction::Avance:
-            Serial.write(controlleur.avancePendantXDixiemeSec(Serial.read()));
+            Serial.write(controlleur.avancePendantXDixiemeSec(lireInt()));
             break;
 
         case ControlleurPrincipal::Fonction::Recule:
-            Serial.write(controlleur.reculePendantXDixiemeSec(Serial.read()));
+            Serial.write(controlleur.reculePendantXDixiemeSec(lireInt()));
             break;
 
         case ControlleurPrincipal::Fonction::Stop:
@@ -86,19 +97,19 @@ void loop()
             break;
 
         case ControlleurPrincipal::Fonction::Tourne:
-            Serial.write(controlleur.tourneAuDegresX(Serial.read()));
+            Serial.write(controlleur.tourneAuDegresX(lireInt()));
             break;
 
         case ControlleurPrincipal::Fonction::Orientation:
-            Serial.write(controlleur.obtenirOrientation());
+            ecrireInt(controlleur.obtenirOrientation());
             break;
 
         case ControlleurPrincipal::Fonction::Gauche:
-            Serial.write(controlleur.tourneGauche(Serial.read()));
+            Serial.write(controlleur.tourneGauche(lireInt()));
             break;
             
         case ControlleurPrincipal::Fonction::Droite:
-            Serial.write(controlleur.tourneDroite(Serial.read()));
+            Serial.write(controlleur.tourneDroite(lireInt()));
             break;
 
         case ControlleurPrincipal::Fonction::SetDebug:
@@ -108,6 +119,7 @@ void loop()
         case ControlleurPrincipal::Fonction::StopDebug:
             controlleur.stopDebug();
             break;
+
 		default:
 			Serial.write(ControlleurPrincipal::Fonction::Erreur);
 			Serial.write(ControlleurPrincipal::TypeErreur::FonctionInconnue);

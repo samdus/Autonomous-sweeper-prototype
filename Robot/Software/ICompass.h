@@ -4,8 +4,8 @@
 class ICompass
 {
 public:
-	volatile virtual void init()volatile = 0;
-	volatile virtual float read()volatile = 0;
+	 virtual void init() = 0;
+	 virtual float read() = 0;
 };
 
 #endif // !ICOMPASS_H
