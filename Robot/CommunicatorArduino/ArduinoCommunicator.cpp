@@ -1,42 +1,83 @@
 #include "ArduinoCommunicator.h"
 
-ArduinoCommunicator::ArduinoCommunicator()
+bool ArduinoCommunicator::init()
 {
-	pthread_mutex_init(&_mutexFichier, NULL);
-	_fichier = fopen(ARDUINO_COMUNICATOR_NOM_FICHIER, "w");
+    try 
+    {
+        _serial = new serial::Serial(ARDUINO_COMUNICATOR_PORT, ARDUINO_COMUNICATOR_BAUD, serial::Timeout::simpleTimeout(1000));
+        return true;
+    }
+    catch (serial::IOException e)
+    {
+        return false;
+    }
 }
 
 ArduinoCommunicator::~ArduinoCommunicator()
 {
-	if (_fichier != NULL)
-		fclose(_fichier);
+    if(_serial != NULL)
+        delete _serial;
 }
 
-void ArduinoCommunicator::ecrire(int message)
+void ArduinoCommunicator::ecrire(uint8_t message)
 {
-	pthread_mutex_lock(&_mutexFichier);
-    fputc(message, _fichier);
-	pthread_mutex_unlock(&_mutexFichier);
-};
+    uint8_t *donnees = new uint8_t[1];
+    donnees[0] = message;
 
-int ArduinoCommunicator::lire()
+    _serial->write(donnees, 1);
+
+    delete donnees;
+}
+
+void ArduinoCommunicator::ecrireInt(int message)
+{
+    uint8_t *donnees = new uint8_t[2];
+
+    donnees[0] = (message << 8) >> 8;
+    donnees[1] = message >> 8;
+
+    _serial->write(donnees, 2);
+
+    delete donnees;
+}
+
+uint8_t ArduinoCommunicator::lire()
 {
 	return lire(false);
 }
 
-int ArduinoCommunicator::lire(bool verifierFlag)
+uint8_t ArduinoCommunicator::lire(bool verifierFlag)
+{
+    uint8_t retour;
+    uint8_t *lecture = new uint8_t[1];
+
+    while ((!verifierFlag || !_stopFonctionLectureFlag) && !_serial->available());
+
+    _serial->read(lecture, 1);
+    retour = lecture[0];
+
+    delete lecture;
+    return retour;
+}
+
+int ArduinoCommunicator::lireInt()
+{
+    return lireInt(false);
+}
+
+int ArduinoCommunicator::lireInt(bool verifierFlag)
 {
     int retour;
+    uint8_t *lecture = new uint8_t[2];
 
-    do
-    {
-		pthread_mutex_lock(&_mutexFichier);
-        retour = fgetc(_fichier);
-		pthread_mutex_unlock(&_mutexFichier);
-    } while (retour <= 0 || (verifierFlag && _stopFonctionLectureFlag) || retour == 205);
+    while ((!verifierFlag || !_stopFonctionLectureFlag) && _serial->available() < 2);
 
+    _serial->read(lecture, 2);
+    retour = (lecture[1] << 8) | lecture[0];
+
+    delete lecture;
     return retour;
-};
+}
 
 void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 {
@@ -52,7 +93,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
             lecture[0] == Fonction::InfoOrientation ||
             lecture[0] == Fonction::InfoVitesseMoteur)
         {
-            lecture[1] = self->lire(true);
+            lecture[1] = self->lireInt(true);
         }
 
         self->_callback(lecture);
@@ -63,7 +104,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
  bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)
 {
     ecrire(Fonction::Avance);
-    ecrire(dixiemeSec);
+    ecrireInt(dixiemeSec);
 
     return lire() == 1;
 }
@@ -71,7 +112,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
  bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)
 {
     ecrire(Fonction::Recule);
-    ecrire(dixiemeSec);
+    ecrireInt(dixiemeSec);
 
     return lire() == 1;
 }
@@ -85,7 +126,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
  bool ArduinoCommunicator::tourneAuDegresX(int degres)
 {
     ecrire(Fonction::Tourne);
-    ecrire(degres);
+    ecrireInt(degres);
 
     return lire() == 1;
 }
@@ -93,7 +134,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
  bool ArduinoCommunicator::tourneGauche(int degres)
 {
     ecrire(Fonction::Gauche);
-    ecrire(degres);
+    ecrireInt(degres);
 
     return lire() == 1;
 }
@@ -101,7 +142,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
  bool ArduinoCommunicator::tourneDroite(int degres)
 {
     ecrire(Fonction::Droite);
-    ecrire(degres);
+    ecrireInt(degres);
 
     return lire() == 1;
 }
@@ -109,7 +150,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
  int ArduinoCommunicator::obtenirOrientation()
 {
     ecrire(Fonction::Orientation);
-	return lire();
+	return lireInt();
 }
 
  void ArduinoCommunicator::setDebug()

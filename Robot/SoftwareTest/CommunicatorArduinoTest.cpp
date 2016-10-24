@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
+
 #include "../CommunicatorArduino/ArduinoCommunicator.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace SoftwareTest
 {
-
     TEST_CLASS(CommunicatorArduinoTest)
     {
     public:
@@ -15,8 +15,9 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+                 virtual void ecrireInt(int message)  { ecriture[itEcrire++] = message; }
+				 virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -36,8 +37,9 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+                virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+                virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
+				virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -57,8 +59,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture = message; itEcrire++; }
-				 virtual int lire() {
+				 virtual void ecrire(uint8_t message) { ecriture = message; itEcrire++; }
+				 virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -77,8 +79,9 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+                virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+                virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
+				virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -98,8 +101,9 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-                 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire()  {
+                virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+                virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
+				 virtual uint8_t lire()  {
                     return 1;
                 }
             public:
@@ -119,8 +123,9 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+                virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+                virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
+				 virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -140,8 +145,9 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+                virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+                virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
+				virtual int lireInt() {
                     return 234;
                 }
             public:
@@ -160,8 +166,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+				 virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -179,8 +185,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+				 virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -198,8 +204,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+				 virtual uint8_t lire() {
                     return 1;
                 }
             public:
@@ -223,8 +229,8 @@ namespace SoftwareTest
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
-				 virtual void ecrire(int message) { ecriture[itEcrire++] = message; }
-				 virtual int lire() {
+				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
+				 virtual uint8_t lire() {
                     return itLecture++ % 2 ? Fonction::Erreur : 25;
                 }
             public:

@@ -12,46 +12,38 @@
 #include "../Software/IControlleurPrincipal.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-#define ARDUINO_COMUNICATOR_NOM_FICHIER "COM6"
+#define ARDUINO_COMUNICATOR_PORT "COM6"
 #else
-#define ARDUINO_COMUNICATOR_NOM_FICHIER "/dev/ttyACM0"
+#define ARDUINO_COMUNICATOR_PORT "/dev/ttyACM0"
 #endif
+
+#define ARDUINO_COMUNICATOR_BAUD 9600
 
 #include <iostream>
 
 class ArduinoCommunicator : public IControlleurPrincipal
 {
 private:
-    FILE *_fichier = NULL;
+    serial::Serial *_serial = NULL;
     pthread_t _thread;
     bool _stopFonctionLectureFlag;
-	pthread_mutex_t _mutexFichier = PTHREAD_MUTEX_INITIALIZER;
 
     void(*_callback)(int[4]);
 
-	 virtual void ecrire(int message);
-	 virtual int lire();
-	 virtual int lire(bool);
-	 static void *appliquerFonctionLecture(void* s);
+    virtual void ecrire(uint8_t message);
+    virtual void ecrireInt(int message);
+	virtual uint8_t lire();
+	virtual uint8_t lire(bool);
+    virtual int lireInt();
+    virtual int lireInt(bool);
+
+	static void *appliquerFonctionLecture(void* s);
 
 public: 
-	ArduinoCommunicator();
     ~ArduinoCommunicator();
 
-	void afficherPortsDisponibles()
-	{
-		std::vector<serial::PortInfo> devices_found = serial::list_ports();
-
-		std::vector<serial::PortInfo>::iterator iter = devices_found.begin();
-
-		while (iter != devices_found.end())
-		{
-			serial::PortInfo device = *iter++;
-
-			printf("(%s, %s, %s)\n", device.port.c_str(), device.description.c_str(),
-				device.hardware_id.c_str());
-		}
-	}
+    // \brief Permet d'initialiser le port série
+    bool init();
 
     /// \overload
 	 virtual bool avancePendantXDixiemeSec(int dixiemeSec);
