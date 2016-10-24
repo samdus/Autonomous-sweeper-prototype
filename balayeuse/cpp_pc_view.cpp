@@ -230,7 +230,7 @@ void DrawGLScene()
         for (int i = 0; i < realTimeDepth.size(); ++i)
         {
             Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * realTimeDepth[i] / f,
-                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * realTimeDepth[i] / f) - HauteurKin,
+                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * realTimeDepth[i] / f) + HauteurKin,
                                   -realTimeDepth[i]);
 
             if(vec.y > HauteurMax || vec.y < HauteurMin )
@@ -266,15 +266,17 @@ void DrawGLScene()
 
     if(CarteVisible) //Draw a plane
     {
-        glBegin(GL_TRIANGLES);
-            glColor4f(0.5, 0.5, 0.5, 0.5);
-            glVertex3f( 5000.0,-1000.0, 5000.0);
-            glVertex3f(-5000.0,-1000.0, 5000.0);
-            glVertex3f( 5000.0,-1000.0,-5000.0);
+        glLineWidth(5.0f);
+        glBegin(GL_LINES);
+        glColor3ub(255, 0, 0);  // Red   X-axis
 
-            glVertex3f(-5000.0,-1000.0, 5000.0);
-            glVertex3f( 5000.0,-1000.0,-5000.0);
-            glVertex3f(-5000.0,-1000.0,-5000.0);
+        std::vector<segment> segments = DecodeurScene.Environnement.GetSegments();
+        for(int i = 0; i < segments.size(); ++i)
+        {
+            glVertex3f(segments[i].debut.x, 0, segments[i].debut.y);
+            glVertex3f(segments[i].fin.x, 0, segments[i].fin.y);
+        }
+
         glEnd();
     }
 
@@ -473,7 +475,7 @@ void resizeGLScene(int width, int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(50.0, (float)width / height, 900.0, 11000.0);
+    gluPerspective(50.0, (float)width / height, 90.0, 110000.0);
 
     glMatrixMode(GL_MODELVIEW);
 }

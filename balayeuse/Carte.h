@@ -8,8 +8,8 @@
 
 struct segment
 {
-    Vector3 debut;
-    Vector3 fin;
+    Vector2 debut;
+    Vector2 fin;
     int nbPoint;
 
     void fromString(std::string text)
@@ -23,16 +23,10 @@ struct segment
         debut.y = std::stof(text.substr(deb,pos));
         deb = pos + 1;
         pos = text.find(" ",deb);
-        debut.z = std::stof(text.substr(deb,pos));
-        deb = pos + 1;
-        pos = text.find(" ",deb);
         fin.x = std::stof(text.substr(deb,pos));
         deb = pos + 1;
         pos = text.find(" ",deb);
         fin.y = std::stof(text.substr(deb,pos));
-        deb = pos + 1;
-        pos = text.find(" ",deb);
-        fin.z = std::stof(text.substr(deb,pos));
         deb = pos + 1;
         nbPoint = std::stoi(text.substr(deb));
     }
@@ -42,10 +36,8 @@ struct segment
         return
         std::to_string(debut.x) + " " +
         std::to_string(debut.y) + " " +
-        std::to_string(debut.z) + " " +
         std::to_string(fin.x) + " " +
         std::to_string(fin.y) + " " +
-        std::to_string(fin.z) + " " +
         std::to_string(nbPoint) + "\n";
     }
 };
@@ -59,6 +51,8 @@ class Carte
     public:
     Carte();
     ~Carte();
+
+    const std::vector<segment>& GetSegments()const { return segments; }
 
     void SaveCarte();
 };
