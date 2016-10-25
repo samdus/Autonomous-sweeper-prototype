@@ -17,7 +17,7 @@ namespace SoftwareTest
             {
 				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
                  virtual void ecrireInt(int message)  { ecriture[itEcrire++] = message; }
-				 virtual uint8_t lire() {
+				 virtual int getRetour() {
                     return 1;
                 }
             public:
@@ -39,7 +39,7 @@ namespace SoftwareTest
             {
                 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
                 virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
-				virtual uint8_t lire() {
+				virtual int getRetour() {
                     return 1;
                 }
             public:
@@ -55,33 +55,13 @@ namespace SoftwareTest
             Assert::IsTrue(retour);
         }
 
-        TEST_METHOD(Communicator_Stop)
-        {
-            class ArduinoCommunicator_tst : public ArduinoCommunicator
-            {
-				 virtual void ecrire(uint8_t message) { ecriture = message; itEcrire++; }
-				 virtual uint8_t lire() {
-                    return 1;
-                }
-            public:
-                int itEcrire = 0;
-                int ecriture;
-            } communicator;
-
-            bool retour = communicator.stop();
-
-            Assert::IsTrue(communicator.itEcrire == 1);
-            Assert::IsTrue(communicator.ecriture== ArduinoCommunicator::Fonction::Stop);
-            Assert::IsTrue(retour);
-        }
-
         TEST_METHOD(Communicator_TourneAuDegresX)
         {
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
                 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
                 virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
-				virtual uint8_t lire() {
+				virtual int getRetour() {
                     return 1;
                 }
             public:
@@ -103,7 +83,7 @@ namespace SoftwareTest
             {
                 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
                 virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
-				 virtual uint8_t lire()  {
+				virtual int getRetour()  {
                     return 1;
                 }
             public:
@@ -125,7 +105,7 @@ namespace SoftwareTest
             {
                 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
                 virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
-				 virtual uint8_t lire() {
+				 virtual int getRetour() {
                     return 1;
                 }
             public:
@@ -147,7 +127,7 @@ namespace SoftwareTest
             {
                 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
                 virtual void ecrireInt(int message) { ecriture[itEcrire++] = message; }
-				virtual int lireInt() {
+				virtual int getRetour() {
                     return 234;
                 }
             public:
@@ -167,7 +147,7 @@ namespace SoftwareTest
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
 				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
-				 virtual uint8_t lire() {
+				 virtual int getRetour() {
                     return 1;
                 }
             public:
@@ -186,7 +166,7 @@ namespace SoftwareTest
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
 				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
-				 virtual uint8_t lire() {
+				 virtual int getRetour() {
                     return 1;
                 }
             public:
@@ -205,7 +185,7 @@ namespace SoftwareTest
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
 				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
-				 virtual uint8_t lire() {
+				 virtual int getRetour() {
                     return 1;
                 }
             public:
@@ -230,7 +210,7 @@ namespace SoftwareTest
             class ArduinoCommunicator_tst : public ArduinoCommunicator
             {
 				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
-				 virtual uint8_t lire() {
+				 virtual int getRetour() {
                     return itLecture++ % 2 ? Fonction::Erreur : 25;
                 }
             public:

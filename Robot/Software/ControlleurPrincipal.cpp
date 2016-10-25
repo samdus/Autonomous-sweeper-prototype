@@ -12,7 +12,7 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     _recule = false;
 }
 
- void ControlleurPrincipal::init(void(*transmettreDonnee)(int), void(*attendre)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])
+ void ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*attendre)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])
 {
     _transmettreDonnee = transmettreDonnee;
     _attendre = attendre;
@@ -70,16 +70,16 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
 
 		if (_modeDebug)
 		{
-			_transmettreDonnee(Fonction::InfoOrientation);
-			_transmettreDonnee((int)orientation);
+			_transmettreDonnee(Fonction::InfoOrientation, false);
+			_transmettreDonnee((int)orientation, true);
 
-			_transmettreDonnee(Fonction::InfoVitesseMoteur);
-			_transmettreDonnee(STEPPER_GAUCHE);
-			_transmettreDonnee(_moteurGauche->getVitesse());
+			_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
+			_transmettreDonnee(STEPPER_GAUCHE, true);
+			_transmettreDonnee(_moteurGauche->getVitesse(), true);
 
-			_transmettreDonnee(Fonction::InfoVitesseMoteur);
-			_transmettreDonnee(STEPPER_DROIT);
-			_transmettreDonnee(_moteurDroit->getVitesse());
+			_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
+			_transmettreDonnee(STEPPER_DROIT, true);
+			_transmettreDonnee(_moteurDroit->getVitesse(), true);
 		}
 	}
 }
@@ -97,28 +97,28 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
 			_moteurGauche->stop();
 			_moteurDroit->stop();
 
-			_transmettreDonnee(Fonction::Erreur);
-			_transmettreDonnee(TypeErreur::Obstacle);
+			_transmettreDonnee(Fonction::Erreur, false);
+			_transmettreDonnee(TypeErreur::Obstacle, true);
 		}
 		else if (_modeDebug)
 		{
-			_transmettreDonnee(Fonction::InfoDistanceObjet);
-			_transmettreDonnee(_sonarDriver->getDist());
+			_transmettreDonnee(Fonction::InfoDistanceObjet, false);
+			_transmettreDonnee(_sonarDriver->getDist(), true);
 		}
 	}
 }
 
- bool ControlleurPrincipal::isErreur()  const
+bool ControlleurPrincipal::isErreur()  const
 {
 	return _erreur;
 }
 
- bool ControlleurPrincipal::isDebug() const
+bool ControlleurPrincipal::isDebug() const
 {
 	return _modeDebug;
 }
 
- bool ControlleurPrincipal::avancePendantXDixiemeSec(int dixiemeSec)
+bool ControlleurPrincipal::avancePendantXDixiemeSec(int dixiemeSec)
 {
     _moteurGauche->avant();
     _moteurDroit->avant();
@@ -133,7 +133,7 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     return stop();
 }
 
- bool ControlleurPrincipal::reculePendantXDixiemeSec(int dixiemeSec)
+bool ControlleurPrincipal::reculePendantXDixiemeSec(int dixiemeSec)
 {
     _moteurGauche->derriere();
     _moteurDroit->derriere();
@@ -148,7 +148,7 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     return stop();
 }
 
- bool ControlleurPrincipal::stop()
+bool ControlleurPrincipal::stop()
 {
     _avance = false;
     _recule = false;
@@ -159,34 +159,29 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     return !_erreur;
 }
 
- bool ControlleurPrincipal::tourneAuDegresX(int degres)
+bool ControlleurPrincipal::tourneAuDegresX(int degres)
 {
-    if (_compassDriver->getOrientation() > degres)
+	float diff = degres - _compassDriver->getOrientation();
+    
+	if ((diff < 0 && diff > -180) || diff > 180)
     {
         _moteurGauche->droite();
         _moteurDroit->droite();
-
-		_moteurGauche->avance();
-		_moteurDroit->avance();
-
-        while (_compassDriver->getOrientation() > degres)
-        {
-            _attendre(10);
-        }
     }
     else
     {
         _moteurGauche->gauche();
         _moteurDroit->gauche();
-
-		_moteurGauche->avance();
-		_moteurDroit->avance();
-
-        while (_compassDriver->getOrientation() < degres)
-        {
-            _attendre(10);
-        }
     }
+
+	_moteurGauche->avance();
+	_moteurDroit->avance();
+
+	do
+	{
+		_attendre(10);
+		diff = degres - _compassDriver->getOrientation();
+	} while (fabs(diff) > 0.5);
 
     _moteurGauche->stop();
     _moteurDroit->stop();
@@ -194,13 +189,13 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     return !_erreur;
 }
 
- bool ControlleurPrincipal::tourneGauche(int degres)
+bool ControlleurPrincipal::tourneGauche(int degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, true);
     return tourneAuDegresX((int) angleFinal);
 }
 
- bool ControlleurPrincipal::tourneDroite(int degres)
+bool ControlleurPrincipal::tourneDroite(int degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, false);
     return tourneAuDegresX((int)angleFinal);
@@ -228,23 +223,25 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     _recule = false;
 }
 
- float ControlleurPrincipal::getAngleResultant(float depart, float angle, bool gauche)
+float ControlleurPrincipal::getAngleResultant(float depart, float angle, bool gauche)
 {
     float resultat;
 
+	if (angle > 360)
+		angle = 360;
+	else if (angle < 0)
+		angle = 0;
+
     if (gauche)
     {
-        resultat = depart + angle;
-
-        while (resultat > 360)
-            resultat -= 360;
+		resultat = fmod(depart + angle, 360);
     }
     else
     {
         resultat = depart - angle;
 
-        while (resultat < 0)
-            resultat += 360;
+        if (resultat < 0)
+            resultat = 360 + resultat;
     }
 
     return resultat;

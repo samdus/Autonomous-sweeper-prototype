@@ -49,9 +49,12 @@ int lireInt()
 	return resultat;
 }
 
-void transmettreDonnee(int donnee)
+void transmettreDonnee(int donnee, bool entier)
 {
-	ecrireInt(donnee);
+	if (entier)
+		ecrireInt(donnee);
+	else
+		Serial.write(donnee);
 }
 
 void attendre(unsigned long duree)
@@ -59,12 +62,12 @@ void attendre(unsigned long duree)
     elapsedMillis timeElapsed = 0;
     while (timeElapsed < duree)
     {
-        controlleur.verifierObstacle();
-        controlleur.calibrerMoteur();
+		controlleur.verifierObstacle();
+		controlleur.calibrerMoteur();
     }
 }
 
-void stepMoteur() 
+void stepMoteur()
 {
     controlleur.stepMoteur();
 }
@@ -77,39 +80,56 @@ void setup()
     
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
+
+	controlleur.tourneAuDegresX(90);
 }
 
 void loop()
 {
     if (Serial.available() > 0) {
+		int retour = 0;
         switch (Serial.read())
         {
         case ControlleurPrincipal::Fonction::Avance:
-            Serial.write(controlleur.avancePendantXDixiemeSec(lireInt()));
+			retour = controlleur.avancePendantXDixiemeSec(lireInt());
+
+			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
+            Serial.write(retour);
             break;
 
         case ControlleurPrincipal::Fonction::Recule:
-            Serial.write(controlleur.reculePendantXDixiemeSec(lireInt()));
-            break;
+			retour = controlleur.reculePendantXDixiemeSec(lireInt());
 
-        case ControlleurPrincipal::Fonction::Stop:
-            Serial.write(controlleur.stop());
+			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
+			Serial.write(retour);
             break;
 
         case ControlleurPrincipal::Fonction::Tourne:
-            Serial.write(controlleur.tourneAuDegresX(lireInt()));
+			retour = controlleur.tourneAuDegresX(lireInt());
+
+			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
+			Serial.write(retour);
             break;
 
         case ControlleurPrincipal::Fonction::Orientation:
-            ecrireInt(controlleur.obtenirOrientation());
+            retour = controlleur.obtenirOrientation();
+
+			Serial.write(ControlleurPrincipal::Fonction::RetourInt);
+			ecrireInt(retour);
             break;
 
         case ControlleurPrincipal::Fonction::Gauche:
-            Serial.write(controlleur.tourneGauche(lireInt()));
+			retour = controlleur.tourneGauche(lireInt());
+
+			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
+			Serial.write(retour);
             break;
             
         case ControlleurPrincipal::Fonction::Droite:
-            Serial.write(controlleur.tourneDroite(lireInt()));
+			retour = controlleur.tourneDroite(lireInt());
+
+			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
+			Serial.write(retour);
             break;
 
         case ControlleurPrincipal::Fonction::SetDebug:
@@ -122,7 +142,7 @@ void loop()
 
 		default:
 			Serial.write(ControlleurPrincipal::Fonction::Erreur);
-			Serial.write(ControlleurPrincipal::TypeErreur::FonctionInconnue);
+			ecrireInt(ControlleurPrincipal::TypeErreur::FonctionInconnue);
         }
 		Serial.flush();
     }

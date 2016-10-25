@@ -6,6 +6,7 @@
 #endif
 
 #include <pthread.h>
+#include <queue>
 #include <stdio.h>
 
 #include "../Serial_wjwwood/include/serial/serial.h"
@@ -26,16 +27,20 @@ class ArduinoCommunicator : public IControlleurPrincipal
 private:
     serial::Serial *_serial = NULL;
     pthread_t _thread;
+	bool _threadEnFonction = false;
     bool _stopFonctionLectureFlag;
+	pthread_mutex_t _mutexLecture = PTHREAD_MUTEX_INITIALIZER;
+	pthread_cond_t _conditionLecture = PTHREAD_COND_INITIALIZER;
+	std::queue<int> _intDisponibles; 
 
-    void(*_callback)(int[4]);
+    void(*_callbackFonctionLecture)(int[4]);
 
     virtual void ecrire(uint8_t message);
     virtual void ecrireInt(int message);
 	virtual uint8_t lire();
-	virtual uint8_t lire(bool);
     virtual int lireInt();
-    virtual int lireInt(bool);
+
+	virtual int getRetour();
 
 	static void *appliquerFonctionLecture(void* s);
 
@@ -50,10 +55,7 @@ public:
 
     /// \overload
 	 virtual bool reculePendantXDixiemeSec(int dixiemeSec);
-
-    /// \overload
-	 virtual bool stop();
-
+	 
     /// \overload
 	 virtual bool tourneAuDegresX(int degres);
 

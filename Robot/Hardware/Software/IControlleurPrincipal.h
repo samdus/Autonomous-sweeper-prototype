@@ -19,7 +19,9 @@ public:
         ResetErreur = 11,
         InfoVitesseMoteur = 12,
         InfoOrientation = 13,
-        InfoDistanceObjet = 14
+        InfoDistanceObjet = 14,
+		RetourBool = 15,
+		RetourInt = 16 
     };
 
     enum TypeErreur
@@ -37,10 +39,6 @@ public:
     /// \param dixiemeSec La durée qu'on veut reculer (en dixième de sec)
     /// \return Vrai si ça a fonctionné, faux s'il y a eu un problème
 	 virtual bool reculePendantXDixiemeSec(int dixiemeSec) = 0;
-
-    /// \brief Arrête immédiatement le robot
-    /// \return Vrai si ça a fonctionné, faux s'il y a eu un problème
-	 virtual bool stop() = 0;
 
     /// \brief Fait tourner le robot jusqu'à l'orientation voulue
     /// \param degres L'orientation désirée (en degré)

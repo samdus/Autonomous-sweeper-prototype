@@ -67,7 +67,7 @@ namespace SoftwareTest
         DummySonarDriver *sonarDriver = new DummySonarDriver();
         DummyCompasDriver *compasDriver = new DummyCompasDriver();
 
-        static void transmettreDonnee(int) {}
+        static void transmettreDonnee(int,bool) {}
         static void attendre(unsigned long) {}
 
         TEST_METHOD(ControlleurPrincipal_AvancePendantXDixiemeSec)
@@ -116,226 +116,107 @@ namespace SoftwareTest
 			Assert::IsFalse(stepperDroit->isEnMouvement());
         }
 
-        TEST_METHOD(ControlleurPrincipal_TourneAuDegresXVersLaGauche)
-        {
-			static float angleDepart = 60, 
-						 angleFin = 180;
-
-			class CompasDriverCustom : public CompassDriver
-			{
-			public:
-				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				 virtual float getOrientation() {
-					return ++angleDepart;
-				}
-			} compasDriverCustom;
-
-			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
-			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
-
-			auto att = [](unsigned long temp) {
-				Assert::AreEqual(1, (int)stepperGauche->getDirection());
-				Assert::AreEqual(-1, (int)stepperDroit->getDirection());
-
-				Assert::IsTrue(stepperGauche->isEnMouvement());
-				Assert::IsTrue(stepperDroit->isEnMouvement());
-
-				Assert::AreEqual(10UL, temp);
-			};
-
-			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
-			Assert::IsTrue(controlleur.tourneAuDegresX(angleFin));
-
-			Assert::IsFalse(stepperGauche->isEnMouvement());
-			Assert::IsFalse(stepperDroit->isEnMouvement());
-
-			Assert::AreEqual(angleFin, angleDepart);
-        }
-		
-		TEST_METHOD(ControlleurPrincipal_TourneAuDegresXVersLaDroite)
+		TEST_METHOD(ControlleurPrincipal_Tourner)
 		{
-			static float angleDepart = 180,
-						 angleFin = 60;
-
-			class CompasDriverCustom : public CompassDriver
+			struct testCaseTourne
 			{
-			public:
-				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				 virtual float getOrientation() {
-					return --angleDepart;
+				int depart, angle, arrive, fonction;
+				bool gauche;
+				testCaseTourne(int d, int an, int arr, int f, bool g)
+				{
+					depart = d; angle = an; arrive = arr; fonction = f;  gauche = g;
 				}
-			} compasDriverCustom;
-
-			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
-			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
-
-			auto att = [](unsigned long temp) {
-				Assert::AreEqual(-1, (int)stepperGauche->getDirection());
-				Assert::AreEqual(1, (int)stepperDroit->getDirection());
-
-				Assert::IsTrue(stepperGauche->isEnMouvement());
-				Assert::IsTrue(stepperDroit->isEnMouvement());
-
-				Assert::AreEqual(10UL, temp);
 			};
 
-			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
-			Assert::IsTrue(controlleur.tourneAuDegresX(angleFin));
-
-			Assert::IsFalse(stepperGauche->isEnMouvement());
-			Assert::IsFalse(stepperDroit->isEnMouvement());
-
-			Assert::AreEqual(angleFin, angleDepart);
-		}
-
-        TEST_METHOD(ControlleurPrincipal_TourneGauche_ReelGauche)
-        {
-			static float angleDepart = 60,
-						 angleFin = 180;
-
-			class CompasDriverCustom : public CompassDriver
-			{
-			public:
-				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				 virtual float getOrientation() {
-					return ++angleDepart;
-				}
-			} compasDriverCustom;
-
-			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
-			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
-
-			auto att = [](unsigned long temp) {
-				Assert::AreEqual(1, (int)stepperGauche->getDirection());
-				Assert::AreEqual(-1, (int)stepperDroit->getDirection());
-
-				Assert::IsTrue(stepperGauche->isEnMouvement());
-				Assert::IsTrue(stepperDroit->isEnMouvement());
-
-				Assert::AreEqual(10UL, temp);
+			testCaseTourne tests[] = { 
+				testCaseTourne( 90, 180, 270, 1, true), 
+				testCaseTourne(270, 180,  90, 1, true),
+				testCaseTourne(270,  15, 285, 1, true),
+				testCaseTourne( 90, 181, 271, 1, false),
+				testCaseTourne(270, 181,  91, 1, false),
+				testCaseTourne(270, 270, 180, 1, false),
+				testCaseTourne( 90, 180, 270, 2, true),
+				testCaseTourne(270, 180,  90, 2, true),
+				testCaseTourne(270, 345, 285, 2, true),
+				testCaseTourne( 90, 179, 271, 2, false),
+				testCaseTourne(270, 179,  91, 2, false),
+				testCaseTourne(270,  85, 185, 2, false),
+				testCaseTourne( 90, 180, 270, 3, true),
+				testCaseTourne(270, 180,  90, 3, true),
+				testCaseTourne(270,  15, 285, 3, true),
+				testCaseTourne( 90, 179, 271, 3, false),
+				testCaseTourne(270, 179,  91, 3, false),
+				testCaseTourne(270,  85, 185, 3, false)
 			};
+			static int angle = 0;
+			static bool gauche = false;
 
-			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
-			Assert::IsTrue(controlleur.tourneGauche(angleFin - angleDepart));
-
-			Assert::IsFalse(stepperGauche->isEnMouvement());
-			Assert::IsFalse(stepperDroit->isEnMouvement());
-
-			Assert::AreEqual(angleFin, angleDepart - 1);
-        }
-
-		TEST_METHOD(ControlleurPrincipal_TourneGauche_ReelDroite)
-		{
-			static float angleDepart = 180,
-						 angleFin = 60;
-
-			class CompasDriverCustom : public CompassDriver
+			for (testCaseTourne test : tests)
 			{
-			public:
-				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				 virtual float getOrientation() {
-					return --angleDepart;
+				angle = test.depart;
+				gauche = test.gauche;
+
+				class CompasDriverCustom : public CompassDriver
+				{
+					int compteur = 0;
+				public:
+					CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
+					virtual float getOrientation() {
+						if (compteur++ < 3)
+							return angle;
+						if(gauche)
+							return fmod(angle++, 360);
+						if (angle == 0)
+							angle = 360;
+						return angle--;
+					}
+				} compasDriverCustom;
+
+				ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
+				static DummyStepperDriver* stepperGauche = stepperDriverGauche;
+				static DummyStepperDriver* stepperDroit = stepperDriverDroit;
+
+				auto att = [](unsigned long temp) {
+					if (gauche)
+					{
+						Assert::AreEqual(1,  (int)stepperGauche->getDirection());
+						Assert::AreEqual(-1, (int)stepperDroit->getDirection());
+					}
+					else
+					{
+						Assert::AreEqual(-1, (int)stepperGauche->getDirection());
+						Assert::AreEqual(1,  (int)stepperDroit->getDirection());
+					}
+
+					Assert::IsTrue(stepperGauche->isEnMouvement());
+					Assert::IsTrue(stepperDroit->isEnMouvement());
+
+					Assert::AreEqual(10UL, temp);
+				};
+
+				controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
+
+				switch (test.fonction)
+				{
+				case 1:
+					Assert::IsTrue(controlleur.tourneGauche(test.angle));
+					break;
+				case 2:
+					Assert::IsTrue(controlleur.tourneDroite(test.angle));
+					break;
+				case 3:
+					Assert::IsTrue(controlleur.tourneAuDegresX(test.arrive));
+					break;
 				}
-			} compasDriverCustom;
 
-			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
-			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
+				Assert::IsFalse(stepperGauche->isEnMouvement());
+				Assert::IsFalse(stepperDroit->isEnMouvement());
 
-			auto att = [](unsigned long temp) {
-				Assert::AreEqual(-1, (int)stepperGauche->getDirection());
-				Assert::AreEqual(1, (int)stepperDroit->getDirection());
-
-				Assert::IsTrue(stepperGauche->isEnMouvement());
-				Assert::IsTrue(stepperDroit->isEnMouvement());
-
-				Assert::AreEqual(10UL, temp);
-			};
-
-			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
-			Assert::IsTrue(controlleur.tourneGauche(angleFin + angleDepart));
-
-			Assert::IsFalse(stepperGauche->isEnMouvement());
-			Assert::IsFalse(stepperDroit->isEnMouvement());
-
-			Assert::AreEqual(angleFin, angleDepart + 3);
-		}
-
-		TEST_METHOD(ControlleurPrincipal_TourneDroite_ReelGauche)
-		{
-			static float angleDepart = 60,
-						 angleFin = 180;
-
-			class CompasDriverCustom : public CompassDriver
-			{
-			public:
-				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				 virtual float getOrientation() {
-					return ++angleDepart;
-				}
-			} compasDriverCustom;
-
-			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
-			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
-
-			auto att = [](unsigned long temp) {
-				Assert::AreEqual(1, (int)stepperGauche->getDirection());
-				Assert::AreEqual(-1, (int)stepperDroit->getDirection());
-
-				Assert::IsTrue(stepperGauche->isEnMouvement());
-				Assert::IsTrue(stepperDroit->isEnMouvement());
-
-				Assert::AreEqual(10UL, temp);
-			};
-
-			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
-			Assert::IsTrue(controlleur.tourneDroite(angleDepart + angleFin));
-
-			Assert::IsFalse(stepperGauche->isEnMouvement());
-			Assert::IsFalse(stepperDroit->isEnMouvement());
-
-			Assert::AreEqual(angleFin, angleDepart - 1);
-		}
-
-		TEST_METHOD(ControlleurPrincipal_TourneDroite_ReelDroite)
-		{
-			static float angleDepart = 180,
-						 angleFin = 60;
-
-			class CompasDriverCustom : public CompassDriver
-			{
-			public:
-				CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-				 virtual float getOrientation() {
-					return --angleDepart;
-				}
-			} compasDriverCustom;
-
-			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-			static DummyStepperDriver* stepperGauche = stepperDriverGauche;
-			static DummyStepperDriver* stepperDroit = stepperDriverDroit;
-
-			auto att = [](unsigned long temp) {
-				Assert::AreEqual(-1, (int)stepperGauche->getDirection());
-				Assert::AreEqual(1, (int)stepperDroit->getDirection());
-
-				Assert::IsTrue(stepperGauche->isEnMouvement());
-				Assert::IsTrue(stepperDroit->isEnMouvement());
-
-				Assert::AreEqual(10UL, temp);
-			};
-
-			controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
-			Assert::IsTrue(controlleur.tourneDroite(angleDepart - angleFin));
-
-			Assert::IsFalse(stepperGauche->isEnMouvement());
-			Assert::IsFalse(stepperDroit->isEnMouvement());
-
-			Assert::AreEqual(angleFin, angleDepart + 1);
+				if(gauche)
+					Assert::AreEqual((float)test.arrive, (float)fmod(angle - 1, 360));
+				else
+					Assert::AreEqual((float)test.arrive, (float)fmod(angle + 1, 360));
+			}
 		}
 
         TEST_METHOD(ControlleurPrincipal_ObtenirOrientation)

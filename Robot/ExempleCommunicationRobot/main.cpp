@@ -3,6 +3,26 @@
 
 using namespace std;
 
+void afficherDebug(int debug[4])
+{
+	switch (debug[0])
+	{
+	case ArduinoCommunicator::Fonction::InfoDistanceObjet:
+		cout << "Distance: " << debug[1] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::InfoOrientation:
+		cout << "Orientation: " << debug[1] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::InfoVitesseMoteur:
+		cout << "Vitesse du moteur: " << debug[1] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::Erreur:
+		if(debug[1] == ArduinoCommunicator::TypeErreur::Obstacle)
+			cout << "Obstacle!!" << endl;
+		break;
+	}
+}
+
 int main(int argc, char **argv)
 {
 	ArduinoCommunicator communicator;
@@ -14,8 +34,10 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    cout << "Orientation: " << communicator.obtenirOrientation() << endl;
+	communicator.setFonctionLecture(afficherDebug);
 
+	communicator.avancePendantXDixiemeSec(30);
+	
 	cin.get();
     return 0;
 }

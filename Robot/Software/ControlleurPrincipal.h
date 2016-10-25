@@ -3,6 +3,7 @@
 
 #include "IControlleurPrincipal.h"
 
+#include <math.h>
 #include "ControlleurPrincipal.h"
 #include "CompassDriver.h"
 #include "SonarDriver.h"
@@ -26,7 +27,7 @@ private:
 	 bool _recule;
 	 float _derniereOrientation;
 
-    void(*_transmettreDonnee)(int);
+    void(*_transmettreDonnee)(int, bool);
     void(*_attendre)(unsigned long);
 
 	 float getAngleResultant(float depart, float angle, bool gauche);
@@ -34,7 +35,7 @@ private:
 public:
     ControlleurPrincipal( StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*);
 
-	 void init(void(*)(int), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
+	 void init(void(*)(int, bool), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
 
 	 void stepMoteur();
 	 void calibrerMoteur();
@@ -43,14 +44,13 @@ public:
 	 bool isErreur() const;
 	 bool isDebug() const;
 
+	 virtual bool stop();
+
     /// \overload
 	 virtual bool avancePendantXDixiemeSec(int dixiemeSec);
 
     /// \overload
 	 virtual bool reculePendantXDixiemeSec(int dixiemeSec);
-
-    /// \overload
-	 virtual bool stop();
 
     /// \overload
 	 virtual bool tourneAuDegresX(int degres);
