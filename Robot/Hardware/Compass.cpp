@@ -15,7 +15,7 @@ Compass::~Compass()
 	_mag->begin();
 }
 
- float Compass::read()
+float Compass::read()
 {
 	sensors_event_t event;
 	_mag->getEvent(&event);

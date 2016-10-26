@@ -61,6 +61,12 @@ public:
     /// \overload
 	 virtual bool tourneDroite(int degres);
 
+	 /// \overload
+	 virtual bool tourneGauchePendant(int dixiemeSec);
+
+	 /// \overload
+	 virtual bool tourneDroitePendant(int dixiemeSec);
+
     /// \overload
 	 virtual int obtenirOrientation();
 

@@ -26,7 +26,17 @@ void ArduinoCommunicator::ecrire(uint8_t message)
     uint8_t *donnees = new uint8_t[1];
     donnees[0] = message;
 
-    _serial->write(donnees, 1);
+	try
+	{
+		_serial->write(donnees, 1);
+	}
+	catch (serial::IOException ex)
+	{
+		int erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
+		_callbackFonctionLecture(erreur);
+
+		stopFonctionLecture();
+	}
 
     delete donnees;
 }
@@ -37,21 +47,39 @@ void ArduinoCommunicator::ecrireInt(int message)
 
     donnees[0] = (message << 8) >> 8;
     donnees[1] = message >> 8;
+	try
+	{
+		_serial->write(donnees, 2);
+	}
+	catch (serial::IOException ex)
+	{
+		int erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
+		_callbackFonctionLecture(erreur);
 
-    _serial->write(donnees, 2);
-
+		stopFonctionLecture();
+	}
     delete donnees;
 }
 
 uint8_t ArduinoCommunicator::lire()
 {
-    uint8_t retour;
+    uint8_t retour = 0;
     uint8_t *lecture = new uint8_t[1];
 
-    while (!_stopFonctionLectureFlag && !_serial->available());
+	try
+	{
+		while (!_stopFonctionLectureFlag && !_serial->available());
 
-    _serial->read(lecture, 1);
-    retour = lecture[0];
+		_serial->read(lecture, 1);
+		retour = lecture[0];
+	}
+	catch (serial::IOException ex) 
+	{
+		int erreur[4] = {Fonction::Erreur, TypeErreur::IO, 0, 0};
+		_callbackFonctionLecture(erreur);
+
+		stopFonctionLecture();
+	}
 
     delete lecture;
     return retour;
@@ -62,25 +90,38 @@ int ArduinoCommunicator::lireInt()
     int retour;
     uint8_t *lecture = new uint8_t[2];
 
-    while (!_stopFonctionLectureFlag && _serial->available() < 2);
+	try
+	{
+		while (!_stopFonctionLectureFlag && _serial->available() < 2);
 
-    _serial->read(lecture, 2);
-    retour = (lecture[1] << 8) | lecture[0];
-	
+		_serial->read(lecture, 2);
+		retour = (lecture[1] << 8) | lecture[0];
+	}
+	catch (serial::IOException ex)
+	{
+		int erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
+		_callbackFonctionLecture(erreur);
+
+		stopFonctionLecture();
+	}
+
     delete lecture;
     return retour;
 }
 
 int ArduinoCommunicator::getRetour()
 {
-	int retour;
+	int retour = -1;
 	pthread_mutex_lock(&_mutexLecture);
 
-	while(_intDisponibles.empty())
+	while(_intDisponibles.empty() && !_stopFonctionLectureFlag)
 		pthread_cond_wait(&_conditionLecture, &_mutexLecture);
 
-	retour = _intDisponibles.front();
-	_intDisponibles.pop();
+	if (!_intDisponibles.empty())
+	{
+		retour = _intDisponibles.front();
+		_intDisponibles.pop();
+	}
 	
 	pthread_mutex_unlock(&_mutexLecture);
 	return retour;
@@ -173,6 +214,22 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     return getRetour() == 1;
 }
 
+ bool ArduinoCommunicator::tourneGauchePendant(int dixiemeSec)
+ {
+	 ecrire(Fonction::GauchePendant);
+	 ecrireInt(dixiemeSec);
+
+	 return getRetour() == 1;
+ }
+
+ bool ArduinoCommunicator::tourneDroitePendant(int dixiemeSec)
+ {
+	 ecrire(Fonction::DroitePendant);
+	 ecrireInt(dixiemeSec);
+
+	 return getRetour() == 1;
+ }
+
  int ArduinoCommunicator::obtenirOrientation()
 {
     ecrire(Fonction::Orientation);
@@ -199,13 +256,40 @@ void ArduinoCommunicator::setFonctionLecture(void fonction(int[4]))
 	_threadEnFonction = pthread_create(&_thread, NULL, appliquerFonctionLecture, this) == 0;
 }
 
+bool ArduinoCommunicator::lectureEnFonction()
+{
+	bool enFonction;
+
+	pthread_mutex_lock(&_mutexFermerThread);
+	enFonction = _threadEnFonction;
+	pthread_mutex_unlock(&_mutexFermerThread);
+
+	return enFonction;
+}
+
 void ArduinoCommunicator::stopFonctionLecture()
 {
-	if (_threadEnFonction)
+	bool enFonction;
+
+	pthread_mutex_lock(&_mutexFermerThread);
+	enFonction = _threadEnFonction;
+	pthread_mutex_unlock(&_mutexFermerThread);
+	
+	if (enFonction)
 	{
 		void* status;
 		_stopFonctionLectureFlag = true;
+
 		pthread_kill(_thread, 9);
 		pthread_join(_thread, &status);
+
+		pthread_mutex_lock(&_mutexFermerThread);
+		_threadEnFonction = false;
+		pthread_mutex_unlock(&_mutexFermerThread);
+
+		pthread_mutex_lock(&_mutexLecture);
+		pthread_cond_signal(&_conditionLecture);
+		pthread_mutex_unlock(&_mutexLecture);
 	}
+
 }

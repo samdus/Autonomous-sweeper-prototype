@@ -30,6 +30,7 @@ private:
 	bool _threadEnFonction = false;
     bool _stopFonctionLectureFlag;
 	pthread_mutex_t _mutexLecture = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t _mutexFermerThread = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t _conditionLecture = PTHREAD_COND_INITIALIZER;
 	std::queue<int> _intDisponibles; 
 
@@ -65,6 +66,12 @@ public:
     /// \overload
 	 virtual bool tourneDroite(int degres);
 
+	 /// \overload
+	 virtual bool tourneGauchePendant(int dixiemeSec);
+
+	 /// \overload
+	 virtual bool tourneDroitePendant(int dixiemeSec);
+
     /// \overload
 	 virtual int obtenirOrientation();
 
@@ -84,6 +91,9 @@ public:
     ///                 Elle possède le paramètre message int[4] qui
     ///                 contiendra jusqu'à 4 messages lues sur le port série
     void setFonctionLecture(void fonction(int[4]));
+
+	/// \brief indique si la lecture est encore en fonction
+	bool lectureEnFonction();
 
     /// \brief Arrête le processus de lecture
     void stopFonctionLecture();

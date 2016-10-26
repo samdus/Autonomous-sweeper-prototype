@@ -19,7 +19,7 @@ byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
 	{ 2,3,4,5 }
 };
 StepperDriver moteurGauche(new StepperMotor(), STEPPER_GAUCHE),
-            moteurDroit(new StepperMotor(), STEPPER_DROIT);
+              moteurDroit(new StepperMotor(), STEPPER_DROIT);
 SonarDriver sonarDriver(new Sonar());
 CompassDriver compassDriver(new Compass());
 ControlleurPrincipal controlleur(&moteurGauche, &moteurDroit, &sonarDriver, &compassDriver);
@@ -80,8 +80,6 @@ void setup()
     
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
-
-	controlleur.tourneAuDegresX(90);
 }
 
 void loop()
@@ -110,6 +108,20 @@ void loop()
 			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
 			Serial.write(retour);
             break;
+
+		case ControlleurPrincipal::Fonction::GauchePendant:
+			retour = controlleur.tourneGauchePendant(lireInt());
+
+			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
+			Serial.write(retour);
+			break;
+
+		case ControlleurPrincipal::Fonction::DroitePendant:
+			retour = controlleur.tourneDroitePendant(lireInt());
+
+			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
+			Serial.write(retour);
+			break;
 
         case ControlleurPrincipal::Fonction::Orientation:
             retour = controlleur.obtenirOrientation();

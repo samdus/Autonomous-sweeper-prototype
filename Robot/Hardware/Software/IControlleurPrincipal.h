@@ -14,20 +14,23 @@ public:
         Erreur = 6,
         Droite = 7,
         Gauche = 8,
-        SetDebug = 9,
-        StopDebug = 10,
-        ResetErreur = 11,
-        InfoVitesseMoteur = 12,
-        InfoOrientation = 13,
-        InfoDistanceObjet = 14,
-		RetourBool = 15,
-		RetourInt = 16 
+		DroitePendant = 9,
+		GauchePendant = 10,
+        SetDebug = 11,
+        StopDebug = 12,
+        ResetErreur = 13,
+        InfoVitesseMoteur = 14,
+        InfoOrientation = 15,
+        InfoDistanceObjet = 16,
+		RetourBool = 17,
+		RetourInt = 18 
     };
 
     enum TypeErreur
     {
         Obstacle = 1,
-		FonctionInconnue = 2
+		FonctionInconnue = 2,
+		IO = 3
     };
 
     /// \brief Fait avancer le robot pendant la durée donnée
@@ -54,6 +57,16 @@ public:
     /// \param degres Le nombre de degré de la rotation
     /// \return Vrai si ça a fonctionné, faux s'il y a eu un problème
 	 virtual bool tourneDroite(int degres) = 0;
+
+	 /// \brief Fait tourner le robot vers la gauche pendant le nombre de dixième de seconde voulue
+	 /// \param dixiemeSec La durée qu'on veut tourner (en dixième de sec)
+	 /// \return Vrai si ça a fonctionné, faux s'il y a eu un problème
+	 virtual bool tourneGauchePendant(int dixiemeSec) = 0;
+
+	 /// \brief Fait tourner le robot vers la droite pendant le nombre de dixième de seconde voulue
+	 /// \param dixiemeSec La durée qu'on veut tourner (en dixième de sec)
+	 /// \return Vrai si ça a fonctionné, faux s'il y a eu un problème
+	 virtual bool tourneDroitePendant(int dixiemeSec) = 0;
 
     /// \brief Obtient l'orientation actuel
     /// \return L'orientation

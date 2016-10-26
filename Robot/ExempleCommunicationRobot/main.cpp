@@ -1,4 +1,5 @@
 #include <iostream>
+#include "RotationTestsFonctionnels.h"
 #include "../CommunicatorArduino/ArduinoCommunicator.h"
 
 using namespace std;
@@ -17,8 +18,18 @@ void afficherDebug(int debug[4])
 		cout << "Vitesse du moteur: " << debug[1] << endl;
 		break;
 	case ArduinoCommunicator::Fonction::Erreur:
-		if(debug[1] == ArduinoCommunicator::TypeErreur::Obstacle)
+		switch (debug[1])
+		{
+		case ArduinoCommunicator::TypeErreur::Obstacle:
 			cout << "Obstacle!!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::FonctionInconnue:
+			cout << "Fonction inconnue!!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::IO:
+			cout << "Erreur de IO" << endl;
+			break;
+		}
 		break;
 	}
 }
@@ -36,8 +47,16 @@ int main(int argc, char **argv)
 
 	communicator.setFonctionLecture(afficherDebug);
 
-	communicator.avancePendantXDixiemeSec(30);
-	
+	/*
+		Pourra éventuellement testé si la rotation fonctionne
+		----------------------------------------------------------
+		RotationTestsFonctionels rotation;
+		rotation.test(communicator);
+	*/
+
+	communicator.tourneGauchePendant(20);
+	communicator.tourneDroitePendant(20);
+
 	cin.get();
     return 0;
 }

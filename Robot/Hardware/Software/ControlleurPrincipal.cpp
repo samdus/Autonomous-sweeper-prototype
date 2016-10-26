@@ -201,7 +201,33 @@ bool ControlleurPrincipal::tourneDroite(int degres)
     return tourneAuDegresX((int)angleFinal);
 }
 
- int ControlleurPrincipal::obtenirOrientation()
+bool ControlleurPrincipal::tourneGauchePendant(int dixiemeSec)
+{
+	_moteurGauche->gauche();
+	_moteurDroit->gauche();
+
+	_moteurGauche->avance();
+	_moteurDroit->avance();
+	
+	_attendre(dixiemeSec * 100);
+
+	return stop();
+}
+
+bool ControlleurPrincipal::tourneDroitePendant(int dixiemeSec)
+{
+	_moteurGauche->droite();
+	_moteurDroit->droite();
+
+	_moteurGauche->avance();
+	_moteurDroit->avance();
+
+	_attendre(dixiemeSec * 100);
+
+	return stop();
+}
+
+int ControlleurPrincipal::obtenirOrientation()
 {
     return (int)_compassDriver->getOrientation();
 }
