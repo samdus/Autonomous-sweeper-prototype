@@ -44,19 +44,17 @@ int main(int argc, char **argv)
 
         return -1;
     }
-
+/*
 	communicator.setFonctionLecture(afficherDebug);
 
-	/*
-		Pourra éventuellement testé si la rotation fonctionne
-		----------------------------------------------------------
-		RotationTestsFonctionels rotation;
-		rotation.test(communicator);
-	*/
+	//	Pourra éventuellement testé si la rotation fonctionne
+	//	----------------------------------------------------------
+	//	RotationTestsFonctionels rotation;
+	//	rotation.test(communicator);
 
 	communicator.tourneGauchePendant(20);
 	communicator.tourneDroitePendant(20);
-
+*/
 	cin.get();
     return 0;
 }
