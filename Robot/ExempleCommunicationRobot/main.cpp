@@ -51,10 +51,13 @@ int main(int argc, char **argv)
 	//	----------------------------------------------------------
 	//	RotationTestsFonctionels rotation;
 	//	rotation.test(communicator);
+*/
+
+	communicator.setFonctionLecture(afficherDebug);
 
 	communicator.tourneGauchePendant(20);
 	communicator.tourneDroitePendant(20);
-*/
+
 	cin.get();
     return 0;
 }
