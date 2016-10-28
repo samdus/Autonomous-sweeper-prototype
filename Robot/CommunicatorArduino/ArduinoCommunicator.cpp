@@ -1,5 +1,6 @@
 #include "ArduinoCommunicator.h"
-
+#include <iostream>
+using namespace std;
 bool ArduinoCommunicator::init()
 {
     try 
@@ -129,7 +130,7 @@ int16_t ArduinoCommunicator::getRetour()
 
 void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 {
-    ArduinoCommunicator* self = (ArduinoCommunicator*)s;
+   /* ArduinoCommunicator* self = (ArduinoCommunicator*)s;
 
     while (!self->_stopFonctionLectureFlag) 
 	{
@@ -177,7 +178,9 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 			self->_callbackFonctionLecture(lecture);
 		}
     }
-    return s;
+    return s;*/
+	cout << "Test" <<endl;
+	return s;
 }
 
  bool ArduinoCommunicator::avancePendantXDixiemeSec(int16_t dixiemeSec)
