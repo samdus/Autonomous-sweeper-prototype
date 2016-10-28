@@ -82,7 +82,10 @@ uint8_t ArduinoCommunicator::lire()
 
 	try
 	{
-		while (!_stopFonctionLectureFlag && !_serial->available());
+		while (!_stopFonctionLectureFlag && !_serial->available()) {
+			std::cout << "Attente lire" << std::endl;
+			sleep(500);
+		}
 
 		_serial->read(lecture, 1);
 		retour = lecture[0];

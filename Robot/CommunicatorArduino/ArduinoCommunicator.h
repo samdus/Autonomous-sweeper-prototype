@@ -1,12 +1,20 @@
 #ifndef ARDUINO_COMUNICATOR_H
 #define ARDUINO_COMUNICATOR_H
 
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-#define HAVE_STRUCT_TIMESPEC
+	#include <windows.h>
+	#define ARDUINO_COMUNICATOR_PORT "COM6"
+	#define HAVE_STRUCT_TIMESPEC
 #else
-#include <signal.h>
+	#include <signal.h>
+	#include <unistd.h>
+	#define ARDUINO_COMUNICATOR_PORT "/dev/ttyACM0"
 #endif
 
+#define ARDUINO_COMUNICATOR_BAUD 9600
+
+#include <iostream>
 #include <pthread.h>
 #include <queue>
 #include <stdio.h>
@@ -14,19 +22,22 @@
 #include "../Serial_wjwwood/include/serial/serial.h"
 #include "../Software/IControlleurPrincipal.h"
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-#define ARDUINO_COMUNICATOR_PORT "COM6"
-#else
-#define ARDUINO_COMUNICATOR_PORT "/dev/ttyACM0"
-#endif
-
-#define ARDUINO_COMUNICATOR_BAUD 9600
-
-#include <iostream>
-
 class ArduinoCommunicator : public IControlleurPrincipal
 {
 private:
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+	void sleep(unsigned milliseconds)
+	{
+		Sleep(milliseconds);
+	}
+#else
+	void sleep(unsigned milliseconds)
+	{
+		usleep(milliseconds * 1000); // takes microseconds
+	}
+#endif
+
     serial::Serial *_serial = NULL;
     pthread_t _thread;
 	bool _threadEnFonction = false;
