@@ -51,7 +51,9 @@ int main(int argc, char **argv)
     }
 	communicator.setFonctionLecture(afficherDebug);
 	
-	while (1);
+	cout << "Demande l'orientation..." << endl;
+	cout << "Orientation: " << communicator.obtenirOrientation() << endl;
+
 	/*communicator.tourneDroitePendant(75);
 	communicator.avancePendantXDixiemeSec(30);
 	communicator.reculePendantXDixiemeSec(30);
