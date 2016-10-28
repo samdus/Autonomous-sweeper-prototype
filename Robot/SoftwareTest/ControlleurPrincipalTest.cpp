@@ -24,7 +24,7 @@ namespace SoftwareTest
         {
         public:
             int sonarPing = 8;
-			 virtual unsigned int ping_cm() { return sonarPing; }
+			virtual unsigned int ping_cm() { return sonarPing; }
         };
 
         class DummyCompas : public ICompass
@@ -233,7 +233,7 @@ namespace SoftwareTest
 			} compasDriverCustom;
 
 			ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-			Assert::AreEqual((int)expected, controlleur.obtenirOrientation());
+			Assert::AreEqual((int16_t)expected, controlleur.obtenirOrientation());
         }
 
         TEST_METHOD(ControlleurPrincipal_SetDebug)

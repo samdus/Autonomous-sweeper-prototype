@@ -118,7 +118,7 @@ bool ControlleurPrincipal::isDebug() const
 	return _modeDebug;
 }
 
-bool ControlleurPrincipal::avancePendantXDixiemeSec(int dixiemeSec)
+bool ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
 {
     _moteurGauche->avant();
     _moteurDroit->avant();
@@ -133,7 +133,7 @@ bool ControlleurPrincipal::avancePendantXDixiemeSec(int dixiemeSec)
     return stop();
 }
 
-bool ControlleurPrincipal::reculePendantXDixiemeSec(int dixiemeSec)
+bool ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
 {
     _moteurGauche->derriere();
     _moteurDroit->derriere();
@@ -159,7 +159,7 @@ bool ControlleurPrincipal::stop()
     return !_erreur;
 }
 
-bool ControlleurPrincipal::tourneAuDegresX(int degres)
+bool ControlleurPrincipal::tourneAuDegresX(int16_t degres)
 {
 	float diff = degres - _compassDriver->getOrientation();
     
@@ -189,19 +189,19 @@ bool ControlleurPrincipal::tourneAuDegresX(int degres)
     return !_erreur;
 }
 
-bool ControlleurPrincipal::tourneGauche(int degres)
+bool ControlleurPrincipal::tourneGauche(int16_t degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, true);
     return tourneAuDegresX((int) angleFinal);
 }
 
-bool ControlleurPrincipal::tourneDroite(int degres)
+bool ControlleurPrincipal::tourneDroite(int16_t degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, false);
     return tourneAuDegresX((int)angleFinal);
 }
 
-bool ControlleurPrincipal::tourneGauchePendant(int dixiemeSec)
+bool ControlleurPrincipal::tourneGauchePendant(int16_t dixiemeSec)
 {
 	_moteurGauche->gauche();
 	_moteurDroit->gauche();
@@ -214,7 +214,7 @@ bool ControlleurPrincipal::tourneGauchePendant(int dixiemeSec)
 	return stop();
 }
 
-bool ControlleurPrincipal::tourneDroitePendant(int dixiemeSec)
+bool ControlleurPrincipal::tourneDroitePendant(int16_t dixiemeSec)
 {
 	_moteurGauche->droite();
 	_moteurDroit->droite();
@@ -227,7 +227,7 @@ bool ControlleurPrincipal::tourneDroitePendant(int dixiemeSec)
 	return stop();
 }
 
-int ControlleurPrincipal::obtenirOrientation()
+int16_t ControlleurPrincipal::obtenirOrientation()
 {
     return (int)_compassDriver->getOrientation();
 }

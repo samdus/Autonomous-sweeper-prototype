@@ -10,7 +10,7 @@ class CompassDriver
 private:
 	 ICompass *_compass;
 public:
-	CompassDriver( ICompass*);
+	CompassDriver(ICompass*);
 	~CompassDriver();
 	
 	 virtual void init();

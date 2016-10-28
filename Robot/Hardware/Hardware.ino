@@ -24,7 +24,7 @@ SonarDriver sonarDriver(new Sonar());
 CompassDriver compassDriver(new Compass());
 ControlleurPrincipal controlleur(&moteurGauche, &moteurDroit, &sonarDriver, &compassDriver);
 
-void ecrireInt(int aEcrire)
+void ecrireInt(int16_t aEcrire)
 {
 	uint8_t *donnees = new uint8_t[2];
 

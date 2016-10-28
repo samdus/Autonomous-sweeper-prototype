@@ -30,10 +30,10 @@ private:
     void(*_transmettreDonnee)(int, bool);
     void(*_attendre)(unsigned long);
 
-	 float getAngleResultant(float depart, float angle, bool gauche);
+	float getAngleResultant(float depart, float angle, bool gauche);
 
 public:
-    ControlleurPrincipal( StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*);
+    ControlleurPrincipal(StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*);
 
 	 void init(void(*)(int, bool), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
 
@@ -47,28 +47,28 @@ public:
 	 virtual bool stop();
 
     /// \overload
-	 virtual bool avancePendantXDixiemeSec(int dixiemeSec);
+	 virtual bool avancePendantXDixiemeSec(int16_t dixiemeSec);
 
     /// \overload
-	 virtual bool reculePendantXDixiemeSec(int dixiemeSec);
+	 virtual bool reculePendantXDixiemeSec(int16_t dixiemeSec);
 
     /// \overload
-	 virtual bool tourneAuDegresX(int degres);
+	 virtual bool tourneAuDegresX(int16_t degres);
 
     /// \overload
-	 virtual bool tourneGauche(int degres);
+	 virtual bool tourneGauche(int16_t degres);
 
     /// \overload
-	 virtual bool tourneDroite(int degres);
+	 virtual bool tourneDroite(int16_t degres);
 
 	 /// \overload
-	 virtual bool tourneGauchePendant(int dixiemeSec);
+	 virtual bool tourneGauchePendant(int16_t dixiemeSec);
 
 	 /// \overload
-	 virtual bool tourneDroitePendant(int dixiemeSec);
+	 virtual bool tourneDroitePendant(int16_t dixiemeSec);
 
     /// \overload
-	 virtual int obtenirOrientation();
+	 virtual int16_t obtenirOrientation();
 
     /// \overload
 	 virtual void setDebug();

@@ -32,7 +32,7 @@ void ArduinoCommunicator::ecrire(uint8_t message)
 	}
 	catch (serial::IOException ex)
 	{
-		int erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
+		int16_t erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
 		_callbackFonctionLecture(erreur);
 
 		stopFonctionLecture();
@@ -41,7 +41,7 @@ void ArduinoCommunicator::ecrire(uint8_t message)
     delete donnees;
 }
 
-void ArduinoCommunicator::ecrireInt(int message)
+void ArduinoCommunicator::ecrireInt(int16_t message)
 {
     uint8_t *donnees = new uint8_t[2];
 
@@ -53,7 +53,7 @@ void ArduinoCommunicator::ecrireInt(int message)
 	}
 	catch (serial::IOException ex)
 	{
-		int erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
+		int16_t erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
 		_callbackFonctionLecture(erreur);
 
 		stopFonctionLecture();
@@ -75,7 +75,7 @@ uint8_t ArduinoCommunicator::lire()
 	}
 	catch (serial::IOException ex) 
 	{
-		int erreur[4] = {Fonction::Erreur, TypeErreur::IO, 0, 0};
+		int16_t erreur[4] = {Fonction::Erreur, TypeErreur::IO, 0, 0};
 		_callbackFonctionLecture(erreur);
 
 		stopFonctionLecture();
@@ -85,9 +85,9 @@ uint8_t ArduinoCommunicator::lire()
     return retour;
 }
 
-int ArduinoCommunicator::lireInt()
+int16_t ArduinoCommunicator::lireInt()
 {
-    int retour;
+	int16_t retour;
     uint8_t *lecture = new uint8_t[2];
 
 	try
@@ -99,7 +99,7 @@ int ArduinoCommunicator::lireInt()
 	}
 	catch (serial::IOException ex)
 	{
-		int erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
+		int16_t erreur[4] = { Fonction::Erreur, TypeErreur::IO, 0, 0 };
 		_callbackFonctionLecture(erreur);
 
 		stopFonctionLecture();
@@ -109,9 +109,9 @@ int ArduinoCommunicator::lireInt()
     return retour;
 }
 
-int ArduinoCommunicator::getRetour()
+int16_t ArduinoCommunicator::getRetour()
 {
-	int retour = -1;
+	int16_t retour = -1;
 	pthread_mutex_lock(&_mutexLecture);
 
 	while(_intDisponibles.empty() && !_stopFonctionLectureFlag)
@@ -133,7 +133,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 
     while (!self->_stopFonctionLectureFlag) 
 	{
-        int lecture[4] = { 0 };
+        int16_t lecture[4] = { 0 };
 
         lecture[0] = self->lire();
 
@@ -169,12 +169,18 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 			pthread_cond_signal(&self->_conditionLecture);
 			pthread_mutex_unlock(&self->_mutexLecture);
 			break;
+		default:
+			lecture[2] = lecture[0];
+			lecture[0] = Fonction::Erreur;
+			lecture[1] = TypeErreur::EntreeInconnue;
+
+			self->_callbackFonctionLecture(lecture);
 		}
     }
     return s;
 }
 
- bool ArduinoCommunicator::avancePendantXDixiemeSec(int dixiemeSec)
+ bool ArduinoCommunicator::avancePendantXDixiemeSec(int16_t dixiemeSec)
 {
     ecrire(Fonction::Avance);
     ecrireInt(dixiemeSec);
@@ -182,7 +188,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     return getRetour() == 1;
 }
 
- bool ArduinoCommunicator::reculePendantXDixiemeSec(int dixiemeSec)
+ bool ArduinoCommunicator::reculePendantXDixiemeSec(int16_t dixiemeSec)
 {
     ecrire(Fonction::Recule);
     ecrireInt(dixiemeSec);
@@ -190,7 +196,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     return getRetour() == 1;
 }
 
- bool ArduinoCommunicator::tourneAuDegresX(int degres)
+ bool ArduinoCommunicator::tourneAuDegresX(int16_t degres)
 {
     ecrire(Fonction::Tourne);
     ecrireInt(degres);
@@ -198,7 +204,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     return getRetour() == 1;
 }
 
- bool ArduinoCommunicator::tourneGauche(int degres)
+ bool ArduinoCommunicator::tourneGauche(int16_t degres)
 {
     ecrire(Fonction::Gauche);
     ecrireInt(degres);
@@ -206,7 +212,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     return getRetour() == 1;
 }
 
- bool ArduinoCommunicator::tourneDroite(int degres)
+ bool ArduinoCommunicator::tourneDroite(int16_t degres)
 {
     ecrire(Fonction::Droite);
     ecrireInt(degres);
@@ -214,7 +220,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     return getRetour() == 1;
 }
 
- bool ArduinoCommunicator::tourneGauchePendant(int dixiemeSec)
+ bool ArduinoCommunicator::tourneGauchePendant(int16_t dixiemeSec)
  {
 	 ecrire(Fonction::GauchePendant);
 	 ecrireInt(dixiemeSec);
@@ -222,7 +228,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 	 return getRetour() == 1;
  }
 
- bool ArduinoCommunicator::tourneDroitePendant(int dixiemeSec)
+ bool ArduinoCommunicator::tourneDroitePendant(int16_t dixiemeSec)
  {
 	 ecrire(Fonction::DroitePendant);
 	 ecrireInt(dixiemeSec);
@@ -230,7 +236,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 	 return getRetour() == 1;
  }
 
- int ArduinoCommunicator::obtenirOrientation()
+int16_t ArduinoCommunicator::obtenirOrientation()
 {
     ecrire(Fonction::Orientation);
 	return getRetour();
@@ -249,7 +255,7 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
     ecrire(Fonction::ResetErreur);
 }
 
-void ArduinoCommunicator::setFonctionLecture(void fonction(int[4]))
+void ArduinoCommunicator::setFonctionLecture(void fonction(int16_t[4]))
 {
     _callbackFonctionLecture = fonction;
     _stopFonctionLectureFlag = false;

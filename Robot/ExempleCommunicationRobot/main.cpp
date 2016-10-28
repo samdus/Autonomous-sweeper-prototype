@@ -1,10 +1,11 @@
 #include <iostream>
+#include <bitset>
 #include "RotationTestsFonctionnels.h"
 #include "../CommunicatorArduino/ArduinoCommunicator.h"
 
 using namespace std;
 
-void afficherDebug(int debug[4])
+void afficherDebug(int16_t debug[4])
 {
 	switch (debug[0])
 	{
@@ -29,6 +30,10 @@ void afficherDebug(int debug[4])
 		case ArduinoCommunicator::TypeErreur::IO:
 			cout << "Erreur de IO" << endl;
 			break;
+		case ArduinoCommunicator::TypeErreur::EntreeInconnue:
+			std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
+			cout << "Entree inconnue: " << endl << binaire << endl;			
+			break;
 		}
 		break;
 	}
@@ -44,20 +49,86 @@ int main(int argc, char **argv)
 
         return -1;
     }
-/*
 	communicator.setFonctionLecture(afficherDebug);
+	
+	while (1);
+	/*communicator.tourneDroitePendant(75);
+	communicator.avancePendantXDixiemeSec(30);
+	communicator.reculePendantXDixiemeSec(30);
+	communicator.tourneGauchePendant(75);*/
 
-	//	Pourra éventuellement testé si la rotation fonctionne
-	//	----------------------------------------------------------
-	//	RotationTestsFonctionels rotation;
-	//	rotation.test(communicator);
-*/
-
-	communicator.setFonctionLecture(afficherDebug);
-
-	communicator.tourneGauchePendant(20);
-	communicator.tourneDroitePendant(20);
-
+	cout << "Enter pour quitter." << endl;
 	cin.get();
-    return 0;
+	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+//	Pourra éventuellement tester si la rotation fonctionne
+//	----------------------------------------------------------
+//	RotationTestsFonctionels rotation;
+//	rotation.test(communicator);
+
+
+/*
+Tests pour le port série
+----------------------------------------------------------
+serial::Serial *_serial;
+string envoie = "test...";
+
+try
+{
+_serial = new serial::Serial(ARDUINO_COMUNICATOR_PORT, ARDUINO_COMUNICATOR_BAUD, serial::Timeout::simpleTimeout(1000));
+}
+catch (serial::IOException e)
+{
+cout << "Erreur lors de l'ouverture de new serial::Serial..." << endl;
+cin.get();
+
+return -1;
+}
+
+try
+{
+_serial->write(envoie);
+}
+catch (serial::IOException e)
+{
+cout << "Erreur lors de l'ouverture de _serial->write..." << endl;
+cin.get();
+
+return -1;
+}
+
+try
+{
+string recu;
+
+while (!_serial->available())
+{
+
+}
+
+_serial->read(recu, envoie.length());
+
+cout << "Recu: " << recu << endl;
+}
+catch (serial::IOException e)
+{
+cout << "Erreur lors de l'ouverture de _serial->write..." << endl;
+cin.get();
+
+return -1;
+}
+
+
+*/

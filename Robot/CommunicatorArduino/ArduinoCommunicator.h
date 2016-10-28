@@ -34,16 +34,16 @@ private:
 	pthread_mutex_t _mutexLecture = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutex_t _mutexFermerThread = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t _conditionLecture = PTHREAD_COND_INITIALIZER;
-	std::queue<int> _intDisponibles; 
+	std::queue<int16_t> _intDisponibles;
 
-    void(*_callbackFonctionLecture)(int[4]);
+    void(*_callbackFonctionLecture)(int16_t[4]);
 
     virtual void ecrire(uint8_t message);
-    virtual void ecrireInt(int message);
+    virtual void ecrireInt(int16_t message);
 	virtual uint8_t lire();
-    virtual int lireInt();
+    virtual int16_t lireInt();
 
-	virtual int getRetour();
+	virtual int16_t getRetour();
 
 	static void *appliquerFonctionLecture(void* s);
 
@@ -54,28 +54,28 @@ public:
     bool init();
 
     /// \overload
-	 virtual bool avancePendantXDixiemeSec(int dixiemeSec);
+	 virtual bool avancePendantXDixiemeSec(int16_t dixiemeSec);
 
     /// \overload
-	 virtual bool reculePendantXDixiemeSec(int dixiemeSec);
+	 virtual bool reculePendantXDixiemeSec(int16_t dixiemeSec);
 	 
     /// \overload
-	 virtual bool tourneAuDegresX(int degres);
+	 virtual bool tourneAuDegresX(int16_t degres);
 
     /// \overload
-	 virtual bool tourneGauche(int degres);
+	 virtual bool tourneGauche(int16_t degres);
 
     /// \overload
-	 virtual bool tourneDroite(int degres);
+	 virtual bool tourneDroite(int16_t degres);
 
 	 /// \overload
-	 virtual bool tourneGauchePendant(int dixiemeSec);
+	 virtual bool tourneGauchePendant(int16_t dixiemeSec);
 
 	 /// \overload
-	 virtual bool tourneDroitePendant(int dixiemeSec);
+	 virtual bool tourneDroitePendant(int16_t dixiemeSec);
 
     /// \overload
-	 virtual int obtenirOrientation();
+	 virtual int16_t obtenirOrientation();
 
     /// \overload
 	 virtual void setDebug();
@@ -92,7 +92,7 @@ public:
     /// \param fonction La fonction callback 
     ///                 Elle possède le paramètre message int[4] qui
     ///                 contiendra jusqu'à 4 messages lues sur le port série
-    void setFonctionLecture(void fonction(int[4]));
+    void setFonctionLecture(void fonction(int16_t[4]));
 
 	/// \brief indique si la lecture est encore en fonction
 	bool lectureEnFonction();
