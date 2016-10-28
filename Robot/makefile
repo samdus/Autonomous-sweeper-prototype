@@ -15,12 +15,11 @@
 all: ExempleCommunicationRobot.exe
 
 #====================================================================================
-#Preparation
+#Run
 #====================================================================================
-Prepare:
-	mkdir -p RaspberryBin
-	cd RaspberryBin && mkdir -p objs
-
+run: 
+	./RaspberryBin/ExempleCommunicationRobot.exe
+	
 #====================================================================================
 #Compilation du projet ExempleCommunicationRobot
 #====================================================================================
@@ -28,6 +27,14 @@ Prepare:
 ExempleCommunicationRobot.exe: CommunicatorArduino.a
 	g++ -std=c++11 -lpthread -pthread -I Serial_wjwwood/include/ ExempleCommunicationRobot/main.cpp ExempleCommunicationRobot/RotationTestsFonctionnels.h RaspberryBin/CommunicatorArduino.a RaspberryBin/Software.a RaspberryBin/Serial.a -o RaspberryBin/ExempleCommunicationRobot.exe
 
+#====================================================================================
+#Preparation
+#====================================================================================
+Prepare:
+	git pull
+	mkdir -p RaspberryBin
+	cd RaspberryBin && mkdir -p objs
+	
 #====================================================================================
 #Compilation du projet CommunicatorArduino
 #====================================================================================
