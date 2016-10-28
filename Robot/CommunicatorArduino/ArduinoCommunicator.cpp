@@ -137,44 +137,46 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 
         lecture[0] = self->lire();
 
-		switch (lecture[0])
-		{
-		case Fonction::Erreur:
-		case Fonction::InfoDistanceObjet:
-		case Fonction::InfoOrientation:
-			lecture[1] = self->lireInt();
-			self->_callbackFonctionLecture(lecture);
-			break;
+		if (!self->_stopFonctionLectureFlag) {
+			switch (lecture[0])
+			{
+			case Fonction::Erreur:
+			case Fonction::InfoDistanceObjet:
+			case Fonction::InfoOrientation:
+				lecture[1] = self->lireInt();
+				self->_callbackFonctionLecture(lecture);
+				break;
 
-		case Fonction::InfoVitesseMoteur:
-			lecture[1] = self->lireInt();
-			lecture[2] = self->lireInt();
-			self->_callbackFonctionLecture(lecture);
-			break;
+			case Fonction::InfoVitesseMoteur:
+				lecture[1] = self->lireInt();
+				lecture[2] = self->lireInt();
+				self->_callbackFonctionLecture(lecture);
+				break;
 
-		case Fonction::RetourBool:
-			pthread_mutex_lock(&self->_mutexLecture);
-			
-			self->_intDisponibles.push(self->lire());
+			case Fonction::RetourBool:
+				pthread_mutex_lock(&self->_mutexLecture);
 
-			pthread_cond_signal(&self->_conditionLecture);
-			pthread_mutex_unlock(&self->_mutexLecture);
-			break;
+				self->_intDisponibles.push(self->lire());
 
-		case Fonction::RetourInt:
-			pthread_mutex_lock(&self->_mutexLecture);
+				pthread_cond_signal(&self->_conditionLecture);
+				pthread_mutex_unlock(&self->_mutexLecture);
+				break;
 
-			self->_intDisponibles.push(self->lireInt());
+			case Fonction::RetourInt:
+				pthread_mutex_lock(&self->_mutexLecture);
 
-			pthread_cond_signal(&self->_conditionLecture);
-			pthread_mutex_unlock(&self->_mutexLecture);
-			break;
-		default:
-			lecture[2] = lecture[0];
-			lecture[0] = Fonction::Erreur;
-			lecture[1] = TypeErreur::EntreeInconnue;
+				self->_intDisponibles.push(self->lireInt());
 
-			self->_callbackFonctionLecture(lecture);
+				pthread_cond_signal(&self->_conditionLecture);
+				pthread_mutex_unlock(&self->_mutexLecture);
+				break;
+			default:
+				lecture[2] = lecture[0];
+				lecture[0] = Fonction::Erreur;
+				lecture[1] = TypeErreur::EntreeInconnue;
+
+				self->_callbackFonctionLecture(lecture);
+			}
 		}
     }
     return s;
