@@ -42,14 +42,13 @@ void afficherDebug(int16_t debug[4])
 int main(int argc, char **argv)
 {
 	ArduinoCommunicator communicator;
-    if (!communicator.init())
+    if (!communicator.init(afficherDebug))
     {
         cout << "Erreur lors de l'ouverture du port..." << endl;
         cin.get();
 
         return -1;
     }
-	communicator.setFonctionLecture(afficherDebug);
 	
 	cout << "Demande l'orientation..." << endl;
 	cout << "Orientation: " << communicator.obtenirOrientation() << endl;

@@ -49,9 +49,21 @@ private:
 
 public: 
     ~ArduinoCommunicator();
+	
+	/// \brief Permet d'initialiser le port série et
+	///        Cree un nouveau thread pour faire la lecture sur le port serie
+	//         (Boucle exécutée en parallele)
+	/// \param fonction La fonction appelee lorsque le périphérique recevra des donnees 
+	///                 Elle possede le paramètre message int[4] qui
+	///                 contiendra jusqu'à 4 messages lues sur le port série
+    bool init(void fonction(int16_t[4]));
 
-    // \brief Permet d'initialiser le port série
-    bool init();
+	// \brief Cree un nouveau thread pour faire la lecture sur le port serie
+	//         (Boucle exécutée en parallele)
+	/// \param fonction La fonction appelee lorsque le périphérique recevra des donnees 
+	///                 Elle possede le paramètre message int[4] qui
+	///                 contiendra jusqu'à 4 messages lues sur le port série
+	void setFonctionLecture(void fonction(int16_t[4]));
 
     /// \overload
 	 virtual bool avancePendantXDixiemeSec(int16_t dixiemeSec);
@@ -86,16 +98,8 @@ public:
     /// \overload
 	 virtual void resetErreur();
 
-    /// \brief Défini la fonction qui sera appelé lorsque le périphérique
-    ///        recevra des données
-    //         (Boucle exécutée en parallèle)
-    /// \param fonction La fonction callback 
-    ///                 Elle possède le paramètre message int[4] qui
-    ///                 contiendra jusqu'à 4 messages lues sur le port série
-    void setFonctionLecture(void fonction(int16_t[4]));
-
 	/// \brief indique si la lecture est encore en fonction
-	bool lectureEnFonction();
+	bool isLectureEnFonction();
 
     /// \brief Arrête le processus de lecture
     void stopFonctionLecture();

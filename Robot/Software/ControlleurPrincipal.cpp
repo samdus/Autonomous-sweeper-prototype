@@ -260,7 +260,7 @@ float ControlleurPrincipal::getAngleResultant(float depart, float angle, bool ga
 
     if (gauche)
     {
-		resultat = fmod(depart + angle, 360);
+		resultat = (float) fmod(depart + angle, 360);
     }
     else
     {

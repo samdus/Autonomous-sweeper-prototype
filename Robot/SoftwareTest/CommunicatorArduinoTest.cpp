@@ -212,7 +212,7 @@ namespace SoftwareTest
 				 virtual void ecrire(uint8_t message) { ecriture[itEcrire++] = message; }
 				 virtual int16_t getRetour() {
                     return itLecture++ % 2 ? Fonction::Erreur : 25;
-                }
+				 }
             public:
                 int itEcrire = 0;
                 int itLecture = 0;
