@@ -32,7 +32,7 @@ void ArduinoCommunicator::setFonctionLecture(void fonction(int16_t[4]))
 
 void ArduinoCommunicator::ecrire(uint8_t message)
 {
-	std::cout << "Debut ecrire avec message: " << message << std::endl;
+	std::cout << "Debut ecrire avec message: " << (int)message << std::endl;
     uint8_t *donnees = new uint8_t[1];
     donnees[0] = message;
 
@@ -48,13 +48,13 @@ void ArduinoCommunicator::ecrire(uint8_t message)
 		stopFonctionLecture();
 	}
 
-	std::cout << "    ==>Fin ecrire avec message: " << message << std::endl;
+	std::cout << "    ==>Fin ecrire avec message: " << (int)message << std::endl;
     delete donnees;
 }
 
 void ArduinoCommunicator::ecrireInt(int16_t message)
 {
-	std::cout << "Debut ecrireInt avec message: " << message << std::endl;
+	std::cout << "Debut ecrireInt avec message: " << (int)message << std::endl;
     uint8_t *donnees = new uint8_t[2];
 
     donnees[0] = (message << 8) >> 8;
@@ -71,7 +71,7 @@ void ArduinoCommunicator::ecrireInt(int16_t message)
 		stopFonctionLecture();
 	}
     delete donnees;
-	std::cout << "    ==>Fin ecrireInt avec message: " << message << std::endl;
+	std::cout << "    ==>Fin ecrireInt avec message: " << (int)message << std::endl;
 }
 
 uint8_t ArduinoCommunicator::lire()
@@ -96,7 +96,7 @@ uint8_t ArduinoCommunicator::lire()
 	}
 
     delete lecture;
-	std::cout << "    ==>Fin lire avec lue: " << retour << std::endl;
+	std::cout << "    ==>Fin lire avec lue: " << (int)retour << std::endl;
     return retour;
 }
 
@@ -122,7 +122,7 @@ int16_t ArduinoCommunicator::lireInt()
 	}
 
     delete lecture;
-	std::cout << "    ==>Fin lireInt avec lue: " << retour << std::endl;
+	std::cout << "    ==>Fin lireInt avec lue: " << (int)retour << std::endl;
     return retour;
 }
 
