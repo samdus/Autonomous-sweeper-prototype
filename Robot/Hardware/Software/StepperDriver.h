@@ -22,10 +22,10 @@ private:
 		65407, //1111 1111 0111 1111 (15/16)
 		65535, //1111 1111 1111 1111 (16/16)
 	};
-	const char AVANT   [STEPPER_NB_MOTEUR] = { -1, -1 },
-			   DERRIERE[STEPPER_NB_MOTEUR] = {  1,  1 },
-			   DROITE  [STEPPER_NB_MOTEUR] = { -1,  1 },
-			   GAUCHE  [STEPPER_NB_MOTEUR] = {  1, -1 };
+	const char AVANT   [STEPPER_NB_MOTEUR] = { (char) -1, (char) -1 },
+			   DERRIERE[STEPPER_NB_MOTEUR] = { (char)  1, (char)  1 },
+			   DROITE  [STEPPER_NB_MOTEUR] = { (char) -1, (char)  1 },
+			   GAUCHE  [STEPPER_NB_MOTEUR] = { (char)  1, (char) -1 };
 
 	 unsigned short _compteur;
 	 char _direction;
