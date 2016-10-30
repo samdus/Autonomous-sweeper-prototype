@@ -6,7 +6,7 @@ Decodeur::~Decodeur()
 {
     device->stopDepth();
     device->stopVideo();
-    DecodeurEnMarche = false;
+    convertisseur.ContinuerConvertion = false;
 }
 
 void Decodeur::Init(MyFreenectDevice& freenectSingleton)
@@ -14,8 +14,7 @@ void Decodeur::Init(MyFreenectDevice& freenectSingleton)
     device = &freenectSingleton;
     device->startVideo();
     device->startDepth();
-    pthread_t convertisseur;
-    pthread_create(&convertisseur, NULL, Convertir, this);
+    convertisseur.DemarreThread(&cloudBuffer);
 }
 
 void Decodeur::UpdateFPS(bool showFpsConsole)
@@ -89,31 +88,9 @@ void Decodeur::UpdateCloudOfPoint()
     }
 }
 
-void Decodeur::SaveCarte()
-{
-    Environnement.SaveCarte();
-}
-
 void Decodeur::RunLoop()
 {
     device->setTiltDegrees(0.0);
-    UpdateFPS(true);
+    UpdateFPS(false);
     UpdateCloudOfPoint();
-}
-
-void* Decodeur::Convertir(void* parent)
-{
-    Decodeur* decodeur = (Decodeur*)parent;
-    std::vector<Vector3> points = std::vector<Vector3>();
-    int indiceTraite = -1;
-    while(decodeur->DecodeurEnMarche)
-    {
-        indiceTraite = decodeur->cloudBuffer.GetCopyCloudPointToConvert(points);
-        if(indiceTraite != -1)
-        {
-            //algorithme de regression lineaire
-
-            decodeur->cloudBuffer.Converted[indiceTraite] = true;
-        }
-    }
 }

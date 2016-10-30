@@ -2,10 +2,10 @@
 #include <float.h>
 #include "linreg.h"
 
-LinearRegression::LinearRegression(Point2D *p, long size)
+LinearRegression::LinearRegression(Vector3 *p, long size)
 {
     long i;
-    a = b = sumX = sumY = sumXsquared = sumYsquared = sumXY = 0.0;
+    a = b = sumX = sumZ = sumXsquared = sumZsquared = sumXZ = 0.0;
     n = 0L;
 
     if (size > 0L) // if size greater than zero there are data arrays
@@ -13,25 +13,25 @@ LinearRegression::LinearRegression(Point2D *p, long size)
             addPoint(p[i]);
 }
 
-LinearRegression::LinearRegression(double *x, double *y, long size)
+LinearRegression::LinearRegression(float *x, float *z, long size)
 {
     long i;
-    a = b = sumX = sumY = sumXsquared = sumYsquared = sumXY = 0.0;
+    a = b = sumX = sumZ = sumXsquared = sumZsquared = sumXZ = 0.0;
     n = 0L;
 
     if (size > 0L) // if size greater than zero there are data arrays
         for (n = 0, i = 0L; i < size; i++)
-            addXY(x[i], y[i]);
+            addXZ(x[i], z[i]);
 }
 
-void LinearRegression::addXY(const double& x, const double& y)
+void LinearRegression::addXZ(const float& x, const float& z)
 {
     n++;
     sumX += x;
-    sumY += y;
+    sumZ += z;
     sumXsquared += x * x;
-    sumYsquared += y * y;
-    sumXY += x * y;
+    sumZsquared += z * z;
+    sumXZ += x * z;
     Calculate();
 }
 
@@ -39,19 +39,19 @@ void LinearRegression::Calculate()
 {
     if (haveData())
     {
-        if (fabs( double(n) * sumXsquared - sumX * sumX) > DBL_EPSILON)
+        if (fabs( float(n) * sumXsquared - sumX * sumX) > DBL_EPSILON)
         {
-            b = ( double(n) * sumXY - sumY * sumX) /
-                ( double(n) * sumXsquared - sumX * sumX);
-            a = (sumY - b * sumX) / double(n);
+            b = ( float(n) * sumXZ - sumZ * sumX) /
+                ( float(n) * sumXsquared - sumX * sumX);
+            a = (sumZ - b * sumX) / float(n);
 
-            double sx = b * ( sumXY - sumX * sumY / double(n) );
-            double sy2 = sumYsquared - sumY * sumY / double(n);
-            double sy = sy2 - sx;
+            float sx = b * ( sumXZ - sumX * sumZ / float(n) );
+            float sz2 = sumZsquared - sumZ * sumZ / float(n);
+            float sz = sz2 - sx;
 
-            coefD = sx / sy2;
+            coefD = sx / sz2;
             coefC = sqrt(coefD);
-            stdError = sqrt(sy / double(n - 2));
+            stdError = sqrt(sz / float(n - 2));
         }
         else
         {

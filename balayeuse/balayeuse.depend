@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1477254674 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1477861393 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 	<cstdlib>
 	<iostream>
 	<vector>
@@ -39,12 +39,15 @@
 1475773991 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Camera.h
 	<iostream>
 
-1477245888 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
+1477861107 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
 	"CloudPointContainer.h"
 
-1477245888 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+1477860814 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
 	<vector>
 	"Vectors.h"
+	<iostream>
+	<fstream>
+	"Config.h"
 
 1477253798 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
 	"SceneCamera.h"
@@ -70,7 +73,7 @@
 
 1477007823 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
 
-1477258133 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
+1477590225 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
 	<iostream>
 
@@ -84,10 +87,10 @@
 	<algorithm>
 	"Matrices.h"
 
-1477259644 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1477858278 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
-1477257646 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
+1477858278 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
 	<iostream>
 	<vector>
 	"MyFreenectDevice.h"
@@ -95,7 +98,7 @@
 	"CloudPointContainer.h"
 	"Matrices.h"
 	"Config.h"
-	"Carte.h"
+	"Convertisseur.h"
 
 1477007823 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
 	"Config.h"
@@ -105,18 +108,34 @@
 	<fstream>
 	<string>
 
-1477093232 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
+1477861269 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
 	"Carte.h"
 
-1477253020 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
+1477861260 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
 	<iostream>
 	<fstream>
 	"Vectors.h"
 	<string>
 	<vector>
+	"Config.h"
 
-1477070056 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
+1477860922 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
 	"Convertisseur.h"
 
-1477083509 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
+1477862279 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
+	<iostream>
+	<fstream>
+	<string>
+	"CloudPointContainer.h"
+	"Config.h"
+	"Carte.h"
+	<algorithm>
+
+1477574245 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/linreg.cpp
+	<math.h>
+	<float.h>
+	"linreg.h"
+
+1477574190 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/linreg.h
+	"Vectors.h"
 

@@ -92,13 +92,33 @@ int CloudPointContainer::GetCopyCloudPointToConvert(std::vector<Vector3>& outPoi
 {
     if(Converted[indexSuppression] == false)
     {
-        //depth[indexSuppression].swap(outPoints);
         outPoints = depth[indexSuppression];
         indexSuppression = ProchainIndex(indexSuppression);
         return IndexPrecedent(indexSuppression);
     }
 
     return -1;
+}
+
+void CloudPointContainer::EcrirePoint()
+{
+    std::fstream Fichier;
+    std::string line;
+    Fichier.open(Config::Instance().GetString("FICHIER_DE_POINT"));
+    std::cout << "Ecriture dans le fichier " << Config::Instance().GetString("FICHIER_DE_POINT") << std::endl;
+    if(Fichier.is_open())
+    {
+        for(int i = 0; i < depth[0].size(); ++i)
+        {
+            Fichier << depth[0][i].x << " " << depth[0][i].y << " " << depth[0][i].z << std::endl;
+        }
+        Fichier.close();
+        std::cout << "Fin de l'ecriture dans le fichier " << Config::Instance().GetString("FICHIER_DE_POINT") << std::endl;
+    }
+    else
+    {
+        std::cout << "Error de l'ecriture dans le fichier " << Config::Instance().GetString("FICHIER_DE_POINT") << std::endl;
+    }
 }
 
 void CloudPointContainer::PrintDebugInfo()

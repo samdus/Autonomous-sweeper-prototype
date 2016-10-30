@@ -270,7 +270,7 @@ void DrawGLScene()
         glBegin(GL_LINES);
         glColor3ub(255, 0, 0);  // Red   X-axis
 
-        std::vector<segment> segments = DecodeurScene.Environnement.GetSegments();
+        std::vector<segment> segments = DecodeurScene.convertisseur.Environnement.GetSegments();
         for(int i = 0; i < segments.size(); ++i)
         {
             glVertex3f(segments[i].debut.x, 0, segments[i].debut.y);
@@ -389,13 +389,16 @@ void keyPressed(unsigned char key, int x, int y)
             DecodeurScene.updateCloud = true;
             break;
         case  '1':
-            DecodeurScene.SaveCarte();
+            DecodeurScene.convertisseur.ConvertiFichier();
             break;
         case  '2':
             CarteVisible = !CarteVisible;
             break;
         case  '3':
             RobotVisible = !RobotVisible;
+            break;
+        case  '4':
+            DecodeurScene.cloudBuffer.EcrirePoint();
             break;
         case  'Q':
         case  'q':
@@ -496,9 +499,10 @@ void printInfo()
     std::cout << "Move cam     :   W A S D"           << std::endl;
     std::cout << "Move Kinect  :   I J K L"           << std::endl;
     std::cout << "take a shot  :   P"                 << std::endl;
-    std::cout << "Save carte   :   1"                 << std::endl;
+    std::cout << "Converti f.  :   1"                 << std::endl;
     std::cout << "Toggle carte :   2"                 << std::endl;
     std::cout << "Toggle robot :   3"                 << std::endl;
+    std::cout << "Ecrire points:   4"                 << std::endl;
     std::cout << "Quit         :   Q or Esc"          << std::endl;
 }
 

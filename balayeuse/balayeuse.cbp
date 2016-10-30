@@ -58,6 +58,8 @@
 		<Unit filename="CloudPointContainer.h" />
 		<Unit filename="Config.cpp" />
 		<Unit filename="Config.h" />
+		<Unit filename="Convertisseur.cpp" />
+		<Unit filename="Convertisseur.h" />
 		<Unit filename="Decodeur.cpp" />
 		<Unit filename="Decodeur.h" />
 		<Unit filename="Main.cpp" />
@@ -67,6 +69,7 @@
 		<Unit filename="Mutex.h" />
 		<Unit filename="MyFreenectDevice.cpp" />
 		<Unit filename="MyFreenectDevice.h" />
+		<Unit filename="Points.txt" />
 		<Unit filename="Robot.config" />
 		<Unit filename="SceneCamera.cpp" />
 		<Unit filename="SceneCamera.h" />
@@ -74,6 +77,8 @@
 		<Unit filename="cpp_pc_view.cpp" />
 		<Unit filename="libfreenect.h" />
 		<Unit filename="libfreenect.hpp" />
+		<Unit filename="linreg.cpp" />
+		<Unit filename="linreg.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />
