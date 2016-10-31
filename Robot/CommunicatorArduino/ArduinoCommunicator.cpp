@@ -16,8 +16,8 @@ bool ArduinoCommunicator::init(void fonction(int16_t[4]))
 		_serial->setDTR(false);
 
 		setFonctionLecture(fonction);
-
-		return _threadEnFonction;
+		
+		return _serial->isOpen() && _threadEnFonction;
 	}
 	catch (serial::IOException e)
 	{
