@@ -56,11 +56,13 @@ int main(int argc, char **argv)
 	//cout << "Demande l'orientation..." << endl;
 	//cout << "Orientation: " << communicator.obtenirOrientation() << endl;
 
-	communicator.tourneDroitePendant(75);
-	communicator.avancePendantXDixiemeSec(30);
-	communicator.reculePendantXDixiemeSec(30);
-	communicator.tourneGauchePendant(75);
+	communicator.setDebug();
 
+	//communicator.tourneDroitePendant(75);
+	communicator.avancePendantXDixiemeSec(30000);
+	//communicator.reculePendantXDixiemeSec(30);
+	//communicator.tourneGauchePendant(75);
+	
 	cout << "Enter pour quitter." << endl;
 	cin.get();
 	return 0;

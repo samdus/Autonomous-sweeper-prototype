@@ -104,8 +104,6 @@ void loop()
         switch (Serial.read())
         {
 		case ControlleurPrincipal::Fonction::FinInit:
-			
-
 			Serial.write(ControlleurPrincipal::Fonction::FinInit);
 			break;
 
