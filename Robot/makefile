@@ -17,9 +17,26 @@ all: ExempleCommunicationRobot.exe
 #====================================================================================
 #Run
 #====================================================================================
-run: 
-	stty -F /dev/ttyACM0 -hupcl
+run: rebootArduino
 	./RaspberryBin/ExempleCommunicationRobot.exe
+
+#====================================================================================
+#Build et run
+#====================================================================================
+pull_build_et_run: pull all run
+
+#====================================================================================
+#Met a jour le projet depuis le repo git
+#====================================================================================
+pull:
+	git pull
+	
+#====================================================================================
+#Redemmare le Arduino
+#Le Arduino redemmare tout seul lors de la premiere 
+#====================================================================================
+rebootArduino:	
+	stty -F /dev/ttyACM0 -hupcl
 	
 #====================================================================================
 #Compilation du projet ExempleCommunicationRobot
@@ -32,7 +49,6 @@ ExempleCommunicationRobot.exe: CommunicatorArduino.a
 #Preparation
 #====================================================================================
 Prepare:
-	git pull
 	mkdir -p RaspberryBin
 	cd RaspberryBin && mkdir -p objs
 	
