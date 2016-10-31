@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include "MyFreenectDevice.h"
@@ -5,7 +7,7 @@
 #include "CloudPointContainer.h"
 #include "Matrices.h"
 #include "Config.h"
-#include "Carte.h"
+#include "Convertisseur.h"
 
 class Decodeur
 {
@@ -20,11 +22,10 @@ class Decodeur
     MyFreenectDevice* device;
 
     public:
-    Carte Environnement;
+    Convertisseur convertisseur;
     CloudPointContainer cloudBuffer = CloudPointContainer();
     SceneCamera RealCam = SceneCamera();    // Camera to simulate the kinect in the real world
     bool updateCloud = false;
-    bool DecodeurEnMarche = true;
     std::vector<uint8_t> rgb = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
     std::vector<uint16_t> depth = std::vector<uint16_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y);
 
@@ -35,8 +36,6 @@ class Decodeur
     void UpdateFPS(bool showFpsConsole);
 
     void UpdateCloudOfPoint();
-    void SaveCarte();
-    static void* Convertir(void* decodeur);
 
     void RunLoop();
 };

@@ -5,6 +5,7 @@
 #include "Vectors.h"
 #include <string>
 #include <vector>
+#include "Config.h"
 
 struct segment
 {
@@ -46,7 +47,6 @@ class Carte
 {
     private:
     std::vector<segment> segments;
-    std::string FichierCarte = "Carte.txt";
 
     public:
     Carte();

@@ -4,7 +4,7 @@ Carte::Carte()
 {
     std::fstream Fichier;
     std::string line;
-    Fichier.open(FichierCarte);
+    Fichier.open(Config::Instance().GetString("FICHIER_DE_LA_CARTE"));
 
     if(Fichier.is_open())
     {
@@ -28,7 +28,7 @@ void Carte::SaveCarte()
 {
     std::fstream Fichier;
     std::string line;
-    Fichier.open(FichierCarte);
+    Fichier.open(Config::Instance().GetString("FICHIER_DE_LA_CARTE"));
 
     if(Fichier.is_open())
     {

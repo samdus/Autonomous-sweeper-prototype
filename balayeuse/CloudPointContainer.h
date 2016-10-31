@@ -2,6 +2,9 @@
 
 #include <vector>
 #include "Vectors.h"
+#include <iostream>
+#include <fstream>
+#include "Config.h"
 
 #define IR_CAMERA_RESOLUTION_X 640
 #define IR_CAMERA_RESOLUTION_Y 480
@@ -36,5 +39,6 @@ class CloudPointContainer
 
     int GetCopyCloudPointToConvert(std::vector<Vector3>& outPoints);
 
+    void EcrirePoint();
     void PrintDebugInfo();
 };
