@@ -18,6 +18,7 @@ all: ExempleCommunicationRobot.exe
 #Run
 #====================================================================================
 run: 
+	stty -F /dev/ttyACM0 -hupcl
 	./RaspberryBin/ExempleCommunicationRobot.exe
 	
 #====================================================================================
