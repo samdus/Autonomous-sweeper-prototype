@@ -35,7 +35,7 @@ private:
 public:
     ControlleurPrincipal(StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*);
 
-	 void init(void(*)(int, bool), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
+	 bool init(void(*)(int, bool), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
 
 	 void stepMoteur();
 	 void calibrerMoteur();

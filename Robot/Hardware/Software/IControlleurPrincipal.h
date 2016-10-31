@@ -45,7 +45,8 @@ public:
         Obstacle = 1,
 		FonctionInconnue = 2,
 		IO = 3,
-		EntreeInconnue = 4
+		EntreeInconnue = 4,
+		ErreurInitialisation = 5
     };
 
     /// \brief Fait avancer le robot pendant la durée donnée

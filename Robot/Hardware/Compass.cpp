@@ -2,7 +2,9 @@
 
 Compass::Compass()
 {
-	_mag = new Adafruit_HMC5883_Unified(SENSOR_ID);
+	_mag = new Adafruit_LSM303_Mag_Unified(30302);
+	_accel = new Adafruit_LSM303_Accel_Unified(30301);
+	_dof = new Adafruit_9DOF();
 }
 
 Compass::~Compass()
@@ -10,27 +12,23 @@ Compass::~Compass()
 	delete _mag;
 }
 
- void Compass::init()
+bool Compass::init()
 {
-	_mag->begin();
+	return true; // return _accel->begin() && _mag->begin();
 }
 
 float Compass::read()
 {
-	sensors_event_t event;
-	_mag->getEvent(&event);
+	return 0;
+	sensors_event_t accel_event;
+	sensors_event_t mag_event;
+	sensors_vec_t   orientation;
 
-	float heading = atan2(event.magnetic.y, event.magnetic.x);
-	heading += DECLINATION_ANGLE;
+	_accel->getEvent(&accel_event);
+	_mag->getEvent(&mag_event);
 
-	// Correction des signes
-	if (heading < 0)
-		heading += 2 * PI;
+	_dof->accelGetOrientation(&accel_event, &orientation);
+	_dof->magGetOrientation(SENSOR_AXIS_Z, &mag_event, &orientation);
 
-	// La déclinasons peut faire en sorte qu'on change de cadran
-	if (heading > 2 * PI)
-		heading -= 2 * PI;
-
-	// Convertion de radian vers degré
-	return heading * 180 / M_PI;
+	return orientation.heading;
 }

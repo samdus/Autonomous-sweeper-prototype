@@ -7,9 +7,9 @@ CompassDriver::CompassDriver( ICompass *compass)
 
 CompassDriver::~CompassDriver(){}
 
- void CompassDriver::init()
+bool CompassDriver::init()
 {
-	_compass->init();
+	return _compass->init();
 }
 
  float CompassDriver::getOrientation()

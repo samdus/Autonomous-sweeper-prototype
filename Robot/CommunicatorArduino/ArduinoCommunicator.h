@@ -14,7 +14,6 @@
 
 #define ARDUINO_COMUNICATOR_BAUD 9600
 
-#include <iostream>
 #include <pthread.h>
 #include <queue>
 #include <stdio.h>

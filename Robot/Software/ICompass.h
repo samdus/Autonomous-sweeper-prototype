@@ -4,7 +4,7 @@
 class ICompass
 {
 public:
-	 virtual void init() = 0;
+	 virtual bool init() = 0;
 	 virtual float read() = 0;
 };
 
