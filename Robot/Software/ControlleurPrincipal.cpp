@@ -103,7 +103,8 @@ bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*atten
 			_transmettreDonnee(Fonction::Erreur, false);
 			_transmettreDonnee(TypeErreur::Obstacle, true);
 		}
-		else if (_modeDebug)
+		
+		if (_modeDebug)
 		{
 			_transmettreDonnee(Fonction::InfoDistanceObjet, false);
 			_transmettreDonnee(_sonarDriver->getDist(), true);

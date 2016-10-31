@@ -14,12 +14,11 @@ Compass::~Compass()
 
 bool Compass::init()
 {
-	return true; // return _accel->begin() && _mag->begin();
+	return _accel->begin() && _mag->begin();
 }
 
 float Compass::read()
 {
-	return 0;
 	sensors_event_t accel_event;
 	sensors_event_t mag_event;
 	sensors_vec_t   orientation;
@@ -27,8 +26,7 @@ float Compass::read()
 	_accel->getEvent(&accel_event);
 	_mag->getEvent(&mag_event);
 
-	_dof->accelGetOrientation(&accel_event, &orientation);
-	_dof->magGetOrientation(SENSOR_AXIS_Z, &mag_event, &orientation);
+	_dof->fusionGetOrientation(&accel_event, &mag_event, &orientation);
 
 	return orientation.heading;
 }
