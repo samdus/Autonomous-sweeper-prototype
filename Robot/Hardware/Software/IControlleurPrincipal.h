@@ -36,7 +36,8 @@ public:
         InfoOrientation = 15,
         InfoDistanceObjet = 16,
 		RetourBool = 17,
-		RetourInt = 18 
+		RetourInt = 18 ,
+		FinInit = 19
     };
 
     enum TypeErreur

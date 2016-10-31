@@ -82,6 +82,8 @@ void setup()
     
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
+
+	Serial.write(ControlleurPrincipal::Fonction::FinInit);
 }
 
 void loop()

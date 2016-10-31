@@ -40,7 +40,8 @@ private:
 
     serial::Serial *_serial = NULL;
     pthread_t _thread;
-	bool _threadEnFonction = false;
+	bool _finInit;
+	bool _threadEnFonction;
     bool _stopFonctionLectureFlag;
 	pthread_mutex_t _mutexLecture = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutex_t _mutexFermerThread = PTHREAD_MUTEX_INITIALIZER;

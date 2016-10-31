@@ -2,10 +2,12 @@
 
 ArduinoCommunicator::~ArduinoCommunicator()
 {
-	stopFonctionLecture();
 
-    if(_serial != NULL)
-        delete _serial;
+	if (_serial != NULL)
+	{
+		stopFonctionLecture();
+		delete _serial;
+	}
 }
 
 bool ArduinoCommunicator::init(void fonction(int16_t[4]))
@@ -15,8 +17,17 @@ bool ArduinoCommunicator::init(void fonction(int16_t[4]))
 		_serial = new serial::Serial(ARDUINO_COMUNICATOR_PORT, ARDUINO_COMUNICATOR_BAUD, serial::Timeout::simpleTimeout(1000));
 		_serial->setDTR(false);
 
+		_threadEnFonction = false;
+		_stopFonctionLectureFlag = false;
+		_finInit = false;
+
 		setFonctionLecture(fonction);
 		
+		pthread_mutex_lock(&_mutexLecture);
+		while (!_finInit && !_stopFonctionLectureFlag)
+			pthread_cond_wait(&_conditionLecture, &_mutexLecture);
+		pthread_mutex_unlock(&_mutexLecture);
+
 		return _serial->isOpen() && _threadEnFonction;
 	}
 	catch (serial::IOException e)
@@ -171,6 +182,12 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 				self->_callbackFonctionLecture(lecture);
 				break;
 
+			case Fonction::FinInit:
+				pthread_mutex_lock(&self->_mutexLecture);
+				self->_finInit = true;
+				pthread_cond_signal(&self->_conditionLecture);
+				pthread_mutex_unlock(&self->_mutexLecture);
+				break;
 			case Fonction::InfoVitesseMoteur:
 				lecture[1] = self->lireInt();
 				lecture[2] = self->lireInt();
