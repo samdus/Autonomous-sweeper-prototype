@@ -13,6 +13,8 @@ bool ArduinoCommunicator::init(void fonction(int16_t[4]))
 	try
 	{
 		_serial = new serial::Serial(ARDUINO_COMUNICATOR_PORT, ARDUINO_COMUNICATOR_BAUD, serial::Timeout::simpleTimeout(1000));
+		_serial->setDTR(false);
+
 		setFonctionLecture(fonction);
 
 		return _threadEnFonction;

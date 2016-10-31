@@ -76,6 +76,8 @@ void setup()
 {
 	Serial.begin(9600);
     
+	while (!Serial); //On attend que le port serie soit connecte
+
     controlleur.init(transmettreDonnee, attendre, pinsMoteurs[STEPPER_GAUCHE], pinsMoteurs[STEPPER_DROIT]);
     
 	Timer1.initialize(TEMPS_TIMER1);
