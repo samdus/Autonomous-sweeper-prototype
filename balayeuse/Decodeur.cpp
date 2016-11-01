@@ -56,15 +56,21 @@ void Decodeur::UpdateCloudOfPoint()
         float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
         float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
         float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
+        float OffsetKin = std::stof(Config::Instance().GetString("OFFSET_KINECT"));
+        float DistanceMax = std::stof(Config::Instance().GetString("FAR_CLIPPING")) + OffsetKin;
+        float DistanceMin = std::stof(Config::Instance().GetString("NEAR_CLIPPING")) + OffsetKin;
         //transforme les donnees du buffer en coordonne monde
+
+
         float f = 595.f;
         for(int i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
         {
-            Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[i] / f,
-                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[i] / f) + HauteurKin,
-                                  -depth[i]);
+            int j = i%IR_CAMERA_RESOLUTION_Y * IR_CAMERA_RESOLUTION_X + i/IR_CAMERA_RESOLUTION_Y;
+            Vector3 vec = Vector3((j%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[j] / f,
+                                  (-(j/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[j] / f) + HauteurKin,
+                                  -depth[j]);
 
-            if(vec.y > HauteurMax || vec.y < HauteurMin )
+            if(vec.y > HauteurMax || vec.y < HauteurMin || vec.z < -DistanceMax || vec.z > -DistanceMin )
             {
                 continue;
             };
