@@ -2,10 +2,11 @@
 
 ArduinoCommunicator::~ArduinoCommunicator()
 {
-	stopFonctionLecture();
-
-    if(_serial != NULL)
-        delete _serial;
+	if (_serial != NULL)
+	{
+		stopFonctionLecture();
+		delete _serial;
+	}
 }
 
 bool ArduinoCommunicator::init(void fonction(int16_t[4]))
@@ -13,9 +14,22 @@ bool ArduinoCommunicator::init(void fonction(int16_t[4]))
 	try
 	{
 		_serial = new serial::Serial(ARDUINO_COMUNICATOR_PORT, ARDUINO_COMUNICATOR_BAUD, serial::Timeout::simpleTimeout(1000));
-		setFonctionLecture(fonction);
+		_serial->setDTR(false);
 
-		return _threadEnFonction;
+		_threadEnFonction = false;
+		_stopFonctionLectureFlag = false;
+		_finInit = false;
+
+		setFonctionLecture(fonction);
+		
+		ecrire(Fonction::FinInit);
+
+		pthread_mutex_lock(&_mutexLecture);
+		while (!_finInit && !_stopFonctionLectureFlag)
+			pthread_cond_wait(&_conditionLecture, &_mutexLecture);
+		pthread_mutex_unlock(&_mutexLecture);
+
+		return _serial->isOpen() && _threadEnFonction;
 	}
 	catch (serial::IOException e)
 	{
@@ -32,7 +46,6 @@ void ArduinoCommunicator::setFonctionLecture(void fonction(int16_t[4]))
 
 void ArduinoCommunicator::ecrire(uint8_t message)
 {
-	std::cout << "Debut ecrire avec message: " << (int)message << std::endl;
     uint8_t *donnees = new uint8_t[1];
     donnees[0] = message;
 
@@ -48,13 +61,11 @@ void ArduinoCommunicator::ecrire(uint8_t message)
 		stopFonctionLecture();
 	}
 
-	std::cout << "    ==>Fin ecrire avec message: " << (int)message << std::endl;
     delete donnees;
 }
 
 void ArduinoCommunicator::ecrireInt(int16_t message)
 {
-	std::cout << "Debut ecrireInt avec message: " << (int)message << std::endl;
     uint8_t *donnees = new uint8_t[2];
 
     donnees[0] = (message << 8) >> 8;
@@ -71,21 +82,16 @@ void ArduinoCommunicator::ecrireInt(int16_t message)
 		stopFonctionLecture();
 	}
     delete donnees;
-	std::cout << "    ==>Fin ecrireInt avec message: " << (int)message << std::endl;
 }
 
 uint8_t ArduinoCommunicator::lire()
 {
-	std::cout << "Debut lire" << std::endl;
     uint8_t retour = 0;
     uint8_t *lecture = new uint8_t[1];
 
 	try
 	{
-		while ( !_serial->available()) {
-			std::cout << "Attente lire" << std::endl;
-			sleep(500);
-		}
+		while (!_stopFonctionLectureFlag && !_serial->available());
 
 		_serial->read(lecture, 1);
 		retour = lecture[0];
@@ -99,13 +105,11 @@ uint8_t ArduinoCommunicator::lire()
 	}
 
     delete lecture;
-	std::cout << "    ==>Fin lire avec lue: " << (int)retour << std::endl;
     return retour;
 }
 
 int16_t ArduinoCommunicator::lireInt()
 {
-	std::cout << "Debut lireInt" << std::endl;
 	int16_t retour;
     uint8_t *lecture = new uint8_t[2];
 
@@ -125,13 +129,11 @@ int16_t ArduinoCommunicator::lireInt()
 	}
 
     delete lecture;
-	std::cout << "    ==>Fin lireInt avec lue: " << (int)retour << std::endl;
     return retour;
 }
 
 int16_t ArduinoCommunicator::getRetour()
 {
-	std::cout << "Debut getRetour" << std::endl;
 	int16_t retour = -1;
 	pthread_mutex_lock(&_mutexLecture);
 
@@ -150,7 +152,6 @@ int16_t ArduinoCommunicator::getRetour()
 
 void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 {
-	std::cout << "Debut appliquerFonctionLecture" << std::endl;
     ArduinoCommunicator* self = (ArduinoCommunicator*)s;
 
     while (!self->_stopFonctionLectureFlag) 
@@ -166,7 +167,25 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 			case Fonction::InfoDistanceObjet:
 			case Fonction::InfoOrientation:
 				lecture[1] = self->lireInt();
-				self->_callbackFonctionLecture(lecture);
+
+				if (lecture[1] == TypeErreur::ErreurInitialisation)
+				{
+					self->stopFonctionLecture();
+
+					pthread_mutex_lock(&self->_mutexLecture);
+					self->_finInit = true;
+					pthread_cond_signal(&self->_conditionLecture);
+					pthread_mutex_unlock(&self->_mutexLecture);
+				}
+				
+				self->_callbackFonctionLecture(lecture);				
+				break;
+
+			case Fonction::FinInit:
+				pthread_mutex_lock(&self->_mutexLecture);
+				self->_finInit = true;
+				pthread_cond_signal(&self->_conditionLecture);
+				pthread_mutex_unlock(&self->_mutexLecture);
 				break;
 
 			case Fonction::InfoVitesseMoteur:
@@ -262,7 +281,6 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 
 int16_t ArduinoCommunicator::obtenirOrientation()
 {
-	std::cout << "Debut obtenirOrientation" << std::endl;
     ecrire(Fonction::Orientation);
 	return getRetour();
 }
@@ -315,5 +333,4 @@ void ArduinoCommunicator::stopFonctionLecture()
 		pthread_cond_signal(&_conditionLecture);
 		pthread_mutex_unlock(&_mutexLecture);
 	}
-
 }

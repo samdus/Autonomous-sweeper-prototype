@@ -36,7 +36,8 @@ public:
         InfoOrientation = 15,
         InfoDistanceObjet = 16,
 		RetourBool = 17,
-		RetourInt = 18 
+		RetourInt = 18 ,
+		FinInit = 19
     };
 
     enum TypeErreur
@@ -44,7 +45,8 @@ public:
         Obstacle = 1,
 		FonctionInconnue = 2,
 		IO = 3,
-		EntreeInconnue = 4
+		EntreeInconnue = 4,
+		ErreurInitialisation = 5
     };
 
     /// \brief Fait avancer le robot pendant la durée donnée

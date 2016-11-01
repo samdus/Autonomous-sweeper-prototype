@@ -28,7 +28,10 @@ void afficherDebug(int16_t debug[4])
 			cout << "Fonction inconnue!!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::IO:
-			cout << "Erreur de IO" << endl;
+			cout << "Erreur de IO!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::ErreurInitialisation:
+			cout << "Erreur d'initialisation!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::EntreeInconnue:
 			std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
@@ -44,20 +47,22 @@ int main(int argc, char **argv)
 	ArduinoCommunicator communicator;
     if (!communicator.init(afficherDebug))
     {
-        cout << "Erreur lors de l'ouverture du port..." << endl;
+		cout << endl << "Erreur lors de l'ouverture du port..." << endl;
         cin.get();
 
         return -1;
     }
 	
-	cout << "Demande l'orientation..." << endl;
-	cout << "Orientation: " << communicator.obtenirOrientation() << endl;
+	//cout << "Demande l'orientation..." << endl;
+	//cout << "Orientation: " << communicator.obtenirOrientation() << endl;
 
-	/*communicator.tourneDroitePendant(75);
-	communicator.avancePendantXDixiemeSec(30);
-	communicator.reculePendantXDixiemeSec(30);
-	communicator.tourneGauchePendant(75);*/
+	communicator.setDebug();
 
+	//communicator.tourneDroitePendant(75);
+	communicator.avancePendantXDixiemeSec(30000);
+	//communicator.reculePendantXDixiemeSec(30);
+	//communicator.tourneGauchePendant(75);
+	
 	cout << "Enter pour quitter." << endl;
 	cin.get();
 	return 0;

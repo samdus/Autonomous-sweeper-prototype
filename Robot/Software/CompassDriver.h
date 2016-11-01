@@ -13,7 +13,7 @@ public:
 	CompassDriver(ICompass*);
 	~CompassDriver();
 	
-	 virtual void init();
+	 virtual bool init();
 	 virtual float getOrientation();
 };
 

@@ -12,19 +12,22 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     _recule = false;
 }
 
- void ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*attendre)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])
+bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*attendre)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])
 {
     _transmettreDonnee = transmettreDonnee;
     _attendre = attendre;
 	
     _moteurGauche->init(pinsMoteurGauche[0], pinsMoteurGauche[2], pinsMoteurGauche[1], pinsMoteurGauche[3]);
     _moteurDroit->init(pinsMoteurDroit[0], pinsMoteurDroit[2], pinsMoteurDroit[1], pinsMoteurDroit[3]);
-    _compassDriver->init();
+	
+	if (!_compassDriver->init())
+		return false;
 
     _moteurGauche->avant();
     _moteurDroit->avant();
     
     _derniereOrientation = _compassDriver->getOrientation();
+	return true;
 }
 
  void ControlleurPrincipal::stepMoteur()
@@ -100,7 +103,8 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
 			_transmettreDonnee(Fonction::Erreur, false);
 			_transmettreDonnee(TypeErreur::Obstacle, true);
 		}
-		else if (_modeDebug)
+		
+		if (_modeDebug)
 		{
 			_transmettreDonnee(Fonction::InfoDistanceObjet, false);
 			_transmettreDonnee(_sonarDriver->getDist(), true);

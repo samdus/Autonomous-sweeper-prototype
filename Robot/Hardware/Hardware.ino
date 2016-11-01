@@ -1,6 +1,8 @@
 #include <elapsedMillis.h>
-#include <Adafruit_HMC5883_U.h>
 #include <Adafruit_Sensor.h>
+#include <Adafruit_LSM303_U.h>
+#include <Adafruit_L3GD20_U.h>
+#include <Adafruit_9DOF.h>
 #include <TimerOne.h>
 
 #include "Software\ControlleurPrincipal.h"
@@ -76,18 +78,35 @@ void setup()
 {
 	Serial.begin(9600);
     
-    controlleur.init(transmettreDonnee, attendre, pinsMoteurs[STEPPER_GAUCHE], pinsMoteurs[STEPPER_DROIT]);
+	while (!Serial); //On attend que le port serie soit connecte
+
+	if (!controlleur.init(transmettreDonnee, attendre, pinsMoteurs[STEPPER_GAUCHE], pinsMoteurs[STEPPER_DROIT]))
+	{		
+		Serial.write(ControlleurPrincipal::Fonction::Erreur);
+		ecrireInt(ControlleurPrincipal::TypeErreur::ErreurInitialisation);
+
+		while(1); //Boucle infini pour ne pas continuer
+	}
     
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
+
+	Serial.write(ControlleurPrincipal::Fonction::FinInit);
+
+	pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop()
 {
     if (Serial.available() > 0) {
+
 		int retour = 0;
         switch (Serial.read())
         {
+		case ControlleurPrincipal::Fonction::FinInit:
+			Serial.write(ControlleurPrincipal::Fonction::FinInit);
+			break;
+
         case ControlleurPrincipal::Fonction::Avance:
 			retour = controlleur.avancePendantXDixiemeSec(lireInt());
 
