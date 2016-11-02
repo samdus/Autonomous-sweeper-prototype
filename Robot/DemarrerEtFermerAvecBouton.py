@@ -2,11 +2,11 @@ import RPi.GPIO as GPIO
 import time
 import os
 
-def callback_rouge:
+def callback_rouge(channel):
     os.system("sudo pkill ExempleCom &")
     os.system("stty -F /dev/ttyACM0 -hupcl &")
 
-def callback_jaune:
+def callback_jaune(channel):
   os.system("make -C ~/Documents/Projet-RepoGit/gsd/Robot run &")
 
 boutonRougePin = 19
