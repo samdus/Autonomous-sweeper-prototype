@@ -21,3 +21,6 @@ GPIO.add_event_detect(boutonJaunePin, GPIO.RISING, bouncetime=200)
 
 GPIO.add_event_callback(boutonRougePin, callback_rouge)
 GPIO.add_event_callback(boutonJaunePin, callback_jaune)
+
+while(true)
+    time.sleep(100)
