@@ -16,47 +16,69 @@ Convertisseur::~Convertisseur()
 {
 
 }
-
-std::vector<Vector3> EspionnageVoisinage(std::vector<Vector3>& ensembleDePoints, int& pointSource, float distance)
+/*
+std::vector<int> EspionnageVoisinage(std::vector<Vector3>& ensembleDePoints, int& pointSource, float distanceMax)
 {
-    distance = distance * distance;
-    std::vector<Vector3> voisin = std::vector<Vector3>();
+    distanceMax = distanceMax * distanceMax;
+    std::vector<int> voisin = std::vector<int>();
     for(int i = 0;i < ensembleDePoints.size(); ++i)
     {
-        if(distance > ensembleDePoints[i].distanceXZfast(ensembleDePoints[pointSource]))
+        if(distanceMax > ensembleDePoints[i].distanceXZfast(ensembleDePoints[pointSource]))
         {
-            voisin.push_back(ensembleDePoints[i]);
+            voisin.push_back(i);
+        }
+        else //place pour optimisation ignorer a partir du moment que le vecteur ne touche plus au rayon
+        {
+            float ax = 0.0;
+            float az = 0.0;
+            float bx = ensembleDePoints[i].x * 1000; // gros chiffre pour assurer l'intersection
+            float bz = ensembleDePoints[i].z * 1000; // gros chiffre pour assurer l'intersection
+            float cx = ensembleDePoints[pointSource].x;
+            float cz = ensembleDePoints[pointSource].z;
+
+            float alpha = (bx-ax) * (bx-ax) + (bz-az) * (bz-az);
+            float beta = 2 * ((bx-ax)*(ax-cx) + (bz-az)*(az-cz));
+            float gama =  ax*ax + az*az + cx*cx + cz*cz -2*(ax*cx + az*cz) - distanceMax;
+
+            //AVEC OPTIMISATION basee sur des assomption
+            //float alpha = ensembleDePoints[i].x * ensembleDePoints[i].x + ensembleDePoints[i].z * ensembleDePoints[i].z;
+            //float beta = 2 * (ensembleDePoints[i].x * (-ensembleDePoints[pointSource].x) + (-ensembleDePoints[pointSource].z));
+            //float gama = ensembleDePoints[pointSource].x * ensembleDePoints[pointSource].x + ensembleDePoints[pointSource].z * ensembleDePoints[pointSource].z - distanceMax;
+
+            if(beta*beta - 4*alpha*gama < 0) //Delta < 0
+            {
+                break;
+            }
         }
     }
     return voisin;
 }
 
-
-void EtendreCluster(std::vector<Vector3>& ensembleDePoints,std::vector<Flag>& flags, int point, std::vector<Vector3>& pointVoisins, std::vector<Vector3>& cluster, float distance, int minimumPoints)
+void EtendreCluster(std::vector<Vector3>& ensembleDePoints,std::vector<Flag>& flags, int point, std::vector<int>& pointVoisins, std::vector<int>& cluster, float distance, int minimumPoints)
 {
-    cluster.push_back(ensembleDePoints[point]);
+    cluster.push_back(point);
     for(int i = 0; i < pointVoisins.size(); ++i)
     {
         if(flags[i] != Flag::VISITE)
         {
             flags[i] = Flag::VISITE;
-            std::vector<Vector3> pointVoisin = EspionnageVoisinage(ensembleDePoints, i, distance);
+            std::vector<int> pointVoisin = EspionnageVoisinage(ensembleDePoints, i, distance);
             if(pointVoisin.size() >= minimumPoints)
             {
-                //std::merge (pointVoisins.begin(),pointVoisins.end(),pointVoisin.begin(),pointVoisins.end(),pointVoisins.begin());//p-t pas necessaire
+                pointVoisins.insert(pointVoisins.end(), pointVoisin.begin(), pointVoisin.end());
             }
         }
-        if(std::find(cluster.begin(), cluster.end(), ensembleDePoints[i]) == cluster.end())
+        if(std::find(cluster.begin(), cluster.end(), i) == cluster.end())
         {
-            cluster.push_back(ensembleDePoints[i]);
+            cluster.push_back(i);
         }
     }
 }
 
-std::vector<std::vector<Vector3>> dbscan(std::vector<Vector3>& ensembleDePoints, float distance, int minimumPoints)
+std::vector<std::vector<int>> dbscan(std::vector<Vector3>& ensembleDePoints, float distance, int minimumPoints)
 {
-    std::vector<std::vector<Vector3>> Clusters = std::vector<std::vector<Vector3>>();
-    std::vector<Vector3>Cluster = std::vector<Vector3>();
+    std::vector<std::vector<int>> Clusters = std::vector<std::vector<int>>();
+    std::vector<int>Cluster = std::vector<int>();
     std::vector<Flag> flags = std::vector<Flag>(ensembleDePoints.size(), Flag::NONE);
 
     for(int i = 0; i < ensembleDePoints.size(); ++i)
@@ -66,7 +88,7 @@ std::vector<std::vector<Vector3>> dbscan(std::vector<Vector3>& ensembleDePoints,
             continue;
         }
         flags[i] = Flag::VISITE;
-        std::vector<Vector3> pointVoisin = EspionnageVoisinage(ensembleDePoints, i, distance);
+        std::vector<int> pointVoisin = EspionnageVoisinage(ensembleDePoints, i, distance);
         if(pointVoisin.size() < minimumPoints)
         {
             flags[i] = Flag::BRUIT;
@@ -80,6 +102,71 @@ std::vector<std::vector<Vector3>> dbscan(std::vector<Vector3>& ensembleDePoints,
 
     return Clusters;
 }
+*/
+std::vector<std::vector<int>> DannyScan(std::vector<Vector3>& ensembleDePoints, float distance, int minimumPoints)
+{
+    float distanceMax = distance * distance;
+    std::vector<std::vector<int>> Clusters = std::vector<std::vector<int>>();
+    std::vector<int>Cluster = std::vector<int>();
+    std::vector<Flag> flags = std::vector<Flag>(ensembleDePoints.size(), Flag::NONE);
+
+    for(int i = 0; i < ensembleDePoints.size(); ++i)
+    {
+        if(flags[i] == Flag::VISITE)
+        {
+            continue;
+        }
+
+        flags[i] = Flag::VISITE;
+        Cluster.push_back(i);
+        for(int j = i; j < ensembleDePoints.size(); ++j)
+        {
+            if(flags[j] != Flag::VISITE)
+            {
+                //points potentiel
+                if(distanceMax > ensembleDePoints[j].distanceXZfast(ensembleDePoints[Cluster.back()]))
+                {
+                    flags[j] = Flag::VISITE;
+                    Cluster.push_back(j);
+                }
+                else
+                {
+
+
+                    float ax = 0.0;
+                    float az = 0.0;
+                    float bx = ensembleDePoints[j].x * 1000; // gros chiffre pour assurer l'intersection
+                    float bz = ensembleDePoints[j].z * 1000; // gros chiffre pour assurer l'intersection
+                    float cx = ensembleDePoints[Cluster.back()].x;
+                    float cz = ensembleDePoints[Cluster.back()].z;
+
+                    float alpha = (bx-ax) * (bx-ax) + (bz-az) * (bz-az);
+                    float beta = 2 * ((bx-ax)*(ax-cx) + (bz-az)*(az-cz));
+                    float gama =  ax*ax + az*az + cx*cx + cz*cz -2*(ax*cx + az*cz) - distanceMax;
+
+                    //AVEC OPTIMISATION basee sur des assomption
+                    //float alpha = ensembleDePoints[i].x * ensembleDePoints[i].x + ensembleDePoints[i].z * ensembleDePoints[i].z;
+                    //float beta = 2 * (ensembleDePoints[i].x * (-ensembleDePoints[pointSource].x) + (-ensembleDePoints[pointSource].z));
+                    //float gama = ensembleDePoints[pointSource].x * ensembleDePoints[pointSource].x + ensembleDePoints[pointSource].z * ensembleDePoints[pointSource].z - distanceMax;
+
+                    if(beta*beta - 4*alpha*gama < 0) //Delta < 0
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(Cluster.size() > minimumPoints)
+        {
+            Clusters.push_back(Cluster);
+        }
+        Cluster.clear();
+    }
+
+    return Clusters;
+}
+
 void Convertisseur::DemarreThread(CloudPointContainer* donnees)
 {
     static struct thread_arg args;
@@ -107,9 +194,22 @@ void* Convertisseur::Convertir(void* parent)
 
         if(indiceTraite != -1)
         {
+            convertisseur->parent->Clusters = std::vector<std::vector<Vector3>>();
             std::cout << "Nombre de point a traite : " << points.size() << std::endl;
-            std::vector<std::vector<Vector3>> Clusters = dbscan(points, convertisseur->parent->dist_max, convertisseur->parent->MinNumberOfPoint);
-            std::cout << "Nombre de Cluster trouve : " << Clusters.size() << std::endl;
+            std::vector<std::vector<int>> ClustersList = DannyScan(points, convertisseur->parent->dist_max, convertisseur->parent->MinNumberOfPoint);
+            std::cout << "Nombre de Cluster trouve : " << ClustersList.size() << std::endl;
+            std::cout << "Copy pour le debug..." << std::endl;
+            for(int i = 0; i < ClustersList.size(); ++i)
+            {
+                convertisseur->parent->Clusters.push_back(std::vector<Vector3>());
+
+                for(int j = 0; j < ClustersList[i].size(); ++j)
+                {
+                    //std::cout << "Copy de " << ClustersList[i][j] << " dans " << i << std::endl;
+                    convertisseur->parent->Clusters[i].push_back(points[ClustersList[i][j]]);
+                }
+            }
+            std::cout << "Fin de la copy" << std::endl;
             convertisseur->cloudBuffer->Converted[indiceTraite] = true;
             for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
             {
@@ -155,6 +255,6 @@ void Convertisseur::ConvertiFichier()
     }
 
     std::cout << "Nombre de point a traite : " << points.size() << std::endl;
-    std::vector<std::vector<Vector3>> Clusters = dbscan(points, dist_max, MinNumberOfPoint);
+    std::vector<std::vector<int>> Clusters = DannyScan(points, dist_max, MinNumberOfPoint);
     std::cout << "Nombre de Cluster trouve : " << Clusters.size() << std::endl;
 }

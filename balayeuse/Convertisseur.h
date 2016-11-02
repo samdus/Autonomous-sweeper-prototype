@@ -28,6 +28,7 @@ class Convertisseur
 public :
     Carte Environnement;
     bool ContinuerConvertion;
+    std::vector<std::vector<Vector3>> Clusters;
 
     Convertisseur();
     ~Convertisseur();

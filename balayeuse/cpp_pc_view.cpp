@@ -205,15 +205,31 @@ void DrawGLScene()
         {
             for (int i = 0; i < currentDepth.size(); ++i)
             {
-                if (color)
-                    glColor3ub( currentRgb[3*i+0],    // R
-                                currentRgb[3*i+1],    // G
-                                currentRgb[3*i+2]);   // B
-
                 glVertex3f(currentDepth[i].x, currentDepth[i].y, currentDepth[i].z);
             }
         }
     }
+
+    glEnd();
+    //CLUSTER
+    glPointSize(5.0f);
+    glBegin(GL_POINTS);
+    for(int k = 0; k < DecodeurScene.convertisseur.Clusters.size(); ++k)
+    {
+        glColor3ub(125 + k*k*k*k/255, k * 255 / DecodeurScene.convertisseur.Clusters.size(),k);
+        currentDepth = DecodeurScene.convertisseur.Clusters[k];
+
+        if(!currentDepth.empty())
+        {
+            for (int i = 0; i < currentDepth.size(); ++i)
+            {
+                glVertex3f(currentDepth[i].x, currentDepth[i].y, currentDepth[i].z);
+            }
+        }
+    }
+    glEnd();
+    glPointSize(2.0f);
+    glBegin(GL_POINTS);
 
     //Real time cam
     currentRgb = DecodeurScene.rgb;
@@ -403,7 +419,10 @@ void keyPressed(unsigned char key, int x, int y)
         case  'Q':
         case  'q':
         case 0x1B:  // ESC
+
+            DecodeurScene.convertisseur.ContinuerConvertion = false;
             glutDestroyWindow(window);
+
             exit(0);
     }
     //DecodeurScene.RealCam.DebugInfo();
