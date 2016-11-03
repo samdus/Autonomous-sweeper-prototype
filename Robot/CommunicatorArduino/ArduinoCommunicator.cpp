@@ -211,6 +211,11 @@ void *ArduinoCommunicator::appliquerFonctionLecture(void* s)
 				pthread_cond_signal(&self->_conditionLecture);
 				pthread_mutex_unlock(&self->_mutexLecture);
 				break;
+
+			case Fonction::DirectionChoisie:
+				lecture[1] = self->lireInt();
+				self->_callbackFonctionLecture(lecture);
+				break;
 			default:
 				lecture[2] = lecture[0];
 				lecture[0] = Fonction::Erreur;

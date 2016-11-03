@@ -36,11 +36,11 @@ bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*atten
     _moteurDroit->step();
 }
 
- void ControlleurPrincipal::calibrerMoteur()
+void ControlleurPrincipal::calibrerMoteur()
 {
+	float orientation = _compassDriver->getOrientation();
 	if (_avance || _recule)
-	{
-		float orientation = _compassDriver->getOrientation();
+	{		
 		float difference = _derniereOrientation - orientation;
 
 		unsigned short vitesseGauche = _moteurGauche->getVitesse();
@@ -70,20 +70,20 @@ bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*atten
 				_moteurGauche->setVitesse(vitesseGauche + 1);
 			}
 		}
+	}
 
-		if (_modeDebug)
-		{
-			_transmettreDonnee(Fonction::InfoOrientation, false);
-			_transmettreDonnee((int)orientation, true);
+	if (_modeDebug && (_itDebug++ % 10) == 0)
+	{
+		_transmettreDonnee(Fonction::InfoOrientation, false);
+		_transmettreDonnee((int)orientation, true);
 
-			_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
-			_transmettreDonnee(STEPPER_GAUCHE, true);
-			_transmettreDonnee(_moteurGauche->getVitesse(), true);
+		_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
+		_transmettreDonnee(STEPPER_GAUCHE, true);
+		_transmettreDonnee(_moteurGauche->getVitesse(), true);
 
-			_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
-			_transmettreDonnee(STEPPER_DROIT, true);
-			_transmettreDonnee(_moteurDroit->getVitesse(), true);
-		}
+		_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
+		_transmettreDonnee(STEPPER_DROIT, true);
+		_transmettreDonnee(_moteurDroit->getVitesse(), true);
 	}
 }
 
@@ -103,12 +103,12 @@ bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*atten
 			_transmettreDonnee(Fonction::Erreur, false);
 			_transmettreDonnee(TypeErreur::Obstacle, true);
 		}
-		
-		if (_modeDebug)
-		{
-			_transmettreDonnee(Fonction::InfoDistanceObjet, false);
-			_transmettreDonnee(_sonarDriver->getDist(), true);
-		}
+	}
+
+	if (_modeDebug && _itDebug % 10 == 0)
+	{
+		_transmettreDonnee(Fonction::InfoDistanceObjet, false);
+		_transmettreDonnee(_sonarDriver->getDist(), true);
 	}
 }
 
@@ -163,34 +163,95 @@ bool ControlleurPrincipal::stop()
     return !_erreur;
 }
 
-bool ControlleurPrincipal::tourneAuDegresX(int16_t degres)
+bool ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 {
-	float diff = degres - _compassDriver->getOrientation();
-    
-	if ((diff < 0 && diff > -180) || diff > 180)
-    {
-        _moteurGauche->droite();
-        _moteurDroit->droite();
-    }
-    else
-    {
-        _moteurGauche->gauche();
-        _moteurDroit->gauche();
-    }
+	float diff;
+	_derniereOrientation = _compassDriver->getOrientation();
+	diff = objectif - _derniereOrientation;
+	
+	if (fabs(diff) <= CTRL_PRINC_DIFF_ANGLE_ACCEPTE || fabs(diff) >= 360 - CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
+	{
+		_transmettreDonnee(Fonction::DirectionChoisie, false);
+		_transmettreDonnee(0, true);
+		return true;
+	}
+	else if ((diff < 0 && diff > -180) || diff > 180)
+	{
+		_transmettreDonnee(Fonction::DirectionChoisie, false);
+		_transmettreDonnee(1, true);
+		return tourneAGaucheVersXDegres(objectif);
+	}
+	else
+	{
+		_transmettreDonnee(Fonction::DirectionChoisie, false);
+		_transmettreDonnee(2, true);
+		return tourneADroiteVersXDegres(objectif);
+	}
+}
+
+bool ControlleurPrincipal::tourneADroiteVersXDegres(int16_t objectif)
+{
+	float diff;// , oldDiff;
+
+	_moteurGauche->droite();
+	_moteurDroit->droite();
 
 	_moteurGauche->avance();
 	_moteurDroit->avance();
 
+
 	do
 	{
-		_attendre(10);
-		diff = degres - _compassDriver->getOrientation();
-	} while (fabs(diff) > 0.5);
+		//oldDiff = diff;
+		_attendre(5);
 
-    _moteurGauche->stop();
-    _moteurDroit->stop();
+		_derniereOrientation = _compassDriver->getOrientation();
+		diff = objectif - _derniereOrientation;
+	} while (fabs(diff) > CTRL_PRINC_DIFF_ANGLE_ACCEPTE);
 
-    return !_erreur;
+	_moteurGauche->stop();
+	_moteurDroit->stop();
+
+	return !_erreur;
+}
+
+bool ControlleurPrincipal::tourneAGaucheVersXDegres(int16_t objectif)
+{
+	float diff;// , oldDiff;
+	//int compteurInvalide = 0;
+
+	_moteurGauche->gauche();
+	_moteurDroit->gauche();
+
+	_moteurGauche->avance();
+	_moteurDroit->avance();
+
+	//oldDiff = objectif - _derniereOrientation;
+
+	do
+	{
+		_attendre(5);
+
+		_derniereOrientation = _compassDriver->getOrientation();
+		diff = objectif - _derniereOrientation;
+
+		/*if ((diff > 0 && diff > oldDiff) || (diff < 0 && oldDiff < 0 && diff < oldDiff))
+		{
+			if (++compteurInvalide == 5)
+				return tourneADroiteVersXDegres(objectif);
+		}
+		else
+		{
+			compteurInvalide = 0;
+		}
+
+		oldDiff = diff;*/
+	} while (fabs(diff) > CTRL_PRINC_DIFF_ANGLE_ACCEPTE);
+
+	_moteurGauche->stop();
+	_moteurDroit->stop();
+
+	return !_erreur;
 }
 
 bool ControlleurPrincipal::tourneGauche(int16_t degres)

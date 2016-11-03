@@ -14,6 +14,8 @@
 	#include <stdint.h>
 #endif
 
+#define	CTRL_PRINC_DIFF_ANGLE_ACCEPTE 2
+
 class IControlleurPrincipal
 {
 public:
@@ -37,7 +39,8 @@ public:
         InfoDistanceObjet = 16,
 		RetourBool = 17,
 		RetourInt = 18 ,
-		FinInit = 19
+		FinInit = 19,
+		DirectionChoisie = 20
     };
 
     enum TypeErreur

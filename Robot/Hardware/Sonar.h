@@ -3,9 +3,9 @@
 
 #define ECHO_PIN     11  
 #define TRIGGER_PIN  10
-#define MAX_DISTANCE 200
 
-#define NB_PING 20
+#define NB_PING 10
+
 #include "Software/ISonar.h"
 #include <NewPing.h>
 

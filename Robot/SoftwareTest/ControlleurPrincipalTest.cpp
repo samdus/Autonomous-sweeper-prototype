@@ -1,4 +1,3 @@
-#include <functional>
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
@@ -30,8 +29,8 @@ namespace SoftwareTest
         class DummyCompas : public ICompass
         {
             float compasOrientation = 0;
-			 virtual void init() {}
-			 virtual float read() { return compasOrientation; }
+			virtual bool init() { return true; }
+			virtual float read() { return compasOrientation; }
         };
 
 		class DummyStepperDriver : public StepperDriver
@@ -41,10 +40,10 @@ namespace SoftwareTest
 
 			DummyStepperDriver(int m) : StepperDriver(new DummyStepper(), m) { };
 
-			 virtual void setVitesse(unsigned short v) {
+			virtual void setVitesse(unsigned short v) {
 				vitesse = v; 
 			}
-			 virtual const unsigned short getVitesse() const { return vitesse; }
+			virtual const unsigned short getVitesse() const { return vitesse; }
         };
 
         class DummySonarDriver : public SonarDriver
@@ -115,110 +114,7 @@ namespace SoftwareTest
 			Assert::IsFalse(stepperGauche->isEnMouvement());
 			Assert::IsFalse(stepperDroit->isEnMouvement());
         }
-
-		TEST_METHOD(ControlleurPrincipal_Tourner)
-		{
-			struct testCaseTourne
-			{
-				int depart, angle, arrive, fonction;
-				bool gauche;
-				testCaseTourne(int d, int an, int arr, int f, bool g)
-				{
-					depart = d; angle = an; arrive = arr; fonction = f;  gauche = g;
-				}
-			};
-
-			testCaseTourne tests[] = { 
-				testCaseTourne( 90, 180, 270, 1, true), 
-				testCaseTourne(270, 180,  90, 1, true),
-				testCaseTourne(270,  15, 285, 1, true),
-				testCaseTourne( 90, 181, 271, 1, false),
-				testCaseTourne(270, 181,  91, 1, false),
-				testCaseTourne(270, 270, 180, 1, false),
-				testCaseTourne( 90, 180, 270, 2, true),
-				testCaseTourne(270, 180,  90, 2, true),
-				testCaseTourne(270, 345, 285, 2, true),
-				testCaseTourne( 90, 179, 271, 2, false),
-				testCaseTourne(270, 179,  91, 2, false),
-				testCaseTourne(270,  85, 185, 2, false),
-				testCaseTourne( 90, 180, 270, 3, true),
-				testCaseTourne(270, 180,  90, 3, true),
-				testCaseTourne(270,  15, 285, 3, true),
-				testCaseTourne( 90, 179, 271, 3, false),
-				testCaseTourne(270, 179,  91, 3, false),
-				testCaseTourne(270,  85, 185, 3, false)
-			};
-			static int angle = 0;
-			static bool gauche = false;
-
-			for (testCaseTourne test : tests)
-			{
-				angle = test.depart;
-				gauche = test.gauche;
-
-				class CompasDriverCustom : public CompassDriver
-				{
-					int compteur = 0;
-				public:
-					CompasDriverCustom() : CompassDriver(new DummyCompas()) { }
-					virtual float getOrientation() {
-						if (compteur++ < 3)
-							return angle;
-						if(gauche)
-							return fmod(angle++, 360);
-						if (angle == 0)
-							angle = 360;
-						return angle--;
-					}
-				} compasDriverCustom;
-
-				ControlleurPrincipal controlleur(stepperDriverGauche, stepperDriverDroit, sonarDriver, &compasDriverCustom);
-				static DummyStepperDriver* stepperGauche = stepperDriverGauche;
-				static DummyStepperDriver* stepperDroit = stepperDriverDroit;
-
-				auto att = [](unsigned long temp) {
-					if (gauche)
-					{
-						Assert::AreEqual(1,  (int)stepperGauche->getDirection());
-						Assert::AreEqual(-1, (int)stepperDroit->getDirection());
-					}
-					else
-					{
-						Assert::AreEqual(-1, (int)stepperGauche->getDirection());
-						Assert::AreEqual(1,  (int)stepperDroit->getDirection());
-					}
-
-					Assert::IsTrue(stepperGauche->isEnMouvement());
-					Assert::IsTrue(stepperDroit->isEnMouvement());
-
-					Assert::AreEqual(10UL, temp);
-				};
-
-				controlleur.init(transmettreDonnee, att, pinsMoteurGauche, pinsMoteurDroit);
-
-				switch (test.fonction)
-				{
-				case 1:
-					Assert::IsTrue(controlleur.tourneGauche(test.angle));
-					break;
-				case 2:
-					Assert::IsTrue(controlleur.tourneDroite(test.angle));
-					break;
-				case 3:
-					Assert::IsTrue(controlleur.tourneAuDegresX(test.arrive));
-					break;
-				}
-
-				Assert::IsFalse(stepperGauche->isEnMouvement());
-				Assert::IsFalse(stepperDroit->isEnMouvement());
-
-				if(gauche)
-					Assert::AreEqual((float)test.arrive, (float)fmod(angle - 1, 360));
-				else
-					Assert::AreEqual((float)test.arrive, (float)fmod(angle + 1, 360));
-			}
-		}
-
+		
         TEST_METHOD(ControlleurPrincipal_ObtenirOrientation)
         {
 			static float expected = 90;

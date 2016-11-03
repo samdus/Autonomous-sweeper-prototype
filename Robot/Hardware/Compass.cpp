@@ -26,7 +26,8 @@ float Compass::read()
 	_accel->getEvent(&accel_event);
 	_mag->getEvent(&mag_event);
 
-	_dof->fusionGetOrientation(&accel_event, &mag_event, &orientation);
+	_dof->accelGetOrientation(&accel_event, &orientation);
+	_dof->magGetOrientation(SENSOR_AXIS_Z, &mag_event, &orientation);
 
 	return orientation.heading;
 }

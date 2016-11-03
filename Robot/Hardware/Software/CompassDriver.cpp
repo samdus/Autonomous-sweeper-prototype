@@ -12,14 +12,38 @@ bool CompassDriver::init()
 	return _compass->init();
 }
 
- float CompassDriver::getOrientation()
+void BubbleSort(float num[COMPAS_NB_READ])
 {
-	float avg = 0;
+	int i, j;
+	float temp;
+	bool flag = true;
+
+	for (i = 1; (i <= COMPAS_NB_READ) && flag; ++i)
+	{
+		flag = false;
+		for (j = 0; j < (COMPAS_NB_READ - 1); ++j)
+		{
+			if (num[j + 1] > num[j])
+			{
+				temp = num[j];             
+				num[j] = num[j + 1];
+				num[j + 1] = temp;
+				flag = true;              
+			}
+		}
+	}
+}
+
+float CompassDriver::getOrientation()
+{
+	float lectures[COMPAS_NB_READ];
 
 	for (int i = 0; i < COMPAS_NB_READ; ++i)
 	{
-		avg += _compass->read();
+		lectures[i] = _compass->read();
 	}
 
-	return avg / COMPAS_NB_READ;
+	BubbleSort(lectures);
+
+	return lectures[COMPAS_NB_READ / 2];
 }

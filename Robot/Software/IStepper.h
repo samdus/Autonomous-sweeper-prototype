@@ -3,6 +3,10 @@
 
 typedef unsigned char byte;
 
+#define STEPPER_NB_MOTEUR 2 
+#define STEPPER_GAUCHE 0
+#define STEPPER_DROIT 1
+
 class IStepper
 {
 public:

@@ -4,7 +4,6 @@
 #include "IControlleurPrincipal.h"
 
 #include <math.h>
-#include "ControlleurPrincipal.h"
 #include "CompassDriver.h"
 #include "SonarDriver.h"
 #include "StepperDriver.h"
@@ -15,7 +14,7 @@
 
 class ControlleurPrincipal : public IControlleurPrincipal
 {
-private:
+protected:
 	 StepperDriver *_moteurGauche,
 				   *_moteurDroit;
 	 SonarDriver   *_sonarDriver;
@@ -27,10 +26,15 @@ private:
 	 bool _recule;
 	 float _derniereOrientation;
 
+	 int _itDebug;
+
     void(*_transmettreDonnee)(int, bool);
     void(*_attendre)(unsigned long);
 
-	float getAngleResultant(float depart, float angle, bool gauche);
+	virtual float getAngleResultant(float depart, float angle, bool gauche);
+
+	virtual bool tourneADroiteVersXDegres(int16_t);
+	virtual bool tourneAGaucheVersXDegres(int16_t);
 
 public:
     ControlleurPrincipal(StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*);

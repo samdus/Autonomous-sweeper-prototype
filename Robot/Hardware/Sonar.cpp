@@ -2,7 +2,7 @@
 
 Sonar::Sonar()
 {
-	_sonar = new NewPing(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+	_sonar = new NewPing(TRIGGER_PIN, ECHO_PIN, SONAR_MAX_DIST);
 }
 
 Sonar::~Sonar()
