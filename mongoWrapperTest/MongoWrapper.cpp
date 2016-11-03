@@ -20,7 +20,7 @@ class MongoWrapper
         mongoWorker[1]->init();
         
         mongoWorker[0]->start();
-        mongoWorker[1]->start();  
+        mongoWorker[1]->start(); 
     }
     void addUpdate(string identifier, string value){
         JobInfo thejob;

@@ -44,7 +44,6 @@ class MongoWorker : public Thread
     private:
         void updateStat(string identifier, string value, string containerName){
             mongocxx::collection coll = db[containerName];
-            cout << "update value  ->" << value <<  " " <<  identifier;
             coll.update_one(bsoncxx::builder::stream::document{} << "statIdentifier" << identifier << finalize,
                             bsoncxx::builder::stream::document{} <<
                             "$set" << open_document <<
@@ -156,10 +155,16 @@ class MongoWorker : public Thread
         }
         void doJob(string identifier, bool value, int jobtype=1){
             string container = "statBoolContainer";
-            if(jobtype==1){
-                updateStat( identifier,   bool_as_text(value), container);
+	    string stringvalue = bool_as_text(value);
+	    if(stringvalue == "1"){
+		stringvalue = "true";
             }else{
-                writeStat( identifier,   bool_as_text(value), container);
+		stringvalue = "false";
+	    }
+            if(jobtype==1){
+                updateStat( identifier,   stringvalue, container);
+            }else{
+                writeStat( identifier,   stringvalue, container);
             }
         }
         void writeConsole(string message, string stringLevel){
