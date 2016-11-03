@@ -35,7 +35,6 @@ class Console extends Component {
       }*/
       //as object
       nextProps.consoleContainer.map(function(message) {
-        console.log(message);
         this.props.backLogs[message._id] = message;
       }, this);
       
