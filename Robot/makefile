@@ -43,7 +43,7 @@ rebootArduino:
 #====================================================================================
 
 ExempleCommunicationRobot.exe: CommunicatorArduino.a
-	g++ -std=c++11 `pkg-config --cflags libmongocxx` -lpthread -pthread -I Serial_wjwwood/include/ ExempleCommunicationRobot/main.cpp ExempleCommunicationRobot/RotationTestsFonctionnels.h RaspberryBin/CommunicatorArduino.a RaspberryBin/Software.a RaspberryBin/Serial.a -o RaspberryBin/ExempleCommunicationRobot.exe
+	g++ -std=c++11 `pkg-config --cflags libmongocxx` -lpthread -pthread -I Serial_wjwwood/include/ ExempleCommunicationRobot/main.cpp RaspberryBin/CommunicatorArduino.a RaspberryBin/Software.a RaspberryBin/Serial.a -o RaspberryBin/ExempleCommunicationRobot.exe
 
 #====================================================================================
 #Preparation
