@@ -105,6 +105,8 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < NB_TEST; ++i)
 	{
+		EnvoiWeb = "";
+
 		destination = gen(rng);
 		sensSuppose = getSensSuppose(depart, destination);
 		cout << sensSuppose;
