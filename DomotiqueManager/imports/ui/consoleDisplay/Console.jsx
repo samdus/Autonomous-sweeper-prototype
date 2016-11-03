@@ -20,18 +20,26 @@ class Console extends Component {
     this.handleReset = this.handleReset.bind(this)
   }
   componentWillMount(){
-    this.props.backLogs = _.uniq(this.props.backLogs);
+    //this.props.backLogs = _.uniq(this.props.backLogs);
   }
   componentWillUpdate(nextProps) {
    
     if(nextProps.dataReady && nextProps.consoleContainer){
-      if(this.props.backLogs.length > 0){
+      //ass arrat
+      /*if(this.props.backLogs.length > 0){
         if(this.props.backLogs[this.props.backLogs.length - 1]._id._str != nextProps.consoleContainer._id._str){
            this.props.backLogs.push(nextProps.consoleContainer)
         }
       }else{
          this.props.backLogs.push(nextProps.consoleContainer)
-      }
+      }*/
+      //as object
+      nextProps.consoleContainer.map(function(message) {
+        console.log(message);
+        this.props.backLogs[message._id] = message;
+      }, this);
+      
+
     }
 
     if(this.props.dataReady){
@@ -67,9 +75,10 @@ class Console extends Component {
               <div className="console" ref="consolewindow">
               <ul>
                 { 
-                  this.props.backLogs.map(function(message) {
-                    return <li key={message._id} className={message.messageLevel}> <span className="timestamp">{this.getTimeString(message.createdAt)}</span> : {message.messageValue}</li>
+                  Object.keys(this.props.backLogs).map(function(key) {
+                    return <li key={this.props.backLogs[key]._id} className={this.props.backLogs[key].messageLevel}> <span className="timestamp">{this.getTimeString(this.props.backLogs[key].createdAt)}</span> : {this.props.backLogs[key].messageValue}</li>;
                   }, this)
+    
                 }
                 <li><span className="blink"></span></li>
               </ul>
@@ -103,13 +112,13 @@ Console.propTypes = {
 };
  
 Console.defaultProps  = {
-      backLogs: [],
+      backLogs: {},
 }
 
 export default createContainer(() => {
   var handleSub=Meteor.subscribe('consoleContainer');
   return {
     dataReady:handleSub.ready(),
-    consoleContainer:ConsoleContainer.findOne({}, {sort: {createdAt: -1, limit: 1}})
+    consoleContainer:ConsoleContainer.find({}, {sort: {createdAt: -1, limit: 10}}).fetch()
   };
 }, Console);

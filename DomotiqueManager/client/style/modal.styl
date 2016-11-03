@@ -1,3 +1,4 @@
+@import "mixins.styl"
 .modal-wrapper
     position fixed
     z-index 1
@@ -16,15 +17,15 @@
         cursor pointer
     .modal-box
         position: fixed
-        top: 20vh
+        top: 16vh
         left: 20vw
         z-index: 9
-        height: 60vh
+        height: 64vh
         width: 60vw
         background-color: $mainBackgroundColor
         border-radius: 25px
         box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75)
-        padding 2em
+        padding 3em
         cursor default
         .modal-title
             font-size: 2em
@@ -38,3 +39,8 @@
             cursor pointer
     .loading
         top 30%
+
+@media (max-width: 1023px)
+    .modal-wrapper 
+        .modal-box
+            height auto

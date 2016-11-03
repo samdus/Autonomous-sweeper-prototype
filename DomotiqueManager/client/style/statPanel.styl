@@ -1,3 +1,4 @@
+@import "mixins.styl"
 .statPanel
     display flex
     flex-direction row
@@ -5,41 +6,42 @@
     justify-content flex-start
     align-content stretch
     align-items flex-start
+
     /*Styles for all stats block*/
     .statBlockDisplay
         flex 1 1 auto
         align-self auto
-        flex-basis 15%
-        padding 1.5em 0
+        flex-basis 10%
+        padding 1.5em 0.5em
         background-color $altBackgroundColor
         text-align center
-        margin 1em
-        min-height 113px
+        min-height 127px
         position relative
         overflow hidden
-        padding-bottom 2.5em
-        &:first-child
-            margin-left 0
-        &:last-child
-            margin-right 0
+        padding-bottom 0.5em
+        margin 1em
         &:before
-            content: ''
-            position: absolute
-            right: 0
-            top: 0
-            width: 100%
-            height: 100%
-            z-index: 0
-            background: -webkit-linear-gradient(280deg,hsla(0,0%,100%,.1),transparent 75%)
-            background: linear-gradient(170deg,hsla(0,0%,100%,.1),transparent 75%)
-            -webkit-transform: skew(-10deg) translateX(50%)
-            transform: skew(-10deg) translateX(50%)
-            opacity: .2
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: -webkit-linear-gradient(170deg, rgba(255,255,255,0.3), transparent 75%);
+            background: linear-gradient(170deg, rgba(255,255,255,0.3), transparent 75%);
+            -webkit-transform: skew(-10deg) translateX(50%);
+            transform: skew(-26deg) translateX(-90%);
+            
+            opacity: 0.2;
+        &:nth-child(odd)
+            &:before
+                transform: skew(-26deg) translateX(90%);
         .statDisplayTitle
             font-size 1.5em
             margin-bottom 0.7em
         .statDisplayValue
-            font-size 2.5em
+            font-size 2em
             font-weight 700
             color $popColor
             .statMesure
@@ -54,7 +56,7 @@
             align-content stretch
             align-items flex-start
             height 1em
-            position: absolute
+            position absolute
             bottom 1em
             right 1.5em
             &>img
@@ -75,17 +77,24 @@
                     background-color green
     .chartwrapper
         .loading
-            position: absolute;
-            bottom: calc(50% - 22px);
-            left: calc(50% - 22px);
+            position absolute
+            bottom calc(50% - 22px)
+            left calc(50% - 22px)
         canvas
             max-width 800px
-            width: 100% !important
+            width 100% !important
             height auto !important
-            max-height: calc(60vh - 10em) !important
+            max-height calc(60vh - 10em) !important
         .action-wrapper
             flex-direction column
             align-items center
-            bottom 3em
+            bottom 1em
+            height 2em
             .resetToLive
                 width 100%
+
+@media (max-width 1080px)
+    .statPanel 
+        .statBlockDisplay 
+            flex 1 1 auto
+            align-self auto

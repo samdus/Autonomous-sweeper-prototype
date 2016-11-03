@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { StatContainer } from '../../api/statNumberContainer.js';
 var LineChart = require("react-chartjs").Line;
 var currentNumbStatShown = 0;
-
+var currentChartId = 0
 // Task component - represents a single todo item
 class StatNumberChartDisplay extends Component {
   constructor(props) {
@@ -15,23 +15,13 @@ class StatNumberChartDisplay extends Component {
   }
   handleReset(){
     currentNumbStatShown=1;
-    //var ctx = document.getElementById("testId");
-   
-    this.props.mylabels.splice(0,this.props.mylabels.length)
-    this.props.mydataset[0].data.splice(0,this.props.mydataset[0].data.length)
-     /*var myChart = new Chart(ctx,{
-      type:'bar',
-      data:{
-        labels:this.props.mylabels,
-        datasets:this.props.mydataset[0].data
-      },
-      options:this.props.chartOptions
-    })*/
-
-    //console.log(myChart)
-    this.forceUpdate()
-    console.log(JSON.stringify(this.props.mylabels))
-    console.log(JSON.stringify(this.props.mydataset[0].data))
+    /*Erase the data*/
+    this.props.mylabels.splice(0,this.props.mylabels.length);
+    this.props.mydataset[0].data.splice(0,this.props.mydataset[0].data.length);
+    /*Force remounting of the graph by changing its id/key*/
+    currentChartId = currentChartId+1;
+    this.props.readyStat = false;
+    this.forceUpdate();
   }
   componentDidMount() {		
     this.updateChart(this.props, this);
@@ -45,6 +35,7 @@ class StatNumberChartDisplay extends Component {
   }
  updateChart(props, node) {
    /*Reset our data arrays*/
+   props.readyStat = true;
    props.mylabels.splice(0,props.mylabels.length)
    props.mydataset[0].data.splice(0,props.mydataset[0].data.length)
    /*Iterator setter*/
@@ -69,7 +60,7 @@ class StatNumberChartDisplay extends Component {
                  <LineChart data={{datasets: this.props.mydataset, labels: this.props.mylabels}} 
                          width="800" 
                          height="400"
-                         options={this.props.chartOptions}  id="testId" />
+                         options={this.props.chartOptions}  id="testId"  key={"chart"+currentChartId}/>
   
               <div className="action-wrapper">
                 <img src="/icon/reload.svg" className="resetToLive icon" alt="Chart" title="Reset to live values"  onClick={this.handleReset}/>

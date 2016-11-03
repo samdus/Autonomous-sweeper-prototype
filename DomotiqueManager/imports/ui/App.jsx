@@ -7,6 +7,8 @@ import StatNumberDisplay from './statDisplay/StatNumberDisplay.jsx';
 import StatStringDisplay from './statDisplay/StatStringDisplay.jsx';
 import StatBoolDisplay from './statDisplay/StatBoolDisplay.jsx';
 import MainActionWrapper from './MainActionWrapper.jsx';
+import ContainerManager from './ContainerManager.jsx';
+
 
 /*
 graph d3 
@@ -29,6 +31,7 @@ class App extends Component {
         <div className="container">
           <header className="appHeader">
             <h1>Vaccum cleaner (definetly not a spy robot)</h1>
+            <ContainerManager/>
             <MainActionWrapper />
           </header>
           <div className="statPanel">

@@ -21,10 +21,9 @@ class MainActionWrapper extends Component {
   render() {
         return (
             <div className="action-wrapper main-action-wrapper">
-                { 
-                this.state.showConsole && 
-                <Console  onClose={this.handleClose} /> 
-                }
+                <div className={"console-view-wrappper "+this.state.showConsole} >
+                  <Console  onClose={this.handleClose} /> 
+                </div>
                 <img src="/icon/console.svg" className="showConsoleToggle icon" alt="Chart" title="Show Console"  onClick={this.handleClickConsole}/>
             </div>
       );
