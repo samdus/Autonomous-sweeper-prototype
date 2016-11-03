@@ -18,11 +18,11 @@ LDFLAGS = -lpthread
 
 # List of sources:
 INCLUDES= 
-SOURCES = MongoWrapper.cpp thread.cpp
+SOURCES = main.cpp thread.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
  
 # Name of executable target:
-TARGET = mongoWrapper.a
+TARGET = testmongo
  
 # MRPT specific flags:
 # Here we invoke "pkg-config" passing it as argument the list of the
@@ -35,10 +35,10 @@ LDFLAGS += `pkg-config --libs libmongocxx`
 all: $(SOURCES) $(TARGET)
  
 $(TARGET): $(OBJECTS)
-	ar rvs $@ $(OBJECTS)
+	$(CC) --std=c++11 $(OBJECTS) -o $@ $(LDFLAGS)
  
 .cpp.o:
-	$(CC) --std=c++11 $(LDFLAGS) $(CFLAGS) $(INCLUDES) $< -o $@
+	$(CC) --std=c++11 $(CFLAGS) $(INCLUDES) $< -o $@
  
 clean:
 	rm $(OBJECTS) $(TARGET)
