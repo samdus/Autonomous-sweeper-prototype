@@ -44,7 +44,7 @@ class MongoWorker : public Thread
     private:
         void updateStat(string identifier, string value, string containerName){
             mongocxx::collection coll = db[containerName];
-
+            cout << "update value  ->" << value <<  " " <<  identifier;
             coll.update_one(bsoncxx::builder::stream::document{} << "statIdentifier" << identifier << finalize,
                             bsoncxx::builder::stream::document{} <<
                             "$set" << open_document <<
@@ -52,7 +52,7 @@ class MongoWorker : public Thread
                             close_document <<
                             "$push" << open_document << "history" << open_document <<
                                 "value" << value <<
-                                "createdAd" << utilities::DateTime::millisSinceEpoch() <<
+                                "createdAt" << utilities::DateTime::millisSinceEpoch() <<
                             close_document << close_document <<
                             finalize);
         }
@@ -79,15 +79,19 @@ class MongoWorker : public Thread
         void identifyJob(MongoJob* job){
             if(job->m_jobinfo.jobtype ==1 || job->m_jobinfo.jobtype == 2){
                 switch(job->m_jobinfo.valuetype){
+                    //int
                     case 1:
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.intvalue, job->m_jobinfo.jobtype);
                     break;
+                    //float
                     case 2:
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.floatvalue, job->m_jobinfo.jobtype);
                     break;
+                    //string
                     case 3:
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.stringvalue, job->m_jobinfo.jobtype);
                     break;
+                    //bool
                     case 4:
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.boolvalue, job->m_jobinfo.jobtype);
                     break;
@@ -127,6 +131,7 @@ class MongoWorker : public Thread
 
         void doJob(string identifier, string value, int jobtype=1){
             string container = "statStringContainer";
+            
             if(jobtype==1){
                 updateStat( identifier,  value, container);
             }else{
