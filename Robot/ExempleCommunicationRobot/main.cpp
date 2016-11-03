@@ -124,5 +124,12 @@ int main(int argc, char **argv)
 		 << "            FIN                " << endl 
 		 << "===============================" << endl;
 	//cin.get();
+
+	//Attendre que les donnees sont 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+	Sleep(1000);
+#else
+	usleep(1000 * 1000); // takes microseconds
+#endif
 	return 0;
 }
