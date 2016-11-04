@@ -43,7 +43,7 @@ class MongoWorker : public Thread
 
     private:
         void updateStat(string identifier, string value, string containerName){
-            printf("Doing update")
+            printf("Doing update");
             mongocxx::collection coll = db[containerName];
             coll.update_one(bsoncxx::builder::stream::document{} << "statIdentifier" << identifier << finalize,
                             bsoncxx::builder::stream::document{} <<
@@ -90,8 +90,8 @@ class MongoWorker : public Thread
                     //string
 
                     case 3:
-                        printf("Is a string");
-                        this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.stringvalue, job->m_jobinfo.jobtype);
+                        printf("Is a string\n");
+                        this->doJobString(job->m_jobinfo.identifier, job->m_jobinfo.stringvalue, job->m_jobinfo.jobtype);
                     break;
                     //bool
                     case 4:
@@ -131,7 +131,7 @@ class MongoWorker : public Thread
             return NULL;
         }
 
-        void doJob(string identifier, string value, int jobtype=1){
+        void doJobString(string identifier, string value, int jobtype=1){
             printf("Do job string");
             string container = "statStringContainer";
             if(jobtype==1){
@@ -159,12 +159,12 @@ class MongoWorker : public Thread
         }
         void doJob(string identifier, bool value, int jobtype=1){
             string container = "statBoolContainer";
-	    string stringvalue = bool_as_text(value);
-	    if(stringvalue == "1"){
-		stringvalue = "true";
-            }else{
-		stringvalue = "false";
-	    }
+            string stringvalue = bool_as_text(value);
+            if(stringvalue == "1"){
+            stringvalue = "true";
+                }else{
+            stringvalue = "false";
+            }
             if(jobtype==1){
                 updateStat( identifier,   stringvalue, container);
             }else{

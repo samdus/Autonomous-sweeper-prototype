@@ -23,6 +23,7 @@ class MongoWrapper
         mongoWorker[1]->start(); 
     }
     void addUpdate(string identifier, string value){
+        printf("ADding a string job \n")
         JobInfo thejob;
         thejob.identifier = identifier;
         thejob.jobtype = 1;
