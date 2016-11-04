@@ -87,8 +87,9 @@ class MongoWorker : public Thread
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.floatvalue, job->m_jobinfo.jobtype);
                     break;
                     //string
+
                     case 3:
-                        this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.stringvalue, job->m_jobinfo.jobtype);
+                        this->doJobString(job->m_jobinfo.identifier, job->m_jobinfo.stringvalue, job->m_jobinfo.jobtype);
                     break;
                     //bool
                     case 4:
@@ -128,9 +129,8 @@ class MongoWorker : public Thread
             return NULL;
         }
 
-        void doJob(string identifier, string value, int jobtype=1){
+        void doJobString(string identifier, string value, int jobtype=1){
             string container = "statStringContainer";
-            
             if(jobtype==1){
                 updateStat( identifier,  value, container);
             }else{
@@ -155,12 +155,12 @@ class MongoWorker : public Thread
         }
         void doJob(string identifier, bool value, int jobtype=1){
             string container = "statBoolContainer";
-	    string stringvalue = bool_as_text(value);
-	    if(stringvalue == "1"){
-		stringvalue = "true";
-            }else{
-		stringvalue = "false";
-	    }
+            string stringvalue = bool_as_text(value);
+            if(stringvalue == "1"){
+            stringvalue = "true";
+                }else{
+            stringvalue = "false";
+            }
             if(jobtype==1){
                 updateStat( identifier,   stringvalue, container);
             }else{
