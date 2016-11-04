@@ -8,5 +8,5 @@ Meteor.startup(() => {
     StatNumberContainer.StatContainer._collection._ensureIndex({ "history.createdAt": -1});
     StatBoolContainer.StatContainer._collection._ensureIndex({ "history.createdAt": -1});
     StatStringContainer.StatContainer._collection._ensureIndex({ "history.createdAt": -1});
-    ConsoleContainer.ConsoleContainer._collection._ensureIndex({ "createdAt": -1});
+    ConsoleContainer.ConsoleContainer._collection._ensureIndex({ "createdAt": 1});
 });

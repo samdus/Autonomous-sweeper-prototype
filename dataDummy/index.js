@@ -37,18 +37,15 @@ function getInitialBoolData(){
 
 /********** STRING STATISTICS ***************/
 db.createCollection("consoleContainer", {}, function(error, value){
-    db.collection('consoleContainer').remove({}, function(e, doc){
-        console.log('REMOVE CONSOLE')
-        console.log(e)
-        console.log(doc)
+   // db.collection('consoleContainer').remove({}, function(e, doc){
         db.collection('consoleContainer').insert(getInitialConsoleData(), function(error, value){
             setInterval(simulateConsole, 6*1000);
         })
-    });
+      //});
 });
 
 
-/********** STRING STATISTICS ***************/
+/********** STRING STATISTICS ***************
 db.createCollection("statStringContainer", {}, function(error, value){
     console.log(error)
     console.log(value)
@@ -58,8 +55,8 @@ db.createCollection("statStringContainer", {}, function(error, value){
         })
     });
 });
-
-/********** BOOLEAN STATISTICS **************/
+*/
+/********** BOOLEAN STATISTICS **************
 db.createCollection("statBoolContainer", {}, function(error, value){
     db.collection('statBoolContainer').remove({}, function(e, doc){
         db.collection('statBoolContainer').insert(getInitialBoolData(), function(error, value){
@@ -67,9 +64,9 @@ db.createCollection("statBoolContainer", {}, function(error, value){
         })
     });
 });
+*/
 
-
-/********** NUMBER STATISTICS **************/
+/********** NUMBER STATISTICS **************
 db.createCollection("statNumberContainer", {}, function(error, value){
     db.collection('statNumberContainer').remove({}, function(e, doc){
         console.log('Simulating data from robot...');
@@ -81,7 +78,7 @@ db.createCollection("statNumberContainer", {}, function(error, value){
         })
     });
 });
-
+*/
 
 function simulateWheels(){
     var now = Date.now();
@@ -139,5 +136,6 @@ function simulateConsole(){
                 ['This is a warning message', 'warning']];
    var currentMessage= values[Math.floor(Math.random()*values.length)];
     db.collection('consoleContainer').insert(  {messageValue:currentMessage[0], messageLevel:currentMessage[1], createdAt:now}, function(error, value){
+        console.log(error || value)
     })
 }

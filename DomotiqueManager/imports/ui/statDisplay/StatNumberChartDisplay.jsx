@@ -52,35 +52,21 @@ class StatNumberChartDisplay extends Component {
   render() {
      if (this.props.readyStat) {
       return (
-        <div className="modal-wrapper">
-          <div className="overlay-modal"  onClick={this.props.onClose}></div>
-            <div className={"chartwrapper modal-box"}>
-             <div className="modal-title">Historical data for : {this.props.statContainer.statNiceName}</div>
-              <img className="close icon" src="/icon/close.svg" alt="close" title="Return to main panel" onClick={this.props.onClose} />
-                 <LineChart data={{datasets: this.props.mydataset, labels: this.props.mylabels}} 
+        <div>
+              <LineChart data={{datasets: this.props.mydataset, labels: this.props.mylabels}} 
                          width="800" 
                          height="400"
-                         options={this.props.chartOptions}  id="testId"  key={"chart"+currentChartId}/>
-  
+                         options={this.props.chartOptions}  id="testId"  key={"chart"+currentChartId} />
               <div className="action-wrapper">
                 <img src="/icon/reload.svg" className="resetToLive icon" alt="Chart" title="Reset to live values"  onClick={this.handleReset}/>
               </div>
-          </div>
         </div>
       );
      }else{
       return (
-        <div className="modal-wrapper">
-          <div className="overlay-modal"  onClick={this.props.onClose}></div>
-            <div className={"chartwrapper modal-box"}>
-              <div className="modal-title">Historical data for : {this.props.statContainer.statNiceName}</div>
-              <img className="close icon" src="/icon/close.svg" alt="close" title="Return to main panel" onClick={this.props.onClose} />
               <div className="loading">
                 <div className="circleloader"></div>
               </div>
-            </div>
-        </div>
-        
       );
      }
   }

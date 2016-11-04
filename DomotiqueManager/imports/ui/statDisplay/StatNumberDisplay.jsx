@@ -3,6 +3,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import ReactDOM from 'react-dom';
 
 //Our date entry points
+import ModalContainer from '../ModalContainer.jsx';
 import { StatContainer } from '../../api/statNumberContainer.js';
 import StatNumberChartDisplay from './StatNumberChartDisplay.jsx';
 
@@ -33,13 +34,14 @@ class StatNumberDisplay extends Component {
           <div className="statDisplayValue">{this.props.statContainer.statValue}<span className="statMesure">{this.props.statContainer.statMesure}</span></div>
             { this.props.hasGraph && 
               this.state.showGraph && 
-              <StatNumberChartDisplay listenTo={this.props.listenTo} 
-              onClose={this.handleClose} /> 
+              <ModalContainer onClose={this.handleClose} title={"Historical data for : " + this.props.statContainer.statNiceName} addedClassName={"chartwrapper"}>
+                          <StatNumberChartDisplay listenTo={this.props.listenTo} /> 
+              </ModalContainer> 
             }
             <div className="action-wrapper">
-            { this.props.hasGraph && 
-              <img src="/icon/stats-dots.svg" className="showGraphToggle icon" alt="Chart" title="Show Chart"  onClick={this.handleClick}/>
-            }
+              { this.props.hasGraph && 
+                <img src="/icon/stats-dots.svg" className="showGraphToggle icon" alt="Chart" title="Show Chart"  onClick={this.handleClick}/>
+              }
           </div>
         </div>
       );
