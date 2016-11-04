@@ -12,8 +12,8 @@ int main(int argc, char** argv)
 mongoWrapper.addUpdate("leftWheel",  test);
 mongoWrapper.addUpdate("rightWheel",  test);
 mongoWrapper.addUpdate("kinectPolling",  test);*/
-mongoWrapper.addUpdate("currentlyIn",  "raspberry");
-mongoWrapper.addUpdate("currentlyIn",  "raspberry2");
+mongoWrapper.addUpdate("currentlyIn",  "raspberry4");
+mongoWrapper.addUpdate("currentlyIn",  "raspberry77");
     // Ctrl-C to end program
 	
     printf("Enter Ctrl-C to end the program...\n");

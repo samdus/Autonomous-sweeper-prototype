@@ -22,8 +22,15 @@ class MongoWrapper
         mongoWorker[0]->start();
         mongoWorker[1]->start(); 
     }
-    void addUpdate(string identifier, string value){
-        printf("ADding a string job \n")
+    void addUpdate(string identifier, const char* value){
+        JobInfo thejob;
+        thejob.identifier = identifier;
+        thejob.jobtype = 1;
+        thejob.valuetype = 3;
+        thejob.stringvalue = value;
+        queue.add(new MongoJob(thejob));
+    }
+     void addUpdate(string identifier, string value){
         JobInfo thejob;
         thejob.identifier = identifier;
         thejob.jobtype = 1;
