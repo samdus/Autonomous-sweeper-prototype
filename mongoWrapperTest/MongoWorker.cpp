@@ -43,6 +43,7 @@ class MongoWorker : public Thread
 
     private:
         void updateStat(string identifier, string value, string containerName){
+            printf("Doing update")
             mongocxx::collection coll = db[containerName];
             coll.update_one(bsoncxx::builder::stream::document{} << "statIdentifier" << identifier << finalize,
                             bsoncxx::builder::stream::document{} <<
@@ -87,7 +88,9 @@ class MongoWorker : public Thread
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.floatvalue, job->m_jobinfo.jobtype);
                     break;
                     //string
+
                     case 3:
+                        printf("Is a string");
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.stringvalue, job->m_jobinfo.jobtype);
                     break;
                     //bool
@@ -129,9 +132,10 @@ class MongoWorker : public Thread
         }
 
         void doJob(string identifier, string value, int jobtype=1){
+            printf("Do job string");
             string container = "statStringContainer";
-            
             if(jobtype==1){
+                printf("DO update string");
                 updateStat( identifier,  value, container);
             }else{
                 writeStat( identifier,  value, container);
