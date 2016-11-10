@@ -15,7 +15,7 @@ class CloudPointContainer
     private:
     int indexInsertion = 0;
     int indexSuppression = 0;
-    //Mutex Array_mutex[CLOUD_POINT_CIRCULAR_BUFFER];
+
     std::vector<uint8_t> rgb[CLOUD_POINT_CIRCULAR_BUFFER];
     std::vector<Vector3> depth[CLOUD_POINT_CIRCULAR_BUFFER];
     int ProchainIndex(int index);

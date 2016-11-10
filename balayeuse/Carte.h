@@ -13,6 +13,7 @@ struct segment
     Vector2 fin;
     int nbPoint;
 
+    segment() {debut = Vector2(); fin = Vector2(); nbPoint = 0;}
     void fromString(std::string text)
     {
         int deb = 0;
@@ -52,7 +53,7 @@ class Carte
     Carte();
     ~Carte();
 
-    const std::vector<segment>& GetSegments()const { return segments; }
+    std::vector<segment>& GetSegments() { return segments; }
 
     void SaveCarte();
 };

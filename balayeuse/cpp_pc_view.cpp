@@ -223,7 +223,7 @@ void DrawGLScene()
         {
             for (int i = 0; i < currentDepth.size(); ++i)
             {
-                glVertex3f(currentDepth[i].x, currentDepth[i].y, currentDepth[i].z);
+                glVertex3f(currentDepth[i].x, 0, currentDepth[i].z);
             }
         }
     }
@@ -416,6 +416,9 @@ void keyPressed(unsigned char key, int x, int y)
         case  '4':
             DecodeurScene.cloudBuffer.EcrirePoint();
             break;
+        case  '5':
+            DecodeurScene.convertisseur.Environnement.SaveCarte();
+            break;
         case  'Q':
         case  'q':
         case 0x1B:  // ESC
@@ -522,6 +525,7 @@ void printInfo()
     std::cout << "Toggle carte :   2"                 << std::endl;
     std::cout << "Toggle robot :   3"                 << std::endl;
     std::cout << "Ecrire points:   4"                 << std::endl;
+    std::cout << "Save Carte   :   5"                 << std::endl;
     std::cout << "Quit         :   Q or Esc"          << std::endl;
 }
 

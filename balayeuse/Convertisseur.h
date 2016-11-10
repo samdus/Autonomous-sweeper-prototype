@@ -21,6 +21,9 @@ class Convertisseur
     pthread_t convertisseur_thread;
     float dist_max;
     int MinNumberOfPoint;
+    float distMinPourCassure;
+    int nbPointParVertice;
+    bool enleverbruit;
 
     static void* Convertir(void* parent);
     Vector3 FromString(std::string text);
