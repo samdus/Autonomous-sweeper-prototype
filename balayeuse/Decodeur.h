@@ -20,6 +20,15 @@ class Decodeur
     float fps = 0.0;
     clock_t CloudSamplingTime = 0;
     MyFreenectDevice* device;
+    float HauteurMax = 0.0;
+    float HauteurMin = 0.0;
+    float HauteurKin = 0.0;
+    float OffsetKin = 0.0;
+    float DistanceMax = 0.0;
+    float DistanceMin = 0.0;
+    bool MultithreadActiver;
+
+
 
     public:
     Convertisseur convertisseur;

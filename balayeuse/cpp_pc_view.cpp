@@ -185,14 +185,14 @@ void DrawGLScene()
 {
     InitRobotMesh();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glPointSize(2.0f);
-
-    glBegin(GL_POINTS);
-
     std::vector<uint8_t> currentRgb;
     std::vector<Vector3> currentDepth;
     std::vector<uint16_t> realTimeDepth;
+
+    /*glPointSize(2.0f);
+
+    glBegin(GL_POINTS);
+
 
     for(int k = 0; k < CLOUD_POINT_CIRCULAR_BUFFER; ++k)
     {
@@ -210,9 +210,9 @@ void DrawGLScene()
         }
     }
 
-    glEnd();
+    glEnd();*/
     //CLUSTER
-    glPointSize(5.0f);
+    glPointSize(3.0f);
     glBegin(GL_POINTS);
     for(int k = 0; k < DecodeurScene.convertisseur.Clusters.size(); ++k)
     {
@@ -351,8 +351,8 @@ void DrawGLScene()
 void pressKey(int key, int xx, int yy)
 {
 	switch (key) {
-		case GLUT_KEY_UP : ViewCam.deltaMove = 0.5f; break;
-		case GLUT_KEY_DOWN : ViewCam.deltaMove = -0.5f; break;
+		case GLUT_KEY_UP : ViewCam.deltaMove = 0.25f; break;
+		case GLUT_KEY_DOWN : ViewCam.deltaMove = -0.25f; break;
 	}
 }
 
@@ -370,19 +370,19 @@ void keyPressed(unsigned char key, int x, int y)
     {
         case  'W':
         case  'w':
-            ViewCam.deltaMove = 0.5f;
+            ViewCam.deltaMove = 0.125f;
             break;
         case  'S':
         case  's':
-            ViewCam.deltaMove = -0.5f;
+            ViewCam.deltaMove = -0.125f;
             break;
         case  'A':
         case  'a':
-            ViewCam.deltaStrafe = -0.5f;
+            ViewCam.deltaStrafe = -0.125f;
             break;
         case  'D':
         case  'd':
-            ViewCam.deltaStrafe = 0.5f;
+            ViewCam.deltaStrafe = 0.125f;
             break;
         case  'I':
         case  'i':

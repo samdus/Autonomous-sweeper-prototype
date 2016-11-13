@@ -14,6 +14,28 @@ struct segment
     int nbPoint;
 
     segment() {debut = Vector2(); fin = Vector2(); nbPoint = 0;}
+
+    float LongueurFast()
+    {
+        return fin.distanceFast(debut);
+    }
+
+    float DisancePoint(Vector2 point)
+    {
+        float m, b = 0.0;
+        if(fin.x == debut.x)
+        {
+            m = 0;
+        }
+        else
+        {
+            m = (fin.y - debut.y) / (fin.x - debut.x);
+        }
+        b = fin.y - m * fin.x;
+
+        return std::abs(m * point.x - point.y + b)/ sqrtf(m*m+1);
+    }
+
     void fromString(std::string text)
     {
         int deb = 0;

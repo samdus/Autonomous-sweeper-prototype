@@ -22,10 +22,11 @@ class Convertisseur
     float dist_max;
     int MinNumberOfPoint;
     float distMinPourCassure;
+    float distMaxPourFusion;
     int nbPointParVertice;
     bool enleverbruit;
 
-    static void* Convertir(void* parent);
+    static void* ConvertirThread(void* parent);
     Vector3 FromString(std::string text);
 
 public :
@@ -37,6 +38,7 @@ public :
     ~Convertisseur();
 
     void InitilasationConfig();
+    void Convertir(CloudPointContainer& cloudBuffer);
     void ConvertiFichier();
 
     void DemarreThread(CloudPointContainer* donnees);

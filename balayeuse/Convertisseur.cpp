@@ -86,7 +86,7 @@ void Convertisseur::DemarreThread(CloudPointContainer* donnees)
     static struct thread_arg args;
     args.cloudBuffer = donnees;
     args.parent = this;
-    pthread_create(&convertisseur_thread, NULL, Convertir, (void*)&args);
+    pthread_create(&convertisseur_thread, NULL, ConvertirThread, (void*)&args);
 }
 
 void Convertisseur::InitilasationConfig()
@@ -96,6 +96,7 @@ void Convertisseur::InitilasationConfig()
     distMinPourCassure = std::stof(Config::Instance().GetString("DISTANCE_POUR_LE_SECTIONNEMENT"));
     nbPointParVertice = std::stoi(Config::Instance().GetString("NOMBRE_DE_POINT_POUR_LES_VERTICES_DU_MESH"));
     enleverbruit = std::stoi(Config::Instance().GetString("ENLEVE_BRUIT_DU_CLUSTER"));
+    distMaxPourFusion = std::stof(Config::Instance().GetString("DISTANCE_ENTRE_SEGMENT_POUR_FUSION"));
 }
 
 Vector2 MoyenneVector2(int index, std::vector<int>& ensIndex, std::vector<Vector3>& ensPoints, int nbPoint)
@@ -108,7 +109,6 @@ Vector2 MoyenneVector2(int index, std::vector<int>& ensIndex, std::vector<Vector
     }
     vect.x /= nbPoint;
     vect.y /= nbPoint;
-
     return vect;
 }
 
@@ -121,16 +121,6 @@ std::vector<segment> CoupeSegment(segment& seg, std::vector<int>& ensIndex, std:
     debutSegment.push_back(0);
     finSegment.push_back(ensIndex.size()-1);
 
-    float m, b; //y = mx + b
-    if(seg.fin.x == seg.debut.x)
-    {
-        m = 0;
-    }
-    else
-    {
-        m = (seg.fin.y - seg.debut.y) / (seg.fin.x - seg.debut.x);
-    }
-    b = seg.fin.y - m * seg.fin.x;
 
 
     int pointPlusLoin = 0;
@@ -139,6 +129,18 @@ std::vector<segment> CoupeSegment(segment& seg, std::vector<int>& ensIndex, std:
         float distPaP = 0.0;
         float distMax = dist;
         bool coupeSegment = false;
+        float m, b; //y = mx + b
+
+        if(seg.fin.x == seg.debut.x)
+        {
+            m = 0;
+        }
+        else
+        {
+            m = (segments[i].fin.y - segments[i].debut.y) / (segments[i].fin.x - segments[i].debut.x);
+        }
+        b = seg.fin.y - m * seg.fin.x;
+
         for(int j = debutSegment[i] + nbPointParVertice; j < finSegment[i] && j < ensIndex.size() - nbPointParVertice; ++j)
         {
             distPaP = std::abs(m * ensPoints[ensIndex[j]].x - ensPoints[ensIndex[j]].z + b)/ sqrtf(m*m+1);
@@ -170,6 +172,51 @@ std::vector<segment> CoupeSegment(segment& seg, std::vector<int>& ensIndex, std:
     }
 
     return segments;
+}
+
+void LisserSegment(std::vector<segment>& segments, float distMaxPourFusion)
+{
+    segment ligne = segments[0];
+    bool Fusion = true;
+    int i,j,k = 0;
+    std::vector<segment> resultat = std::vector<segment>();
+    for( i = 1; i < segments.size(); ++i)
+    {
+        ligne.fin = (segments[i].fin - segments[i].debut) / 2 + segments[i].debut;
+        for(j = k; j < i; ++j)
+        {
+            if(ligne.DisancePoint(segments[j].fin) > distMaxPourFusion)
+            {
+                Fusion = false;
+                break;
+            }
+        }
+        if(!Fusion)
+        {
+            if(i-1 > k)
+            {
+                ligne.fin = (segments[i-1].fin - segments[i-1].debut) / 2 + segments[i-1].debut;
+                for(j = k+1; j < i; ++j)
+                {
+                    ligne.nbPoint += segments[j].nbPoint;
+                }
+                resultat.push_back(ligne);
+                ligne.debut = ligne.fin;
+                k = i-1;
+                --i;
+                Fusion = true;
+            }
+            else
+            {
+                resultat.push_back(ligne);
+                ligne.debut = ligne.fin;
+            }
+        }
+    }
+    ligne.fin = segments[segments.size() - 1].fin;
+    resultat.push_back(ligne);
+
+    segments.swap(resultat);
 }
 
 void EnleverBruit(std::vector<int>& index, std::vector<Vector3>& points)
@@ -206,7 +253,7 @@ void EnleverBruit(std::vector<int>& index, std::vector<Vector3>& points)
     }
 }
 
-void* Convertisseur::Convertir(void* parent)
+void* Convertisseur::ConvertirThread(void* parent)
 {
     struct thread_arg* convertisseur = (struct thread_arg*)parent;
     std::vector<Vector3> points = std::vector<Vector3>();
@@ -243,10 +290,10 @@ void* Convertisseur::Convertir(void* parent)
                 //std::cout << "Fin de la copy" << std::endl;
             }
 
-            //remet le flaggue a vrai pour indiquer que les points ont été traité
+            //remet le flag a vrai pour indiquer que les points ont été traité
             convertisseur->cloudBuffer->Converted[indiceTraite] = true;
 
-            std::cout << "Debut de la generation du mesh..." << std::endl;
+            //std::cout << "Debut de la generation du mesh..." << std::endl;
             for(int i = 0; i < ClustersList.size(); ++i)
             {
                 segment seg = segment();
@@ -255,13 +302,68 @@ void* Convertisseur::Convertir(void* parent)
                 seg.fin = MoyenneVector2(ClustersList[i].size()-convertisseur->parent->nbPointParVertice, ClustersList[i], points, convertisseur->parent->nbPointParVertice);
                 seg.nbPoint = ClustersList[i].size();
 
-                //std::vector<segment> segments = CoupeSegment(seg, ClustersList[i], points, convertisseur->parent->distMinPourCassure, convertisseur->parent->nbPointParVertice);
-                std::vector<segment> segments = CoupeSegment(seg, ClustersList[i], points, std::stof(Config::Instance().GetString("DISTANCE_POUR_LE_SECTIONNEMENT")), convertisseur->parent->nbPointParVertice);
+                std::vector<segment> segments = CoupeSegment(seg, ClustersList[i], points, convertisseur->parent->distMinPourCassure, convertisseur->parent->nbPointParVertice);
+
+                LisserSegment(segments, convertisseur->parent->distMaxPourFusion);
 
                 convertisseur->parent->Environnement.GetSegments().insert(convertisseur->parent->Environnement.GetSegments().end(), segments.begin(), segments.end());
             }
-            std::cout << "Fin de la generation du mesh..." << std::endl;
+            //std::cout << "Fin de la generation du mesh..." << std::endl;
         }
+    }
+}
+
+void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
+{
+    std::vector<Vector3> points = std::vector<Vector3>();
+    int indiceTraite = -1;
+
+    points = std::vector<Vector3>();
+    indiceTraite = cloudBuffer.GetCopyCloudPointToConvert(points);
+
+    if(indiceTraite != -1)
+    {
+        Clusters = std::vector<std::vector<Vector3>>();
+        std::vector<std::vector<int>> ClustersList = DannyScan(points, dist_max, MinNumberOfPoint);
+        for(int i = 0; i < ClustersList.size(); ++i)
+        {
+            if(enleverbruit)
+            {
+                EnleverBruit(ClustersList[i], points);
+            }
+        }
+
+        {//DEBUG
+            //std::cout << "Copy pour le debug..." << std::endl;
+            for(int i = 0; i < ClustersList.size(); ++i)
+            {
+                Clusters.push_back(std::vector<Vector3>());
+
+                for(int j = 0; j < ClustersList[i].size(); ++j)
+                {
+                    Clusters[i].push_back(points[ClustersList[i][j]]);
+                }
+            }
+            //std::cout << "Fin de la copy" << std::endl;
+        }
+
+        //remet le flag a vrai pour indiquer que les points ont été traité
+        cloudBuffer.Converted[indiceTraite] = true;
+
+        //std::cout << "Debut de la generation du mesh..." << std::endl;
+        for(int i = 0; i < ClustersList.size(); ++i)
+        {
+            segment seg = segment();
+
+            seg.debut = MoyenneVector2(0, ClustersList[i], points, nbPointParVertice);
+            seg.fin = MoyenneVector2(ClustersList[i].size()-nbPointParVertice, ClustersList[i], points, nbPointParVertice);
+            seg.nbPoint = ClustersList[i].size();
+
+            std::vector<segment> segments = CoupeSegment(seg, ClustersList[i], points, distMinPourCassure, nbPointParVertice);
+            LisserSegment(segments, distMaxPourFusion);
+            Environnement.GetSegments().insert(Environnement.GetSegments().end(), segments.begin(), segments.end());
+        }
+        //std::cout << "Fin de la generation du mesh..." << std::endl;
     }
 }
 
