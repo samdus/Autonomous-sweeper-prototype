@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
 import FullContainer from './FullContainer.jsx';
 import ModalContainer from './ModalContainer.jsx';
-import MapContainer from './mapDisplay/MapContainer.jsx';
+import Map from './mapDisplay/Map.jsx';
 import Console from './consoleDisplay/Console.jsx';
 
 class ContainerManager extends Component {
@@ -28,7 +28,7 @@ class ContainerManager extends Component {
                 {   /*Toggling object, is dismounted*/
                     this.state.showMap &&
                     <FullContainer onClose={() => this.handleClose('showMap')} title={"Vaccum Map"} addedClassName={"map-wrapper"}>
-                        <MapContainer />
+                        <Map />
                     </FullContainer>      
                 }
                 <img src="/icon/map-alt.svg" className="containerActivation icon" alt="Chart" title="Show Map"   onClick={() => this.activateContainer('showMap') }  /> 

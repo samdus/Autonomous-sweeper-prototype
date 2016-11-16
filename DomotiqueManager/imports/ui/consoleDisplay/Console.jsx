@@ -83,6 +83,6 @@ export default createContainer(() => {
   var handleSub=Meteor.subscribe('consoleContainer');
   return {
     dataReady:handleSub.ready(),
-    consoleContainer:ConsoleContainer.find({}, {sort: {createdAt: 10}, limit:10 }).fetch()
+    consoleContainer:ConsoleContainer.find({}, {sort: {createdAt: 1}, limit:10 }).fetch()
   };
 }, Console);

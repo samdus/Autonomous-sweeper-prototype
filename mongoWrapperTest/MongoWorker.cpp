@@ -5,10 +5,10 @@
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
 #include <ctime>
+#include "MongoJob.cpp"
 #include "wqueue.cpp"
 #include <sstream>
-
-
+#include <vector>
 
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
@@ -76,6 +76,7 @@ class MongoWorker : public Thread
         }
 
         void identifyJob(MongoJob* job){
+            //Stat work
             if(job->m_jobinfo.jobtype ==1 || job->m_jobinfo.jobtype == 2){
                 switch(job->m_jobinfo.valuetype){
                     //int
@@ -96,8 +97,12 @@ class MongoWorker : public Thread
                         this->doJob(job->m_jobinfo.identifier, job->m_jobinfo.boolvalue, job->m_jobinfo.jobtype);
                     break;
                 }
+            //console work
             }else if(job->m_jobinfo.jobtype == 3){
                 this->writeConsole(job->m_jobinfo.stringvalue, job->m_jobinfo.level);
+            //map world
+            }else if(job->m_jobinfo.jobtype == 4){
+                this->mapInsert(job->m_jobinfo.map);
             }
             
         }
@@ -179,6 +184,27 @@ class MongoWorker : public Thread
             << bsoncxx::builder::stream::finalize;
 
             coll.insert_one(consoleMessageDB.view());
+        }
+        void mapInsert(std::vector<segment> map){
+            mongocxx::collection coll = db["mapContainer"];
+            auto builder = bsoncxx::builder::stream::document{};
+            auto i;
+            bsoncxx::document::value mapInsert = builder
+            << "createdAt" << utilities::DateTime::millisSinceEpoch()
+            << "lines" << bsoncxx::builder::stream::open_array;
+            
+            for(i=map.begin(); i!=map.end(); ++i){
+                builder << bsoncxx::builder::stream::open_document
+                    << "x1" << i->debut.x
+                    << "y1" << i->debut.y
+                    << "x2" << i->fin.x
+                    << "y2" << i->fin.y
+                    << "nbpts" << ->nbPoint
+                << bsoncxx::builder::stream::close_document;
+            }
+            builder << close_array
+            << bsoncxx::builder::stream::finalize;
+            coll.insert_one(mapInsert.view());
         }
 };
 #endif /* !MONGOWORKER */
