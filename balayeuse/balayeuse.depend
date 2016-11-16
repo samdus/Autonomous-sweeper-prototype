@@ -1,15 +1,5 @@
 # depslib dependency file v1.0
-1479077576 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
-	<cstdlib>
-	<iostream>
-	<vector>
-	"SceneCamera.h"
-	"Decodeur.h"
-	"Vectors.h"
-	"CloudPointContainer.h"
-	"Config.h"
-	<GLUT/glut.h>
-	<GL/glut.h>
+1479327212 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 
 1477059958 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
@@ -72,7 +62,12 @@
 1477060752 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
 	"MyFreenectDevice.h"
 
-1478979706 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+1479327211 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+	<cstdlib>
+	<ctime>
+	<iostream>
+	<vector>
+	"Decodeur.h"
 
 1478720434 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
@@ -88,7 +83,7 @@
 	<algorithm>
 	"Matrices.h"
 
-1478991187 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1479327224 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
 1478979706 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
@@ -101,7 +96,7 @@
 	"Config.h"
 	"Convertisseur.h"
 
-1478903000 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
+1479078610 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
 	"Config.h"
 
 1477007823 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.h
@@ -109,10 +104,10 @@
 	<fstream>
 	<string>
 
-1478909095 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
+1479326132 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
 	"Carte.h"
 
-1479078550 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
+1479321755 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
 	<iostream>
 	<fstream>
 	"Vectors.h"
@@ -120,10 +115,8 @@
 	<vector>
 	"Config.h"
 
-1479077086 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
+1479324461 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
 	"Convertisseur.h"
-	<chrono>
-	<thread>
 
 1479072386 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
 	<iostream>

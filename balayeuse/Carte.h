@@ -70,11 +70,14 @@ class Carte
 {
     private:
     std::vector<segment> segments;
+    float RayonDeFusion;
+    float AngleMaximum;
 
     public:
     Carte();
     ~Carte();
 
+    void FusionCarte(std::vector<segment>& nouveauSegments);
     std::vector<segment>& GetSegments() { return segments; }
 
     void SaveCarte();
