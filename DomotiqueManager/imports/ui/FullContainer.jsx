@@ -20,7 +20,7 @@ class FullContainer extends Component {
   render() {
         return (
             <div className="fullContainer">
-                <img className="back" src="/icon/arrow-left.svg" onClick={this.props.onClose} title="Back" alt="Back" />
+                <img className="back icon" src="/icon/arrow-left.svg" onClick={this.props.onClose} title="Back" alt="Back" />
                 <div className="title">{ this.props.title }</div>
                 <div className="content map-wrapper">{ this.props.children }</div>
             </div>

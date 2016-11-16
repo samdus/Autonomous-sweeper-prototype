@@ -1,8 +1,8 @@
 var mongojs = require('mongojs')
 //For prod
-var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
+//var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
 //For dev
-//var db = mongojs("mongodb://127.0.0.1:3001/meteor");
+var db = mongojs("mongodb://127.0.0.1:3001/meteor");
 
 
 function getInitialNumberData(){
@@ -12,6 +12,37 @@ function getInitialNumberData(){
         {statIdentifier:"rightWheel", statNiceName:"Right Wheel", statValue:0, statMesure:"rpm", history:[{value:0, createdAt:now}]},
         {statIdentifier:"kinectPolling", statNiceName:"Kinect Polling", statValue:0, statMesure:"poll/s", history:[{value:0, createdAt:now}]},
         {statIdentifier:"forcedStop", statNiceName:"Forced Stop", statValue:0, statMesure:"stops", history:[{value:0, createdAt:now}]},
+    ]
+}
+/*
+* todo check afficher photpo
+*/
+
+function getInitialMapData(){
+    var now = Date.now();
+    return [
+        {createdAt:now, lines:[{
+                                x1:150,
+                                y1:100,
+                                x2:200,
+                                y2:25,
+                                nbpts:5,
+                                },
+                                {
+                                x1:200,
+                                y1:25,
+                                x2:200,
+                                y2:150,
+                                nbpts:5,
+                                },
+                                {
+                                x1:200,
+                                y1:150,
+                                x2:150,
+                                y2:100,
+                                nbpts:5,
+                                },]
+    , robotX:0, robotY:0}
     ]
 }
 function getInitialConsoleData(){
@@ -44,6 +75,14 @@ db.createCollection("consoleContainer", {}, function(error, value){
       //});
 });
 
+/********** MAPDATA ***************/
+db.createCollection("mapContainer", {}, function(error, value){
+    db.collection('mapContainer').remove({}, function(e, doc){
+        db.collection('mapContainer').insert(getInitialMapData(), function(error, value){
+      
+        })
+      });
+});
 
 /********** STRING STATISTICS ***************
 db.createCollection("statStringContainer", {}, function(error, value){
