@@ -41,6 +41,20 @@ function getInitialMapData(){
                                 x2:150,
                                 y2:100,
                                 nbpts:5,
+                                },
+                                {
+                                x1:50,
+                                y1:75,
+                                x2:150,
+                                y2:175,
+                                nbpts:5,
+                                },
+                                {
+                                x1:0,
+                                y1:0,
+                                x2:150,
+                                y2:101500,
+                                nbpts:5,
                                 },]
     , robotX:0, robotY:0}
     ]

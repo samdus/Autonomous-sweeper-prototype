@@ -18,7 +18,7 @@ int main(int argc, char** argv)
     map.push_back(seg);
     seg.fromString("200 25 200 150 0");
     map.push_back(seg);
-    seg.fromString("200 250 150 100 0");
+    seg.fromString("200 150 150 100 0");
     map.push_back(seg);
     seg.fromString("50 75 150 150 175");
     map.push_back(seg);
