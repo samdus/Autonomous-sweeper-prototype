@@ -5,6 +5,8 @@
 #include <string>
 #include "wqueue.cpp"
 #include "thread.h"
+#include "segment.cpp"
+#include <vector>
 typedef struct _jobinfo
 {
     int intvalue;
@@ -12,10 +14,11 @@ typedef struct _jobinfo
     string stringvalue;
     bool boolvalue;
     string level; // warning, sucesss, info, error, none 
-
-    int jobtype; //1 update 2 write 3write console
+    
+    int jobtype; //1 update 2 write 3write console 4setmap
     int valuetype;// 1 int  2float 3string 4bool
     string identifier;
+    std::vector<segment> themap;
 } JobInfo;
 
 class MongoJob
@@ -30,3 +33,4 @@ class MongoJob
     int getNumber() { return m_jobinfo.jobtype; }
 };
 #endif /* !MONGOJOB */
+

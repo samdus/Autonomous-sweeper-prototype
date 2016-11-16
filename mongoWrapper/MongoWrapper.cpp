@@ -102,6 +102,13 @@ class MongoWrapper
         thejob.stringvalue = message;
         queue.add(new MongoJob(thejob));
     }
+    //level : // warning, sucesss, info, error, none
+    void writeMap(std::vector<segment> map){
+        JobInfo thejob;
+        thejob.jobtype = 4;
+        thejob.themap = map;
+        queue.add(new MongoJob(thejob));
+    }
     ~MongoWrapper() {
  
     }
