@@ -278,7 +278,7 @@ void* Convertisseur::ConvertirThread(void* parent)
 
             {//DEBUG
                 //std::cout << "Copy pour le debug..." << std::endl;
-                for(int i = 0; i < ClustersList.size(); ++i)
+                /*for(int i = 0; i < ClustersList.size(); ++i)
                 {
                     convertisseur->parent->Clusters.push_back(std::vector<Vector3>());
 
@@ -286,7 +286,7 @@ void* Convertisseur::ConvertirThread(void* parent)
                     {
                         convertisseur->parent->Clusters[i].push_back(points[ClustersList[i][j]]);
                     }
-                }
+                }*/
                 //std::cout << "Fin de la copy" << std::endl;
             }
 
@@ -303,10 +303,8 @@ void* Convertisseur::ConvertirThread(void* parent)
                 seg.nbPoint = ClustersList[i].size();
 
                 std::vector<segment> segments = CoupeSegment(seg, ClustersList[i], points, convertisseur->parent->distMinPourCassure, convertisseur->parent->nbPointParVertice);
-
                 LisserSegment(segments, convertisseur->parent->distMaxPourFusion);
-
-                convertisseur->parent->Environnement.GetSegments().insert(convertisseur->parent->Environnement.GetSegments().end(), segments.begin(), segments.end());
+                convertisseur->parent->Environnement.FusionCarte(segments);
             }
             //std::cout << "Fin de la generation du mesh..." << std::endl;
         }
@@ -361,7 +359,8 @@ void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
 
             std::vector<segment> segments = CoupeSegment(seg, ClustersList[i], points, distMinPourCassure, nbPointParVertice);
             LisserSegment(segments, distMaxPourFusion);
-            Environnement.GetSegments().insert(Environnement.GetSegments().end(), segments.begin(), segments.end());
+            Environnement.FusionCarte(segments);
+            //Environnement.GetSegments().insert(Environnement.GetSegments().end(), segments.begin(), segments.end());
         }
         //std::cout << "Fin de la generation du mesh..." << std::endl;
     }

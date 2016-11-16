@@ -94,7 +94,7 @@ void Decodeur::UpdateCloudOfPoint()
         clock_t now = std::clock();
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
-            //updateCloud = true;
+            updateCloud = true;
             nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile d'être en dessous de 30 image seconde
         }
     }
