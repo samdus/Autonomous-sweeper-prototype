@@ -35,7 +35,7 @@ int CloudPointContainer::IndexPrecedent(int index)
 
 bool CloudPointContainer::Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer)
 {
-    //Mutex::ScopedLock lock(Array_mutex[indexInsertion]);
+    Mutex::ScopedLock lock(Array_mutex[indexInsertion]);
     //PrintDebugInfo();
     if(InsertDepth(depthBuffer))
     {
@@ -50,8 +50,6 @@ bool CloudPointContainer::InsertDepth(std::vector<Vector3>& depthBuffer)
 {
     if(Converted[indexInsertion] == false)
     {
-        //calibrate sampling
-        std::cout << "On doit calibrer le sampling" << std::endl;
         return false;
     }
     depth[indexInsertion].swap(depthBuffer);
@@ -90,6 +88,7 @@ const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth(int idx)cons
 
 int CloudPointContainer::GetCopyCloudPointToConvert(std::vector<Vector3>& outPoints)
 {
+    Mutex::ScopedLock lock(Array_mutex[indexSuppression]);
     if(Converted[indexSuppression] == false)
     {
         outPoints = depth[indexSuppression];
@@ -104,8 +103,9 @@ void CloudPointContainer::EcrirePoint()
 {
     std::fstream Fichier;
     std::string line;
-    Fichier.open(Config::Instance().GetString("FICHIER_DE_POINT"));
-    std::cout << "Ecriture dans le fichier " << Config::Instance().GetString("FICHIER_DE_POINT") << std::endl;
+    std::string nomFichier = Config::Instance().GetString("FICHIER_DE_POINT");
+    Fichier.open(nomFichier);
+    std::cout << "Ecriture dans le fichier " << nomFichier << std::endl;
     if(Fichier.is_open())
     {
         for(int i = 0; i < depth[0].size(); ++i)
@@ -113,11 +113,11 @@ void CloudPointContainer::EcrirePoint()
             Fichier << depth[0][i].x << " " << depth[0][i].y << " " << depth[0][i].z << std::endl;
         }
         Fichier.close();
-        std::cout << "Fin de l'ecriture dans le fichier " << Config::Instance().GetString("FICHIER_DE_POINT") << std::endl;
+        std::cout << "Fin de l'ecriture dans le fichier " << nomFichier << std::endl;
     }
     else
     {
-        std::cout << "Error de l'ecriture dans le fichier " << Config::Instance().GetString("FICHIER_DE_POINT") << std::endl;
+        std::cout << "Error de l'ecriture dans le fichier " << nomFichier << std::endl;
     }
 }
 

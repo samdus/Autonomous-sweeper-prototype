@@ -14,7 +14,17 @@ void Decodeur::Init(MyFreenectDevice& freenectSingleton)
     device = &freenectSingleton;
     device->startVideo();
     device->startDepth();
-    convertisseur.DemarreThread(&cloudBuffer);
+    HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
+    HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
+    HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
+    OffsetKin = std::stof(Config::Instance().GetString("OFFSET_KINECT"));
+    DistanceMax = std::stof(Config::Instance().GetString("FAR_CLIPPING")) + OffsetKin;
+    DistanceMin = std::stof(Config::Instance().GetString("NEAR_CLIPPING")) + OffsetKin;
+    MultithreadActiver = std::stoi(Config::Instance().GetString("MULTITHREAD")) == 1;
+    if(MultithreadActiver)
+    {
+        convertisseur.DemarreThread(&cloudBuffer);
+    }
 }
 
 void Decodeur::UpdateFPS(bool showFpsConsole)
@@ -36,7 +46,7 @@ void Decodeur::UpdateFPS(bool showFpsConsole)
 
             if(showFpsConsole)
             {
-                std::cout << "fps: " << frame << " nombre d'echantillons par seconde : " << nbEchantillonsParSecond << std::endl;
+                std::cout << "fps: " << frame << " nombre d'echantillons par seconde : " << nbEchantillonsParSecond << " next sampling " << nextSampling << std::endl;
             }
         }
     }
@@ -45,20 +55,12 @@ void Decodeur::UpdateFPS(bool showFpsConsole)
 void Decodeur::UpdateCloudOfPoint()
 {
     device->getRGB(rgb);
-    if(device->getDepth(depth))
-    {
-        ++nbEchantillonsParSecond;
-    }
+    device->getDepth(depth);
     if(updateCloud)
     {
-        std::cout << "Echantillonnage!!!!" << std::endl;
+        ++nbEchantillonsParSecond;
+        //std::cout << "Echantillonnage!!!!" << std::endl;
         std::vector<Vector3> snapshot = std::vector<Vector3>();
-        float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
-        float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
-        float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
-        float OffsetKin = std::stof(Config::Instance().GetString("OFFSET_KINECT"));
-        float DistanceMax = std::stof(Config::Instance().GetString("FAR_CLIPPING")) + OffsetKin;
-        float DistanceMin = std::stof(Config::Instance().GetString("NEAR_CLIPPING")) + OffsetKin;
         //transforme les donnees du buffer en coordonne monde
 
 
@@ -82,7 +84,10 @@ void Decodeur::UpdateCloudOfPoint()
         CloudSamplingTime = std::clock();
         updateCloud = false;
 
-        cloudBuffer.Insert(rgb, snapshot);
+        if(!cloudBuffer.Insert(rgb, snapshot))
+        {
+            nextSampling += nextSampling / 2;//slow down the sampling
+        }
     }
     else
     {
@@ -90,6 +95,7 @@ void Decodeur::UpdateCloudOfPoint()
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
             //updateCloud = true;
+            nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile d'être en dessous de 30 image seconde
         }
     }
 }
@@ -99,4 +105,8 @@ void Decodeur::RunLoop()
     device->setTiltDegrees(0.0);
     UpdateFPS(false);
     UpdateCloudOfPoint();
+    if(!MultithreadActiver)
+    {
+        convertisseur.Convertir(cloudBuffer);
+    }
 }

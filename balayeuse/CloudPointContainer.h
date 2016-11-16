@@ -5,21 +5,23 @@
 #include <iostream>
 #include <fstream>
 #include "Config.h"
+#include "Mutex.h"
 
 #define IR_CAMERA_RESOLUTION_X 640
 #define IR_CAMERA_RESOLUTION_Y 480
-#define CLOUD_POINT_CIRCULAR_BUFFER 3
+#define CLOUD_POINT_CIRCULAR_BUFFER 5
 
 class CloudPointContainer
 {
     private:
     int indexInsertion = 0;
     int indexSuppression = 0;
-    //Mutex Array_mutex[CLOUD_POINT_CIRCULAR_BUFFER];
+
     std::vector<uint8_t> rgb[CLOUD_POINT_CIRCULAR_BUFFER];
     std::vector<Vector3> depth[CLOUD_POINT_CIRCULAR_BUFFER];
     int ProchainIndex(int index);
     int IndexPrecedent(int index);
+    Mutex Array_mutex[CLOUD_POINT_CIRCULAR_BUFFER];
 
     public:
     bool Converted[CLOUD_POINT_CIRCULAR_BUFFER];

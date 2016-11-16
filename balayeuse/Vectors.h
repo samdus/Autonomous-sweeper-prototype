@@ -33,6 +33,7 @@ struct Vector2
     void        set(float x, float y);
     float       length() const;                         //
     float       distance(const Vector2& vec) const;     // distance between two vectors
+    float       distanceFast(const Vector2& vec) const;   // distance between two vectors
     Vector2&    normalize();                            //
     float       dot(const Vector2& vec) const;          // dot product
     bool        equal(const Vector2& vec, float e) const; // compare with epsilon
@@ -80,6 +81,7 @@ struct Vector3
     float       distance(const Vector3& vec) const;     // distance between two vectors
     float       distanceXZ(const Vector3& vec) const;   // distance between two vectors
     float       distanceXZfast(const Vector3& vec) const;   // distance between two vectors
+    Vector2     vectorXZ();
     float       angle(const Vector3& vec) const;        // angle between two vectors
     Vector3&    normalize();                            //
     float       dot(const Vector3& vec) const;          // dot product
@@ -252,6 +254,10 @@ inline float Vector2::distance(const Vector2& vec) const {
     return sqrtf((vec.x-x)*(vec.x-x) + (vec.y-y)*(vec.y-y));
 }
 
+inline float Vector2::distanceFast(const Vector2& vec) const{
+    return (vec.x-x)*(vec.x-x) + (vec.y-y)*(vec.y-y);
+}
+
 inline Vector2& Vector2::normalize() {
     //@@const float EPSILON = 0.000001f;
     float xxyy = x*x + y*y;
@@ -377,6 +383,9 @@ inline float Vector3::distanceXZ(const Vector3& vec) const {
 
 inline float Vector3::distanceXZfast(const Vector3& vec) const {
     return (vec.x-x)*(vec.x-x) + (vec.z-z)*(vec.z-z);
+}
+inline Vector2 Vector3::vectorXZ(){
+    return Vector2(x,z);
 }
 
 inline float Vector3::angle(const Vector3& vec) const {
