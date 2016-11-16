@@ -13,11 +13,17 @@ int main(int argc, char** argv)
     mongoWrapper.addUpdate("leftWheel",  test);
     mongoWrapper.addUpdate("rightWheel",  test);
     mongoWrapper.addUpdate("kinectPolling",  test);*/
-    map.push_back(segment(Vector2(150,100), Vector2(200,25), 0));
-    map.push_back(segment(Vector2(200,25), Vector2(200,150), 0));
-    map.push_back(segment(Vector2(200,150), Vector2(150,100), 0));
-    map.push_back(segment(Vector2(50,75), Vector2(150,175), 0));
-    map.push_back(segment(Vector2(0,0), Vector2(150,150), 0));
+    segment seg;
+    seg.fromString("150 100 200 25 0");
+    map.push_back(seg);
+    seg.fromString("200 25 200 150 0");
+    map.push_back(seg);
+    seg.fromString("200 250 150 100 0");
+    map.push_back(seg);
+    seg.fromString("50 75 150 150 175");
+    map.push_back(seg);
+    seg.fromString("0 0 150 150 0");
+    map.push_back(seg);
     mongoWrapper.addUpdate("currentlyIn",  "raspberry8");
     mongoWrapper.writeMap(map);
 
