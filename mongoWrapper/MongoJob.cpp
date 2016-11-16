@@ -20,8 +20,8 @@ typedef struct _jobinfo
     string identifier;
     
     std::vector<segment> themap;
-    int roboty
-    int robotx
+    int roboty;
+    int robotx;
 } JobInfo;
 
 class MongoJob
