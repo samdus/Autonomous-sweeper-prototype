@@ -102,7 +102,7 @@ class MongoWorker : public Thread
                 this->writeConsole(job->m_jobinfo.stringvalue, job->m_jobinfo.level);
             //map world
             }else if(job->m_jobinfo.jobtype == 4){
-                this->mapInsert(job->m_jobinfo.map);
+                this->mapInsert(job->m_jobinfo.themap);
             }
             
         }
@@ -187,22 +187,24 @@ class MongoWorker : public Thread
         }
         void mapInsert(std::vector<segment> map){
             mongocxx::collection coll = db["mapContainer"];
-            auto builder = bsoncxx::builder::stream::document{};
-            auto i;
-            bsoncxx::document::value mapInsert = builder
+            /*auto builder = bsoncxx::builder::stream::document{};
+            auto i;*/
+            bsoncxx::builder::stream::document doc{};
+            
+            auto builder = doc
             << "createdAt" << utilities::DateTime::millisSinceEpoch()
             << "lines" << bsoncxx::builder::stream::open_array;
             
-            for(i=map.begin(); i!=map.end(); ++i){
+            for(auto i=map.begin(); i!=map.end(); ++i){
                 builder << bsoncxx::builder::stream::open_document
                     << "x1" << i->debut.x
                     << "y1" << i->debut.y
                     << "x2" << i->fin.x
                     << "y2" << i->fin.y
-                    << "nbpts" << ->nbPoint
+                    << "nbpts" << i->nbPoint
                 << bsoncxx::builder::stream::close_document;
             }
-            builder << close_array
+            auto mapInsert = builder << close_array
             << bsoncxx::builder::stream::finalize;
             coll.insert_one(mapInsert.view());
         }

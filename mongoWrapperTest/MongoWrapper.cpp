@@ -106,7 +106,7 @@ class MongoWrapper
     void writeMap(std::vector<segment> map){
         JobInfo thejob;
         thejob.jobtype = 4;
-        thejob.map = map;
+        thejob.themap = map;
         queue.add(new MongoJob(thejob));
     }
     ~MongoWrapper() {

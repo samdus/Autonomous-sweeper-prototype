@@ -1,8 +1,8 @@
 var mongojs = require('mongojs')
 //For prod
-//var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
+var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
 //For dev
-var db = mongojs("mongodb://127.0.0.1:3001/meteor");
+//var db = mongojs("mongodb://127.0.0.1:3001/meteor");
 
 
 function getInitialNumberData(){
@@ -68,19 +68,19 @@ function getInitialBoolData(){
 
 /********** STRING STATISTICS ***************/
 db.createCollection("consoleContainer", {}, function(error, value){
-   // db.collection('consoleContainer').remove({}, function(e, doc){
-        db.collection('consoleContainer').insert(getInitialConsoleData(), function(error, value){
+    db.collection('consoleContainer').remove({}, function(e, doc){
+        /*db.collection('consoleContainer').insert(getInitialConsoleData(), function(error, value){
             setInterval(simulateConsole, 6*1000);
-        })
-      //});
+        })*/
+      });
 });
 
 /********** MAPDATA ***************/
 db.createCollection("mapContainer", {}, function(error, value){
     db.collection('mapContainer').remove({}, function(e, doc){
-        db.collection('mapContainer').insert(getInitialMapData(), function(error, value){
+        /*db.collection('mapContainer').insert(getInitialMapData(), function(error, value){
       
-        })
+        })*/
       });
 });
 
