@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     seg.fromString("0 0 150 150 0");
     map.push_back(seg);
     mongoWrapper.addUpdate("currentlyIn",  "raspberry8");
-    mongoWrapper.writeMap(map);
+    mongoWrapper.writeMap(map, 20 , 20);
 
 
     // Ctrl-C to end program

@@ -102,7 +102,7 @@ class MongoWorker : public Thread
                 this->writeConsole(job->m_jobinfo.stringvalue, job->m_jobinfo.level);
             //map world
             }else if(job->m_jobinfo.jobtype == 4){
-                this->mapInsert(job->m_jobinfo.themap);
+                this->mapInsert(job->m_jobinfo.themap, job->m_jobinfo.robotx, job->m_jobinfo.roboty);
             }
             
         }
@@ -185,14 +185,14 @@ class MongoWorker : public Thread
 
             coll.insert_one(consoleMessageDB.view());
         }
-        void mapInsert(std::vector<segment> map){
+        void mapInsert(std::vector<segment> map, int robotx=0, int roboty=0){
             mongocxx::collection coll = db["mapContainer"];
-            /*auto builder = bsoncxx::builder::stream::document{};
-            auto i;*/
             bsoncxx::builder::stream::document doc{};
             
             auto builder = doc
             << "createdAt" << utilities::DateTime::millisSinceEpoch()
+            << "robotX" << robotx
+            << "robotY" << roboty
             << "lines" << bsoncxx::builder::stream::open_array;
             
             for(auto i=map.begin(); i!=map.end(); ++i){
