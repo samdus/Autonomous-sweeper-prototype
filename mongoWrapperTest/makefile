@@ -29,8 +29,8 @@ TARGET = testmongo
 # MRPT libraries needed by our program (see available libs
 # with "pkg-config --list-all | grep mrpt").
 #
-CFLAGS += `pkg-config --cflags libmongocxx`
-LDFLAGS += `pkg-config --libs libmongocxx`
+CFLAGS += `pkg-config --cflags libmongocxx` -Wl,-rpath /usr/local/lib
+LDFLAGS += `pkg-config --libs libmongocxx` -Wl,-rpath /usr/local/lib
  
 all: $(SOURCES) $(TARGET)
  
