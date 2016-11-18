@@ -131,7 +131,7 @@ class MongoWrapper
     MongoCommand* getBlockingCommand(){
          printf("waiting for command \n");
          MongoCommand* item = (MongoCommand*)commandqueu.remove();
-         printf("%s \n", item->m_commandInfo.command);
+         printf("%s \n", item->m_commandInfo.command.c_str());
          return item;
     }
     ~MongoWrapper() {

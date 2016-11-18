@@ -4,8 +4,8 @@ int main(int argc, char** argv)
 {
     MongoWrapper mongoWrapper;
     std::vector<segment> map;
-	int test = 1;
-    /*mongoWrapper.writeConsole("Test from raspberry", "warning");
+	/*int test = 1;
+    mongoWrapper.writeConsole("Test from raspberry", "warning");
     mongoWrapper.writeConsole("Test from raspberry2", "sucesss");
     mongoWrapper.writeConsole("Test from raspberry3", "info");
     mongoWrapper.writeConsole("Test from raspberry4", "error");

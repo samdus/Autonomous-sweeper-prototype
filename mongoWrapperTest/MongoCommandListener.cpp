@@ -47,13 +47,13 @@ class MongoCommandListener : public Thread
            printf("Polling for a command \n");
            mongocxx::cursor cursor = coll.find((
             document{} << "createdAt" << bsoncxx::builder::stream::open_document <<
-                "$gt" << this->fromTime <<
+                "$gt" << this->fromTime
             << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize);
             for(auto doc : cursor) {
                 std::cout << bsoncxx::to_json(doc) << "\n";
                 MongoCommand thecommand;
                 thecommand.command = "stop";
-                queue.add(new MongoCommand(thecommand));
+                m_queue.add(new MongoCommand(thecommand));
             }
             
         }
@@ -63,7 +63,7 @@ class MongoCommandListener : public Thread
             this->uri = mongocxx::uri("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
             this->client = mongocxx::client(this->uri);
             this->db = this->client["domotique_manager"];
-            this->fromTime = utilities::DateTime::millisSinceEpoch()
+            this->fromTime = utilities::DateTime::millisSinceEpoch();
         }
         void* run() {
             // Remove 1 item at a time and process it. Blocks if no items are 
