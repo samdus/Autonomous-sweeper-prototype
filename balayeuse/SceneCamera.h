@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "Vectors.h"
+#include "../lib/Vectors.h"
 #include "Matrices.h"
 
 class SceneCamera

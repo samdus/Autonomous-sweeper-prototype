@@ -23,7 +23,7 @@ Carte::Carte()
 
 Carte::~Carte()
 {
-
+    //SaveCarte();
 }
 
 void Carte::FusionCarte(std::vector<segment>& nouveauSegments)

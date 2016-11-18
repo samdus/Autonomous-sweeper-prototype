@@ -4,7 +4,6 @@
 #include <vector>
 #include "Decodeur.h"
 
-Freenect::Freenect freenect;
 Decodeur DecodeurScene = Decodeur();
 
 void printInfo()
@@ -16,7 +15,7 @@ void printInfo()
 
 int main(int argc, char **argv)
 {
-    DecodeurScene.Init(freenect.createDevice<MyFreenectDevice>(0));
+    DecodeurScene.Init();
     printInfo();
 
     while(1)

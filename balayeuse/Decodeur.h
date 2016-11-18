@@ -8,6 +8,8 @@
 #include "Matrices.h"
 #include "Config.h"
 #include "Convertisseur.h"
+#include "../Robot/CommunicatorArduino/ArduinoCommunicator.h"
+#include <stdexcept>
 
 class Decodeur
 {
@@ -19,6 +21,7 @@ class Decodeur
     bool updateFPS = true;
     float fps = 0.0;
     clock_t CloudSamplingTime = 0;
+    clock_t KinectInitTime = 0;
     MyFreenectDevice* device;
     float HauteurMax = 0.0;
     float HauteurMin = 0.0;
@@ -26,9 +29,15 @@ class Decodeur
     float OffsetKin = 0.0;
     float DistanceMax = 0.0;
     float DistanceMin = 0.0;
-    bool MultithreadActiver;
+    bool MultithreadActiver = false; //utiliser en debug probablement pas necessaire
+    bool KinectAccessible = false;
+    bool ArduinoAccessible = false;
+    bool ModeAutomatique = true;
 
-
+    void InitKinect();
+    void InitCommunicationArduino();
+    void InitCommunicationServeur();
+    void InitConfiguration();
 
     public:
     Convertisseur convertisseur;
@@ -41,7 +50,7 @@ class Decodeur
     Decodeur();
     ~Decodeur();
 
-    void Init(MyFreenectDevice& freenectSingleton);
+    void Init();
     void UpdateFPS(bool showFpsConsole);
 
     void UpdateCloudOfPoint();
