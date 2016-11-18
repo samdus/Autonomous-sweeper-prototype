@@ -116,7 +116,7 @@ db.createCollection("mapContainer", {}, function(error, value){
 db.createCollection("commandContainer", {}, function(error, value){
     db.collection('commandContainer').remove({}, function(e, doc){
         db.collection('commandContainer').insert(getInitialCommand(), function(error, value){
-      
+            setInterval(simulateCommand, 6*1000);
         });
       });
 });
@@ -213,4 +213,12 @@ function simulateConsole(){
     db.collection('consoleContainer').insert(  {messageValue:currentMessage[0], messageLevel:currentMessage[1], createdAt:now}, function(error, value){
         console.log(error || value)
     })
+}
+
+function simulateCommand(){
+   var now = Date.now();
+    db.collection('commandContainer').insert({command:"top",createdAt:now}, function(error, value){
+        console.log(error || value)
+    });
+
 }

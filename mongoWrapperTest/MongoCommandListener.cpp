@@ -7,7 +7,6 @@
 #include "MongoCommand.cpp"
 #include "wqueue.cpp"
 #include <chrono>
-class Thread;
 
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
@@ -50,10 +49,14 @@ class MongoCommandListener : public Thread
                 "$gt" << this->fromTime
             << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize);
             for(auto doc : cursor) {
+            	std::cout << this->fromTime;
+            	//auto commandValue  = doc["command"];
+            	//auto newFromTime  = doc["createdAt"];
                 std::cout << bsoncxx::to_json(doc) << "\n";
                 CommandInfo thecommand;
                 thecommand.command = "stop";
                 m_queue.add(new MongoCommand(thecommand));
+                //this->fromTime = newFromTime.get_value();
             }
             
         }
