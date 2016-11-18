@@ -1,5 +1,9 @@
 #include <iostream>
 #include <string>
+#include <thread>
+#include "thread.h"
+#include "MongoCommand.cpp"
+#include "MongoCommandListener.cpp"
 #include "MongoJob.cpp"
 #include "MongoWorker.cpp"
 #include "wqueue.cpp"
@@ -9,7 +13,9 @@
 class MongoWrapper
 {
     MongoWorker *mongoWorker[2];
+    MongoCommandListener* commandListener;
     workqueu<MongoJob*>  queue;
+    workqueu<MongoCommand*>  commandqueu;
  
   public:
     MongoWrapper(){
@@ -21,6 +27,10 @@ class MongoWrapper
         
         mongoWorker[0]->start();
         mongoWorker[1]->start(); 
+
+        commandListener = new MongoCommandListener(commandqueu);
+        commandListener->init();
+        commandListener->start();
     }
     void addUpdate(string identifier, const char* value){
         JobInfo thejob;
@@ -110,6 +120,18 @@ class MongoWrapper
         thejob.roboty = roboty;
         thejob.themap = map;
         queue.add(new MongoJob(thejob));
+    }
+    
+    MongoCommand* getCommand(){
+        if(commandqueu.size() >0){
+            MongoCommand* item = (MongoCommand*)commandqueu.remove();
+            return item; 
+        }
+        return NULL;
+    }
+    MongoCommand* getBlockingCommand(){
+         MongoCommand* item = (MongoCommand*)commandqueu.remove();
+    	 return item;
     }
     ~MongoWrapper() {
  

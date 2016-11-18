@@ -10,6 +10,7 @@
 #include <sstream>
 #include <vector>
 
+
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
 using bsoncxx::builder::stream::document;
@@ -17,20 +18,6 @@ using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
 
-namespace utilities {
-
-  struct DateTime {
-
-    static int64_t millisSinceEpoch()
-    {
-      std::chrono::system_clock::duration duration{
-        std::chrono::system_clock::now().time_since_epoch()
-      };
-      return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    }
-
-  };
-};
 
 
 class MongoWorker : public Thread

@@ -123,7 +123,6 @@ class MongoWrapper
     }
     
     MongoCommand* getCommand(){
-        printf("Get Non blocking command \n");
         if(commandqueu.size() >0){
             MongoCommand* item = (MongoCommand*)commandqueu.remove();
             return item; 
@@ -131,10 +130,8 @@ class MongoWrapper
         return NULL;
     }
     MongoCommand* getBlockingCommand(){
-         printf("waiting for command \n");
          MongoCommand* item = (MongoCommand*)commandqueu.remove();
-         printf("%s \n", item->m_commandInfo.command.c_str());
-         return item;
+    	 return item;
     }
     ~MongoWrapper() {
  
