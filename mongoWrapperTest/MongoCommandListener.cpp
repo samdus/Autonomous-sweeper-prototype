@@ -45,13 +45,13 @@ class MongoCommandListener : public Thread
         void pollCommand(){
            mongocxx::collection coll = db["commandContainer"]; 
            printf("Polling for a command \n");
-           mongocxx::cursor cursor = coll.find((
+           mongocxx::cursor cursor = coll.find(
             document{} << "createdAt" << bsoncxx::builder::stream::open_document <<
                 "$gt" << this->fromTime
             << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize);
             for(auto doc : cursor) {
                 std::cout << bsoncxx::to_json(doc) << "\n";
-                MongoCommand thecommand;
+                CommandInfo thecommand;
                 thecommand.command = "stop";
                 m_queue.add(new MongoCommand(thecommand));
             }

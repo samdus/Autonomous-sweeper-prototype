@@ -123,7 +123,7 @@ class MongoWrapper
     MongoCommand* getCommand(){
         printf("Get Non blocking command \n");
         if(commandqueu.size() >0){
-            MongoCommand* item = (MongoCommand*)m_queue.remove();
+            MongoCommand* item = (MongoCommand*)commandqueu.remove();
             return item; 
         }
         return NULL;
