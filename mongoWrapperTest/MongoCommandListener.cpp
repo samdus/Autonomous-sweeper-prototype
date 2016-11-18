@@ -7,7 +7,7 @@
 #include "MongoCommand.cpp"
 #include "wqueue.cpp"
 #include <chrono>
-#include <thread>
+class thread;
 
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
