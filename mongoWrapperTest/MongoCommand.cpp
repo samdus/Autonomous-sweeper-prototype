@@ -14,6 +14,9 @@ class MongoCommand
 {
   public:
     CommandInfo m_commandInfo;
+    MongoCommand(){
+
+    }
     MongoCommand(CommandInfo thecommandInfo) 
           :  m_commandInfo(thecommandInfo) {}
     ~MongoCommand() {}

@@ -26,7 +26,7 @@ class MongoWrapper
         mongoWorker[0]->start();
         mongoWorker[1]->start(); 
 
-        commandListener = new MongoCommandListener(commandqueu)
+        commandListener = new MongoCommandListener(commandqueu);
         commandListener->init();
         commandListener->start();
     }
@@ -120,17 +120,18 @@ class MongoWrapper
         queue.add(new MongoJob(thejob));
     }
     
-    void getCommand(){
+    MongoCommand* getCommand(){
         printf("Get Non blocking command \n");
         if(commandqueu.size() >0){
             MongoCommand* item = (MongoCommand*)m_queue.remove();
             return item; 
         }
+        return NULL;
     }
-    void getBlockingCommand(){
+    MongoCommand* getBlockingCommand(){
          printf("waiting for command \n");
-         MongoCommand* item = (MongoCommand*)m_queue.remove();
-         printf("%s \n", item->command);
+         MongoCommand* item = (MongoCommand*)commandqueu.remove();
+         printf("%s \n", item->m_commandInfo.command);
          return item;
     }
     ~MongoWrapper() {

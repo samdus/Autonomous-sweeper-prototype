@@ -17,6 +17,21 @@ using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
 
 
+namespace utilities {
+
+  struct DateTime {
+
+    static int64_t millisSinceEpoch()
+    {
+      std::chrono::system_clock::duration duration{
+        std::chrono::system_clock::now().time_since_epoch()
+      };
+      return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    }
+
+  };
+};
+
 
 class MongoCommandListener : public Thread
 {
@@ -28,12 +43,12 @@ class MongoCommandListener : public Thread
 
     private:
         void pollCommand(){
-           mongocxx::collection coll = db['commandContainer']; 
+           mongocxx::collection coll = db["commandContainer"]; 
            printf("Polling for a command \n");
            mongocxx::cursor cursor = coll.find((
-            document{} << "createdAt" << open_document <<
+            document{} << "createdAt" << bsoncxx::builder::stream::open_document <<
                 "$gt" << this->fromTime <<
-            << close_document << finalize);
+            << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize);
             for(auto doc : cursor) {
                 std::cout << bsoncxx::to_json(doc) << "\n";
                 MongoCommand thecommand;
