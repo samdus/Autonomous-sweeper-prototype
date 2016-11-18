@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "wqueue.cpp"
-#include "thread.h"
 #include "segment.cpp"
 #include <vector>
 typedef struct _jobinfo

@@ -139,7 +139,7 @@ class Map extends Component {
     ctx.fillStyle="#FFFFFF";
 
     //position robot?
-    //ctx.fillRect(cadrantFixX,cadrantFixY,15,15);
+    ctx.fillRect((this.props.mapContainer.robotX+cadrantFixX)*scaleX, (this.props.mapContainer.robotY+cadrantFixY)*scaleY,15,15);
 
     //Position last click
     if(robotClickX != -1){
@@ -190,6 +190,6 @@ export default createContainer(() => {
   var handleSub=Meteor.subscribe('mapContainer');
   return {
     dataReady:handleSub.ready(),
-    mapContainer:MapContainer.findOne({}, {sort: {createdAt: 1}, limit:2 })
+    mapContainer:MapContainer.findOne({}, {sort: {createdAt: -1}, limit:1 })
   };
 }, Map);

@@ -78,14 +78,29 @@ function getInitialBoolData(){
         {statIdentifier:"working", statNiceName:"Working", statValue:true, history:[{value:true, createdAt:now}]}
     ]
 }
-
-
+function getInitialConsoleData(){
+    var now = Date.now();
+    return [
+        //Levels : warning, sucess, error, ''
+        {messageValue:"This is the first message of the simulation", messageLevel:"", createdAt:now},
+    ]
+}
+function getInitialCommand(){
+    var now = Date.now();
+    return [
+        //Levels : warning, sucess, error, ''
+        {command:"goTo",  // Manuel (stopacction goto close startdebug stopdebug scan turn x) Automatique (resume)
+        goToX:"25", 
+        goToY:"25", 
+        createdAt:now},
+    ]
+}
 /********** STRING STATISTICS ***************/
 db.createCollection("consoleContainer", {}, function(error, value){
     db.collection('consoleContainer').remove({}, function(e, doc){
-        /*db.collection('consoleContainer').insert(getInitialConsoleData(), function(error, value){
+        db.collection('consoleContainer').insert(getInitialConsoleData(), function(error, value){
             setInterval(simulateConsole, 6*1000);
-        })*/
+        });
       });
 });
 
@@ -97,7 +112,14 @@ db.createCollection("mapContainer", {}, function(error, value){
         })*/
       });
 });
-
+/********** MAPDATA ***************/
+db.createCollection("commandContainer", {}, function(error, value){
+    db.collection('commandContainer').remove({}, function(e, doc){
+        db.collection('commandContainer').insert(getInitialCommand(), function(error, value){
+      
+        });
+      });
+});
 /********** STRING STATISTICS ***************
 db.createCollection("statStringContainer", {}, function(error, value){
     console.log(error)

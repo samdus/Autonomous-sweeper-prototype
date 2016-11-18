@@ -29,6 +29,8 @@ int main(int argc, char** argv)
 
 
     // Ctrl-C to end program
+    mongoWrapper.getCommand();
+    mongoWrapper.getBlockingCommand()
 	
     printf("Enter Ctrl-C to end the program...\n");
     while (1);

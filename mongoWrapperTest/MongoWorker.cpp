@@ -17,6 +17,7 @@ using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
 
+
 namespace utilities {
 
   struct DateTime {

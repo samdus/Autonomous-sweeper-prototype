@@ -9,7 +9,9 @@
 class MongoWrapper
 {
     MongoWorker *mongoWorker[2];
+    MongoCommandListener* commandListener;
     workqueu<MongoJob*>  queue;
+    workqueu<MongoCommand*>  commandqueu;
  
   public:
     MongoWrapper(){
@@ -21,6 +23,10 @@ class MongoWrapper
         
         mongoWorker[0]->start();
         mongoWorker[1]->start(); 
+
+        commandListener = new MongoCommandListener(commandqueu)
+        commandListener->init();
+        commandListener->start();
     }
     void addUpdate(string identifier, const char* value){
         JobInfo thejob;
@@ -110,6 +116,20 @@ class MongoWrapper
         thejob.roboty = roboty;
         thejob.themap = map;
         queue.add(new MongoJob(thejob));
+    }
+    
+    void getCommand(){
+        printf("Get Non blocking command \n");
+        if(commandqueu.size() >0){
+            MongoCommand* item = (MongoCommand*)m_queue.remove();
+            return item; 
+        }
+    }
+    void getBlockingCommand(){
+         printf("waiting for command \n");
+         MongoCommand* item = (MongoCommand*)m_queue.remove();
+         printf("%s \n", item->command);
+         return item;
     }
     ~MongoWrapper() {
  
