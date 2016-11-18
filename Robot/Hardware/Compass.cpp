@@ -2,9 +2,11 @@
 
 Compass::Compass()
 {
+	_gyro = new Adafruit_L3GD20_Unified(20);
 	_mag = new Adafruit_LSM303_Mag_Unified(30302);
 	_accel = new Adafruit_LSM303_Accel_Unified(30301);
-	_dof = new Adafruit_9DOF();
+
+	_filter = new Mahony();
 }
 
 Compass::~Compass()
@@ -14,20 +16,42 @@ Compass::~Compass()
 
 bool Compass::init()
 {
-	return _accel->begin() && _mag->begin();
+	_filter->begin(50);
+	return _gyro->begin() && _accel->begin() && _mag->begin();
 }
 
 float Compass::read()
 {
+	return _filter->getYaw();
+}
+
+void Compass::update()
+{
+	sensors_event_t gyro_event;
 	sensors_event_t accel_event;
 	sensors_event_t mag_event;
-	sensors_vec_t   orientation;
 
+	_gyro->getEvent(&gyro_event);
 	_accel->getEvent(&accel_event);
 	_mag->getEvent(&mag_event);
 
-	_dof->accelGetOrientation(&accel_event, &orientation);
-	_dof->magGetOrientation(SENSOR_AXIS_Z, &mag_event, &orientation);
+	// Appliquer la compensation pour le magnetometre
+	float x = mag_event.magnetic.x - mag_offsets[0];
+	float y = mag_event.magnetic.y - mag_offsets[1];
+	float z = mag_event.magnetic.z - mag_offsets[2];
 
-	return orientation.heading;
+	// Appliquer la compensation pour l'erreur d'interferance (soft iron)
+	float mx = x * mag_softiron_matrix[0][0] + y * mag_softiron_matrix[0][1] + z * mag_softiron_matrix[0][2];
+	float my = x * mag_softiron_matrix[1][0] + y * mag_softiron_matrix[1][1] + z * mag_softiron_matrix[1][2];
+	float mz = x * mag_softiron_matrix[2][0] + y * mag_softiron_matrix[2][1] + z * mag_softiron_matrix[2][2];
+
+	// Transfert de radian vers degres
+	float gx = gyro_event.gyro.x * 57.2958F;
+	float gy = gyro_event.gyro.y * 57.2958F;
+	float gz = gyro_event.gyro.z * 57.2958F;
+	
+	// Update the filter
+	_filter->update(gx, gy, gz,
+					accel_event.acceleration.x, accel_event.acceleration.y, accel_event.acceleration.z,
+					mx, my, mz);
 }

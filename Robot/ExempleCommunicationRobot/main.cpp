@@ -3,7 +3,7 @@
 #include <random>
 #include <string>
 #include "../CommunicatorArduino/ArduinoCommunicator.h"
-#include "../../mongoWrapper/MongoWrapper.cpp"
+//#include "../../mongoWrapper/MongoWrapper.cpp"
 
 using namespace std;
 
@@ -72,12 +72,25 @@ int getSensSuppose(int depart, int arrive)
 	}
 }
 
+void test()
+{
+	ArduinoCommunicator communicator;
+	communicator.init(afficherDebug);
+
+	communicator.tourneAuDegresX(0);
+	for (int i = 0; i < 12; ++i)
+	{	
+		//Echantillions
+		communicator.tourneDroite(30);
+	}
+}
+
 int main(int argc, char **argv)
 {
 	const int NB_TEST = 1000000;
 
 	ArduinoCommunicator communicator;
-	MongoWrapper mongoWrapper;
+	//MongoWrapper mongoWrapper;
 
     if (!communicator.init(afficherDebug))
     {
@@ -86,7 +99,11 @@ int main(int argc, char **argv)
 
         return -1;
     }
-
+	for (int i = 0; i < NB_TEST; ++i)
+	{
+		cout << communicator.obtenirOrientation() << endl;
+	}
+/*
 	static std::random_device seeder;
 	static std::mt19937 rng(seeder());
 	static std::uniform_int_distribution<int> gen(0, 359);
@@ -117,7 +134,7 @@ int main(int argc, char **argv)
 		cout << " " << depart << " " << destination << endl;
 		EnvoiWeb += " " + std::to_string(depart) + " " + std::to_string(destination);
 
-		mongoWrapper.writeConsole("Test " + std::to_string(i) + ") " + EnvoiWeb, "info");
+		//mongoWrapper.writeConsole("Test " + std::to_string(i) + ") " + EnvoiWeb, "info");
 
 		depart = destination;
 	}
@@ -132,6 +149,7 @@ int main(int argc, char **argv)
 	Sleep(1000);
 #else
 	usleep(1000 * 1000); // takes microseconds
-#endif
+#endif*/
+
 	return 0;
 }

@@ -1,9 +1,9 @@
 #ifndef CONTROLLEUR_PRINCIPAL_H
 #define CONTROLLEUR_PRINCIPAL_H
 
-#include "IControlleurPrincipal.h"
-
 #include <math.h>
+
+#include "IControlleurPrincipal.h"
 #include "CompassDriver.h"
 #include "SonarDriver.h"
 #include "StepperDriver.h"
@@ -12,7 +12,7 @@
     #define NULL 0
 #endif
 
-class ControlleurPrincipal : public IControlleurPrincipal
+class ControlleurPrincipal
 {
 protected:
 	 StepperDriver *_moteurGauche,
@@ -20,26 +20,33 @@ protected:
 	 SonarDriver   *_sonarDriver;
 	 CompassDriver *_compassDriver;
 
+	 void(**_executionASync)(ControlleurPrincipal&);
+	 int **_retourDeFonction;
+
 	 bool _modeDebug;
 	 bool _erreur;
 	 bool _avance;
 	 bool _recule;
 	 float _derniereOrientation;
+	 float _destinationRotation;
+	 unsigned long _tempMouvementLineaire;
 
 	 int _itDebug;
 
     void(*_transmettreDonnee)(int, bool);
-    void(*_attendre)(unsigned long);
+
+	void(*_resetTemps)();
+	unsigned long(*_obtenirTemps)();
 
 	virtual float getAngleResultant(float depart, float angle, bool gauche);
-
-	virtual bool tourneADroiteVersXDegres(int16_t);
-	virtual bool tourneAGaucheVersXDegres(int16_t);
+	
+	static void verifierDestinationRotation(ControlleurPrincipal&);
+	static void verifierTempsMouvementLineaire(ControlleurPrincipal&);
 
 public:
-    ControlleurPrincipal(StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*);
-
-	 bool init(void(*)(int, bool), void(*)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
+	ControlleurPrincipal(StepperDriver*,  StepperDriver*,  SonarDriver*,  CompassDriver*, int**, void(**executionASync)(ControlleurPrincipal&));
+	
+	 bool init(void(*)(int, bool), void (*)(), unsigned long(*)(), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4]);
 
 	 void stepMoteur();
 	 void calibrerMoteur();
@@ -50,37 +57,16 @@ public:
 
 	 virtual bool stop();
 
-    /// \overload
-	 virtual bool avancePendantXDixiemeSec(int16_t dixiemeSec);
-
-    /// \overload
-	 virtual bool reculePendantXDixiemeSec(int16_t dixiemeSec);
-
-    /// \overload
-	 virtual bool tourneAuDegresX(int16_t degres);
-
-    /// \overload
-	 virtual bool tourneGauche(int16_t degres);
-
-    /// \overload
-	 virtual bool tourneDroite(int16_t degres);
-
-	 /// \overload
-	 virtual bool tourneGauchePendant(int16_t dixiemeSec);
-
-	 /// \overload
-	 virtual bool tourneDroitePendant(int16_t dixiemeSec);
-
-    /// \overload
-	 virtual int16_t obtenirOrientation();
-
-    /// \overload
+	 virtual void avancePendantXDixiemeSec(int16_t dixiemeSec);
+	 virtual void reculePendantXDixiemeSec(int16_t dixiemeSec);
+	 virtual void tourneAuDegresX(int16_t degres);
+	 virtual void tourneGauche(int16_t degres);
+	 virtual void tourneDroite(int16_t degres);
+	 virtual void tourneGauchePendant(int16_t dixiemeSec);
+	 virtual void tourneDroitePendant(int16_t dixiemeSec);
+	 virtual void obtenirOrientation();
 	 virtual void setDebug();
-
-    /// \overload
 	 virtual void stopDebug();
-
-    /// \overload
 	 virtual void resetErreur();
 };
 
