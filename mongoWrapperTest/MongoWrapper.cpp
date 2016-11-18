@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "MongoCommand.cpp"
+#include "MongoCommandListener.cpp"
 #include "MongoJob.cpp"
 #include "MongoWorker.cpp"
 #include "wqueue.cpp"
