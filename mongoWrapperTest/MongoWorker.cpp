@@ -9,7 +9,7 @@
 #include "wqueue.cpp"
 #include <sstream>
 #include <vector>
-class thread;
+class Thread;
 
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
