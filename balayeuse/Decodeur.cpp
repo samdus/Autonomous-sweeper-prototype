@@ -1,19 +1,46 @@
 #include "Decodeur.h"
 
+Freenect::Freenect freenect;
+
 Decodeur::Decodeur(){ }
 
 Decodeur::~Decodeur()
 {
-    device->stopDepth();
-    device->stopVideo();
+    if(KinectAccessible)
+    {
+        device->stopDepth();
+        device->stopVideo();
+    }
     convertisseur.ContinuerConvertion = false;
 }
 
-void Decodeur::Init(MyFreenectDevice& freenectSingleton)
+void Decodeur::InitKinect()
 {
-    device = &freenectSingleton;
-    device->startVideo();
-    device->startDepth();
+    KinectInitTime = std::clock();
+    try
+    {
+        device = &freenect.createDevice<MyFreenectDevice>(0);
+        KinectAccessible = true;
+        device->startVideo();
+        device->startDepth();
+        std::cout << "\nKinect demarree!" << std::endl;
+    }
+    catch(std::runtime_error e)
+    {
+        std::cout << "Impossible de demarrer la Kinect" << std::endl;
+    }
+}
+
+void Decodeur::InitCommunicationArduino()
+{
+}
+
+void Decodeur::InitCommunicationServeur()
+{
+}
+
+void Decodeur::InitConfiguration()
+{
     HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
     HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
     HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
@@ -21,6 +48,15 @@ void Decodeur::Init(MyFreenectDevice& freenectSingleton)
     DistanceMax = std::stof(Config::Instance().GetString("FAR_CLIPPING")) + OffsetKin;
     DistanceMin = std::stof(Config::Instance().GetString("NEAR_CLIPPING")) + OffsetKin;
     MultithreadActiver = std::stoi(Config::Instance().GetString("MULTITHREAD")) == 1;
+}
+
+void Decodeur::Init()
+{
+    InitKinect();
+    InitCommunicationArduino();
+    InitCommunicationServeur();
+    InitConfiguration();
+
     if(MultithreadActiver)
     {
         convertisseur.DemarreThread(&cloudBuffer);
@@ -94,7 +130,7 @@ void Decodeur::UpdateCloudOfPoint()
         clock_t now = std::clock();
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
-            updateCloud = true;
+            //updateCloud = true;
             nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile d'être en dessous de 30 image seconde
         }
     }
@@ -102,11 +138,40 @@ void Decodeur::UpdateCloudOfPoint()
 
 void Decodeur::RunLoop()
 {
-    device->setTiltDegrees(0.0);
-    UpdateFPS(false);
-    UpdateCloudOfPoint();
-    if(!MultithreadActiver)
+    if(!KinectAccessible)
     {
-        convertisseur.Convertir(cloudBuffer);
+        if(KinectInitTime < std::clock() - 5000000)
+        {
+            InitKinect();
+        }
+        return;
+    }
+    if(ArduinoAccessible && !ModeAutomatique)
+    {
+        //aller chercher les commandes et les executer
+    }
+
+    if(ArduinoAccessible && ModeAutomatique)
+    {
+        //deplacement autonome
+    }
+    else
+    {
+        try
+        {
+            device->setTiltDegrees(0.0);
+            UpdateFPS(false);
+            UpdateCloudOfPoint();
+            if(!MultithreadActiver)
+            {
+                convertisseur.Convertir(cloudBuffer);
+            }
+        }
+        catch(std::runtime_error e)
+        {
+            freenect.deleteDevice(0);
+            std::cout << "\nError: Kinect deconnectee !" << std::endl;
+            KinectAccessible = false;
+        }
     }
 }

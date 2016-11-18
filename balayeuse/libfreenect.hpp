@@ -232,7 +232,7 @@ namespace Freenect {
 					}
 					std::stringstream ss;
 					ss << "Cannot process freenect events (libusb error code: " << res << ")";
-					throw std::runtime_error(ss.str());
+					//throw std::runtime_error(ss.str());
 				}
 			}
 		}

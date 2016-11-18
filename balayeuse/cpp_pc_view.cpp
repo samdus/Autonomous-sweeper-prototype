@@ -29,7 +29,7 @@
 //#include <vector>
 //#include "SceneCamera.h"
 //#include "Decodeur.h"
-//#include "Vectors.h"
+//#include "../lib/Vectors.h"
 //#include "CloudPointContainer.h"
 //#include "Config.h"
 //
@@ -39,7 +39,6 @@
 //#include <GL/glut.h>
 //#endif
 //
-//Freenect::Freenect freenect;            // Freenect adapteur
 //int window(0);                          // Glut window identifier
 //int mx = -1, my = -1;                   // Previous mouse coordinates
 //bool color = true;                      // Flag to indicate to use of color in the cloud
@@ -531,7 +530,7 @@
 //
 //int main(int argc, char **argv)
 //{
-//    DecodeurScene.Init(freenect.createDevice<MyFreenectDevice>(0));
+//    DecodeurScene.Init();
 //    glutInit(&argc, argv);
 //    InitRobotMesh();
 //    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);

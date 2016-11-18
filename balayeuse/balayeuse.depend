@@ -1,7 +1,17 @@
 # depslib dependency file v1.0
-1479327212 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1479498385 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+	<cstdlib>
+	<iostream>
+	<vector>
+	"SceneCamera.h"
+	"Decodeur.h"
+	"../lib/Vectors.h"
+	"CloudPointContainer.h"
+	"Config.h"
+	<GLUT/glut.h>
+	<GL/glut.h>
 
-1477059958 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
+1479498319 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
 	<stdexcept>
 	<sstream>
@@ -32,9 +42,9 @@
 1478902999 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
 	"CloudPointContainer.h"
 
-1478899398 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+1479418318 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
 	<vector>
-	"Vectors.h"
+	"../lib/Vectors.h"
 	<iostream>
 	<fstream>
 	"Config.h"
@@ -43,9 +53,9 @@
 1477253798 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
 	"SceneCamera.h"
 
-1476837133 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
+1479417429 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
 	<iostream>
-	"Vectors.h"
+	"../lib/Vectors.h"
 	"Matrices.h"
 
 1477060751 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.h
@@ -62,31 +72,26 @@
 1477060752 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
 	"MyFreenectDevice.h"
 
-1479327211 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
-	<cstdlib>
-	<ctime>
-	<iostream>
-	<vector>
-	"Decodeur.h"
+1479498385 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
 
 1478720434 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
 	<iostream>
 
-1476837229 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Matrices.h
+1479417432 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Matrices.h
 	<iostream>
 	<iomanip>
-	"Vectors.h"
+	"../lib/Vectors.h"
 
 1476837229 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Matrices.cpp
 	<cmath>
 	<algorithm>
 	"Matrices.h"
 
-1479327224 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1479498273 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
-1478979706 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
+1479496806 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
 	<iostream>
 	<vector>
 	"MyFreenectDevice.h"
@@ -95,6 +100,8 @@
 	"Matrices.h"
 	"Config.h"
 	"Convertisseur.h"
+	"../Robot/CommunicatorArduino/ArduinoCommunicator.h"
+	<stdexcept>
 
 1479078610 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
 	"Config.h"
@@ -104,18 +111,18 @@
 	<fstream>
 	<string>
 
-1479326132 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
+1479414432 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
 	"Carte.h"
 
-1479321755 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
+1479419307 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
 	<iostream>
 	<fstream>
-	"Vectors.h"
+	"../lib/Segment.h"
 	<string>
 	<vector>
 	"Config.h"
 
-1479324461 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
+1479327283 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
 	"Convertisseur.h"
 
 1479072386 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
@@ -134,4 +141,49 @@
 
 1477862428 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/linreg.h
 	"Vectors.h"
+
+1479416757 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Segment.h
+	"Vectors.h"
+
+1479417986 /home/local/USHERBROOKE/grod2404/gsd/lib/Segment.h
+	"Vectors.h"
+	<string>
+
+1478720434 /home/local/USHERBROOKE/grod2404/gsd/lib/Vectors.h
+	<cmath>
+	<iostream>
+
+1479417990 /home/local/USHERBROOKE/grod2404/gsd/lib/Segment.a
+	"Vectors.h"
+	<string>
+	<cmath>
+	<iostream>
+
+1478029324 /home/local/USHERBROOKE/grod2404/gsd/Robot/CommunicatorArduino/ArduinoCommunicator.h
+	<windows.h>
+	<signal.h>
+	<unistd.h>
+	<pthread.h>
+	<queue>
+	<stdio.h>
+	"../Serial_wjwwood/include/serial/serial.h"
+	"../Software/IControlleurPrincipal.h"
+
+1477573289 /home/local/USHERBROOKE/grod2404/gsd/Robot/Serial_wjwwood/include/serial/serial.h
+	<limits>
+	<vector>
+	<string>
+	<cstring>
+	<sstream>
+	<exception>
+	<stdexcept>
+	<serial/v8stdint.h>
+
+1478714684 /home/local/USHERBROOKE/grod2404/gsd/Robot/Software/IControlleurPrincipal.h
+	<stdint.h>
+
+1477573289 /home/local/USHERBROOKE/grod2404/gsd/Robot/Serial_wjwwood/include//serial/v8stdint.h
+	<stddef.h>
+	<stdio.h>
+	<stdint.h>
 
