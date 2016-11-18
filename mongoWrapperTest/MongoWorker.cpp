@@ -9,6 +9,7 @@
 #include "wqueue.cpp"
 #include <sstream>
 #include <vector>
+#include <thread>
 
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
@@ -19,7 +20,7 @@ using bsoncxx::builder::stream::open_document;
 
 
 
-class MongoWorker : Thread
+class MongoWorker : public Thread
 {
         workqueu<MongoJob*>& m_queue;
         mongocxx::uri uri;
