@@ -1,8 +1,9 @@
 #include <elapsedMillis.h>
+#include <Wire.h>
 #include <Adafruit_Sensor.h>
-#include <Adafruit_LSM303_U.h>
 #include <Adafruit_L3GD20_U.h>
-#include <Adafruit_9DOF.h>
+#include <Adafruit_LSM303_U.h>
+#include <MahonyAHRS.h>
 #include <TimerOne.h>
 
 #include "Software\ControlleurPrincipal.h"
@@ -16,15 +17,22 @@
 
 #define TEMPS_TIMER1 3250
 
+elapsedMillis timeElapsed = 0;
+int* retourDeFonction = NULL;
+bool retourInt;
+void(*fonctionAsync)(ControlleurPrincipal&);
+
 byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
 	{ 6,7,8,9 },
 	{ 2,3,4,5 }
 };
 StepperDriver moteurGauche(new StepperMotor(), STEPPER_GAUCHE),
               moteurDroit(new StepperMotor(), STEPPER_DROIT);
+Compass compas;
+
 SonarDriver sonarDriver(new Sonar());
-CompassDriver compassDriver(new Compass());
-ControlleurPrincipal controlleur(&moteurGauche, &moteurDroit, &sonarDriver, &compassDriver);
+CompassDriver compassDriver(&compas);
+ControlleurPrincipal controlleur(&moteurGauche, &moteurDroit, &sonarDriver, &compassDriver, &retourDeFonction, &fonctionAsync);
 
 void ecrireInt(int16_t aEcrire)
 {
@@ -59,14 +67,24 @@ void transmettreDonnee(int donnee, bool entier)
 		Serial.write(donnee);
 }
 
-void attendre(unsigned long duree)
+//void attendre(unsigned long duree)
+//{
+//    elapsedMillis timeElapsed = 0;
+//    while (timeElapsed < duree)
+//    {
+//		controlleur.verifierObstacle();
+//		controlleur.calibrerMoteur();
+//    }
+//}
+
+void resetTemps()
 {
-    elapsedMillis timeElapsed = 0;
-    while (timeElapsed < duree)
-    {
-		controlleur.verifierObstacle();
-		controlleur.calibrerMoteur();
-    }
+	timeElapsed = 0;
+}
+
+unsigned long obtenirTemps()
+{
+	return timeElapsed;
 }
 
 void stepMoteur()
@@ -80,10 +98,10 @@ void setup()
     
 	while (!Serial); //On attend que le port serie soit connecte
 
-	if (!controlleur.init(transmettreDonnee, attendre, pinsMoteurs[STEPPER_GAUCHE], pinsMoteurs[STEPPER_DROIT]))
+	if (!controlleur.init(transmettreDonnee, resetTemps, obtenirTemps, pinsMoteurs[STEPPER_GAUCHE], pinsMoteurs[STEPPER_DROIT]))
 	{		
-		Serial.write(ControlleurPrincipal::Fonction::Erreur);
-		ecrireInt(ControlleurPrincipal::TypeErreur::ErreurInitialisation);
+		Serial.write(IControlleurPrincipal::Fonction::Erreur);
+		ecrireInt(IControlleurPrincipal::TypeErreur::ErreurInitialisation);
 
 		while(1); //Boucle infini pour ne pas continuer
 	}
@@ -91,90 +109,99 @@ void setup()
 	Timer1.initialize(TEMPS_TIMER1);
 	Timer1.attachInterrupt(stepMoteur);
 
-	Serial.write(ControlleurPrincipal::Fonction::FinInit);
-
-	pinMode(LED_BUILTIN, OUTPUT);
+	Serial.write(IControlleurPrincipal::Fonction::FinInit);
 }
 
 void loop()
 {
-    if (Serial.available() > 0) {
+	controlleur.verifierObstacle();
+	controlleur.calibrerMoteur();
+	compas.update();
 
-		int retour = 0;
+	controlleur.obtenirOrientation();
+
+	//--> Calibrer le temps: millis();	
+
+	if (retourDeFonction != NULL)
+	{
+		if (retourInt)
+		{
+			Serial.write(IControlleurPrincipal::Fonction::RetourInt);
+			ecrireInt(*retourDeFonction);
+		}
+		else
+		{
+			Serial.write(IControlleurPrincipal::Fonction::RetourBool);
+			Serial.write(*retourDeFonction);
+		}
+		Serial.flush();
+		retourDeFonction = NULL;
+	}
+
+	if (fonctionAsync != NULL)
+	{
+		fonctionAsync(controlleur);
+	}
+
+    if (fonctionAsync == NULL && Serial.available() > 0) {
         switch (Serial.read())
         {
-		case ControlleurPrincipal::Fonction::FinInit:
-			Serial.write(ControlleurPrincipal::Fonction::FinInit);
+		case IControlleurPrincipal::Fonction::FinInit:
+			Serial.write(IControlleurPrincipal::Fonction::FinInit);
 			break;
 
-        case ControlleurPrincipal::Fonction::Avance:
-			retour = controlleur.avancePendantXDixiemeSec(lireInt());
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
-            Serial.write(retour);
+        case IControlleurPrincipal::Fonction::Avance:
+			retourInt = false;
+			controlleur.avancePendantXDixiemeSec(lireInt());
             break;
 
-        case ControlleurPrincipal::Fonction::Recule:
-			retour = controlleur.reculePendantXDixiemeSec(lireInt());
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
-			Serial.write(retour);
+        case IControlleurPrincipal::Fonction::Recule:
+			retourInt = false;
+			controlleur.reculePendantXDixiemeSec(lireInt());
             break;
 
-        case ControlleurPrincipal::Fonction::Tourne:
-			retour = controlleur.tourneAuDegresX(lireInt());
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
-			Serial.write(retour);
+		case IControlleurPrincipal::Fonction::Tourne:
+			retourInt = false;
+			controlleur.tourneAuDegresX(lireInt());
             break;
 
-		case ControlleurPrincipal::Fonction::GauchePendant:
-			retour = controlleur.tourneGauchePendant(lireInt());
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
-			Serial.write(retour);
+		case IControlleurPrincipal::Fonction::GauchePendant:
+			retourInt = false;
+			controlleur.tourneGauchePendant(lireInt());
 			break;
 
-		case ControlleurPrincipal::Fonction::DroitePendant:
-			retour = controlleur.tourneDroitePendant(lireInt());
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
-			Serial.write(retour);
+		case IControlleurPrincipal::Fonction::DroitePendant:
+			retourInt = false;
+			controlleur.tourneDroitePendant(lireInt());
 			break;
 
-        case ControlleurPrincipal::Fonction::Orientation:
-            retour = controlleur.obtenirOrientation();
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourInt);
-			ecrireInt(retour);
+        case IControlleurPrincipal::Fonction::Orientation:
+			retourInt = true;
+            controlleur.obtenirOrientation();
             break;
 
-        case ControlleurPrincipal::Fonction::Gauche:
-			retour = controlleur.tourneGauche(lireInt());
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
-			Serial.write(retour);
+        case IControlleurPrincipal::Fonction::Gauche:
+			retourInt = false;
+			controlleur.tourneGauche(lireInt());
             break;
             
-        case ControlleurPrincipal::Fonction::Droite:
-			retour = controlleur.tourneDroite(lireInt());
-
-			Serial.write(ControlleurPrincipal::Fonction::RetourBool);
-			Serial.write(retour);
+        case IControlleurPrincipal::Fonction::Droite:
+			retourInt = false;
+			controlleur.tourneDroite(lireInt());
             break;
 
-        case ControlleurPrincipal::Fonction::SetDebug:
+        case IControlleurPrincipal::Fonction::SetDebug:
             controlleur.setDebug();
             break;
             
-        case ControlleurPrincipal::Fonction::StopDebug:
+        case IControlleurPrincipal::Fonction::StopDebug:
             controlleur.stopDebug();
             break;
 
 		default:
-			Serial.write(ControlleurPrincipal::Fonction::Erreur);
-			ecrireInt(ControlleurPrincipal::TypeErreur::FonctionInconnue);
+			Serial.write(IControlleurPrincipal::Fonction::Erreur);
+			ecrireInt(IControlleurPrincipal::TypeErreur::FonctionInconnue);
+			Serial.flush();
         }
-		Serial.flush();
     }
 }

@@ -1,7 +1,9 @@
 #include "ControlleurPrincipal.h"
 
-ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  StepperDriver *moteurDroit,  SonarDriver *sonarDriver,  CompassDriver *compassDriver)
+ControlleurPrincipal::ControlleurPrincipal(StepperDriver *moteurGauche,  StepperDriver *moteurDroit,  SonarDriver *sonarDriver,  CompassDriver *compassDriver, int** retourFonction, void(**executionASync)(ControlleurPrincipal&))
 {
+	_executionASync = executionASync;
+	_retourDeFonction = retourFonction;
     _moteurGauche = moteurGauche;
     _moteurDroit = moteurDroit;
     _sonarDriver = sonarDriver;
@@ -12,11 +14,12 @@ ControlleurPrincipal::ControlleurPrincipal( StepperDriver *moteurGauche,  Steppe
     _recule = false;
 }
 
-bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*attendre)(unsigned long), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])
+bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*resetTemps)(), unsigned long(*obtenirTemps)(), byte pinsMoteurGauche[4], byte pinsMoteurDroit[4])
 {
     _transmettreDonnee = transmettreDonnee;
-    _attendre = attendre;
-	
+	_resetTemps = resetTemps;
+	_obtenirTemps = obtenirTemps;
+
     _moteurGauche->init(pinsMoteurGauche[0], pinsMoteurGauche[2], pinsMoteurGauche[1], pinsMoteurGauche[3]);
     _moteurDroit->init(pinsMoteurDroit[0], pinsMoteurDroit[2], pinsMoteurDroit[1], pinsMoteurDroit[3]);
 	
@@ -74,14 +77,14 @@ void ControlleurPrincipal::calibrerMoteur()
 
 	if (_modeDebug && (_itDebug++ % 10) == 0)
 	{
-		_transmettreDonnee(Fonction::InfoOrientation, false);
+		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoOrientation, false);
 		_transmettreDonnee((int)orientation, true);
 
-		_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
+		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoVitesseMoteur, false);
 		_transmettreDonnee(STEPPER_GAUCHE, true);
 		_transmettreDonnee(_moteurGauche->getVitesse(), true);
 
-		_transmettreDonnee(Fonction::InfoVitesseMoteur, false);
+		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoVitesseMoteur, false);
 		_transmettreDonnee(STEPPER_DROIT, true);
 		_transmettreDonnee(_moteurDroit->getVitesse(), true);
 	}
@@ -100,14 +103,14 @@ void ControlleurPrincipal::calibrerMoteur()
 			_moteurGauche->stop();
 			_moteurDroit->stop();
 
-			_transmettreDonnee(Fonction::Erreur, false);
-			_transmettreDonnee(TypeErreur::Obstacle, true);
+			_transmettreDonnee(IControlleurPrincipal::Fonction::Erreur, false);
+			_transmettreDonnee(IControlleurPrincipal::TypeErreur::Obstacle, true);
 		}
 	}
 
 	if (_modeDebug && _itDebug % 10 == 0)
 	{
-		_transmettreDonnee(Fonction::InfoDistanceObjet, false);
+		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoDistanceObjet, false);
 		_transmettreDonnee(_sonarDriver->getDist(), true);
 	}
 }
@@ -122,7 +125,7 @@ bool ControlleurPrincipal::isDebug() const
 	return _modeDebug;
 }
 
-bool ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
+void ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
 {
     _moteurGauche->avant();
     _moteurDroit->avant();
@@ -132,12 +135,12 @@ bool ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
 
     _avance = true;
 
-    _attendre(dixiemeSec * 100);
-
-    return stop();
+	_tempMouvementLineaire = dixiemeSec * 100;
+	_resetTemps();
+	(*_executionASync) = verifierTempsMouvementLineaire;
 }
 
-bool ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
+void ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
 {
     _moteurGauche->derriere();
     _moteurDroit->derriere();
@@ -147,9 +150,9 @@ bool ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
 
     _recule = true;
 
-    _attendre(dixiemeSec * 100);
-
-    return stop();
+	_tempMouvementLineaire = dixiemeSec * 100;
+	_resetTemps();
+	(*_executionASync) = verifierTempsMouvementLineaire;
 }
 
 bool ControlleurPrincipal::stop()
@@ -163,7 +166,7 @@ bool ControlleurPrincipal::stop()
     return !_erreur;
 }
 
-bool ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
+void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 {
 	float diff;
 	_derniereOrientation = _compassDriver->getOrientation();
@@ -171,115 +174,86 @@ bool ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 	
 	if (fabs(diff) <= CTRL_PRINC_DIFF_ANGLE_ACCEPTE || fabs(diff) >= 360 - CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
 	{
-		_transmettreDonnee(Fonction::DirectionChoisie, false);
+		_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
 		_transmettreDonnee(0, true);
-		return true;
+		return;
 	}
 	else if ((diff < 0 && diff > -180) || diff > 180)
 	{
-		_transmettreDonnee(Fonction::DirectionChoisie, false);
+		_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
 		_transmettreDonnee(1, true);
-		return tourneAGaucheVersXDegres(objectif);
+
+		_moteurGauche->gauche();
+		_moteurDroit->gauche();
 	}
 	else
 	{
-		_transmettreDonnee(Fonction::DirectionChoisie, false);
+		_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
 		_transmettreDonnee(2, true);
-		return tourneADroiteVersXDegres(objectif);
+
+		_moteurGauche->droite();
+		_moteurDroit->droite();
+	}
+
+	_moteurGauche->avance();
+	_moteurDroit->avance();
+
+	_destinationRotation = objectif;
+	(*_executionASync) = verifierDestinationRotation;
+}
+
+void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &self)
+{
+	float diff;
+
+	self._derniereOrientation = self._compassDriver->getOrientation();
+	diff = self._destinationRotation - self._derniereOrientation;
+	
+	if (fabs(diff) > CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
+	{
+		self._moteurGauche->stop();
+		self._moteurDroit->stop();
+
+		(*self._retourDeFonction) = new int(!self._erreur);
+		(*self._executionASync) = NULL;
 	}
 }
 
-bool ControlleurPrincipal::tourneADroiteVersXDegres(int16_t objectif)
+void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &self)
 {
-	float diff;// , oldDiff;
-
-	_moteurGauche->droite();
-	_moteurDroit->droite();
-
-	_moteurGauche->avance();
-	_moteurDroit->avance();
-
-
-	do
+	if (self._obtenirTemps() >= self._tempMouvementLineaire)
 	{
-		//oldDiff = diff;
-		_attendre(5);
-
-		_derniereOrientation = _compassDriver->getOrientation();
-		diff = objectif - _derniereOrientation;
-	} while (fabs(diff) > CTRL_PRINC_DIFF_ANGLE_ACCEPTE);
-
-	_moteurGauche->stop();
-	_moteurDroit->stop();
-
-	return !_erreur;
+		(*self._retourDeFonction) = new int(self.stop());
+		(*self._executionASync) = NULL;
+	}
 }
 
-bool ControlleurPrincipal::tourneAGaucheVersXDegres(int16_t objectif)
-{
-	float diff;// , oldDiff;
-	//int compteurInvalide = 0;
-
-	_moteurGauche->gauche();
-	_moteurDroit->gauche();
-
-	_moteurGauche->avance();
-	_moteurDroit->avance();
-
-	//oldDiff = objectif - _derniereOrientation;
-
-	do
-	{
-		_attendre(5);
-
-		_derniereOrientation = _compassDriver->getOrientation();
-		diff = objectif - _derniereOrientation;
-
-		/*if ((diff > 0 && diff > oldDiff) || (diff < 0 && oldDiff < 0 && diff < oldDiff))
-		{
-			if (++compteurInvalide == 5)
-				return tourneADroiteVersXDegres(objectif);
-		}
-		else
-		{
-			compteurInvalide = 0;
-		}
-
-		oldDiff = diff;*/
-	} while (fabs(diff) > CTRL_PRINC_DIFF_ANGLE_ACCEPTE);
-
-	_moteurGauche->stop();
-	_moteurDroit->stop();
-
-	return !_erreur;
-}
-
-bool ControlleurPrincipal::tourneGauche(int16_t degres)
+void ControlleurPrincipal::tourneGauche(int16_t degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, true);
     return tourneAuDegresX((int) angleFinal);
 }
 
-bool ControlleurPrincipal::tourneDroite(int16_t degres)
+void ControlleurPrincipal::tourneDroite(int16_t degres)
 {
     float angleFinal = getAngleResultant(_compassDriver->getOrientation(), (float)degres, false);
     return tourneAuDegresX((int)angleFinal);
 }
 
-bool ControlleurPrincipal::tourneGauchePendant(int16_t dixiemeSec)
+void ControlleurPrincipal::tourneGauchePendant(int16_t dixiemeSec)
 {
 	_moteurGauche->gauche();
 	_moteurDroit->gauche();
 
 	_moteurGauche->avance();
 	_moteurDroit->avance();
-	
-	_attendre(dixiemeSec * 100);
 
-	return stop();
+	_tempMouvementLineaire = dixiemeSec * 100;
+	_resetTemps();
+	(*_executionASync) = verifierTempsMouvementLineaire;
 }
 
-bool ControlleurPrincipal::tourneDroitePendant(int16_t dixiemeSec)
+void ControlleurPrincipal::tourneDroitePendant(int16_t dixiemeSec)
 {
 	_moteurGauche->droite();
 	_moteurDroit->droite();
@@ -287,14 +261,14 @@ bool ControlleurPrincipal::tourneDroitePendant(int16_t dixiemeSec)
 	_moteurGauche->avance();
 	_moteurDroit->avance();
 
-	_attendre(dixiemeSec * 100);
-
-	return stop();
+	_tempMouvementLineaire = dixiemeSec * 100;
+	_resetTemps();
+	(*_executionASync) = verifierTempsMouvementLineaire;
 }
 
-int16_t ControlleurPrincipal::obtenirOrientation()
+void ControlleurPrincipal::obtenirOrientation()
 {
-    return (int)_compassDriver->getOrientation();
+	(*_retourDeFonction) = new int(_compassDriver->getOrientation());
 }
 
  void ControlleurPrincipal::setDebug()
