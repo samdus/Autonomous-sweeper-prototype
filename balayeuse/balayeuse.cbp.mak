@@ -18,13 +18,13 @@ LIBDIR =
 LIB = 
 LDFLAGS = 
 
-INC_DEBUG = $(INC) -I../../../../../../usr/include/libusb-1.0
+INC_DEBUG = $(INC) -I../../../../../../usr/include/libusb-1.0 
 CFLAGS_DEBUG = $(CFLAGS) -g
 RESINC_DEBUG = $(RESINC)
 RCFLAGS_DEBUG = $(RCFLAGS)
 LIBDIR_DEBUG = $(LIBDIR)
 LIB_DEBUG = $(LIB)lib/libfreenect.a lib/libfreenect.so ../../../../../../usr/lib/arm-linux-gnueabihf/libusb-1.0.so
-LDFLAGS_DEBUG = $(LDFLAGS) -pthread -lusb-1.0
+LDFLAGS_DEBUG = $(LDFLAGS) -pthread -lusb-1.0 -lmongocxx -lbsoncxx
 OBJDIR_DEBUG = obj/Debug
 DEP_DEBUG = 
 OUT_DEBUG = bin/Debug/balayeuse
@@ -40,9 +40,9 @@ OBJDIR_RELEASE = obj/Release
 DEP_RELEASE = 
 OUT_RELEASE = bin/Release/balayeuse
 
-OBJ_DEBUG = $(OBJDIR_DEBUG)/Mutex.o $(OBJDIR_DEBUG)/cpp_pc_view.o $(OBJDIR_DEBUG)/SceneCamera.o $(OBJDIR_DEBUG)/MyFreenectDevice.o $(OBJDIR_DEBUG)/CloudPointContainer.o $(OBJDIR_DEBUG)/Matrices.o $(OBJDIR_DEBUG)/Main.o $(OBJDIR_DEBUG)/Decodeur.o $(OBJDIR_DEBUG)/Config.o
+OBJ_DEBUG = $(OBJDIR_DEBUG)/Matrices.o $(OBJDIR_DEBUG)/cpp_pc_view.o $(OBJDIR_DEBUG)/SceneCamera.o $(OBJDIR_DEBUG)/MyFreenectDevice.o $(OBJDIR_DEBUG)/Mutex.o $(OBJDIR_DEBUG)/Carte.o $(OBJDIR_DEBUG)/Main.o $(OBJDIR_DEBUG)/Decodeur.o $(OBJDIR_DEBUG)/Convertisseur.o $(OBJDIR_DEBUG)/Config.o $(OBJDIR_DEBUG)/CloudPointContainer.o
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/Mutex.o $(OBJDIR_RELEASE)/cpp_pc_view.o $(OBJDIR_RELEASE)/SceneCamera.o $(OBJDIR_RELEASE)/MyFreenectDevice.o $(OBJDIR_RELEASE)/CloudPointContainer.o $(OBJDIR_RELEASE)/Matrices.o $(OBJDIR_RELEASE)/Main.o $(OBJDIR_RELEASE)/Decodeur.o $(OBJDIR_RELEASE)/Config.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/Matrices.o $(OBJDIR_RELEASE)/cpp_pc_view.o $(OBJDIR_RELEASE)/SceneCamera.o $(OBJDIR_RELEASE)/MyFreenectDevice.o $(OBJDIR_RELEASE)/Mutex.o $(OBJDIR_RELEASE)/Carte.o $(OBJDIR_RELEASE)/Main.o $(OBJDIR_RELEASE)/Decodeur.o $(OBJDIR_RELEASE)/Convertisseur.o $(OBJDIR_RELEASE)/Config.o $(OBJDIR_RELEASE)/CloudPointContainer.o
 
 all: debug release
 
@@ -61,8 +61,8 @@ debug: before_debug out_debug after_debug
 out_debug: before_debug $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) -o $(OUT_DEBUG) $(OBJ_DEBUG)  $(LDFLAGS_DEBUG) $(LIB_DEBUG)
 
-$(OBJDIR_DEBUG)/Mutex.o: Mutex.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Mutex.cpp -o $(OBJDIR_DEBUG)/Mutex.o
+$(OBJDIR_DEBUG)/Matrices.o: Matrices.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Matrices.cpp -o $(OBJDIR_DEBUG)/Matrices.o
 
 $(OBJDIR_DEBUG)/cpp_pc_view.o: cpp_pc_view.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c cpp_pc_view.cpp -o $(OBJDIR_DEBUG)/cpp_pc_view.o
@@ -73,11 +73,11 @@ $(OBJDIR_DEBUG)/SceneCamera.o: SceneCamera.cpp
 $(OBJDIR_DEBUG)/MyFreenectDevice.o: MyFreenectDevice.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c MyFreenectDevice.cpp -o $(OBJDIR_DEBUG)/MyFreenectDevice.o
 
-$(OBJDIR_DEBUG)/CloudPointContainer.o: CloudPointContainer.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c CloudPointContainer.cpp -o $(OBJDIR_DEBUG)/CloudPointContainer.o
+$(OBJDIR_DEBUG)/Mutex.o: Mutex.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Mutex.cpp -o $(OBJDIR_DEBUG)/Mutex.o
 
-$(OBJDIR_DEBUG)/Matrices.o: Matrices.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Matrices.cpp -o $(OBJDIR_DEBUG)/Matrices.o
+$(OBJDIR_DEBUG)/Carte.o: Carte.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Carte.cpp -o $(OBJDIR_DEBUG)/Carte.o
 
 $(OBJDIR_DEBUG)/Main.o: Main.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Main.cpp -o $(OBJDIR_DEBUG)/Main.o
@@ -85,8 +85,14 @@ $(OBJDIR_DEBUG)/Main.o: Main.cpp
 $(OBJDIR_DEBUG)/Decodeur.o: Decodeur.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Decodeur.cpp -o $(OBJDIR_DEBUG)/Decodeur.o
 
+$(OBJDIR_DEBUG)/Convertisseur.o: Convertisseur.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Convertisseur.cpp -o $(OBJDIR_DEBUG)/Convertisseur.o
+
 $(OBJDIR_DEBUG)/Config.o: Config.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Config.cpp -o $(OBJDIR_DEBUG)/Config.o
+
+$(OBJDIR_DEBUG)/CloudPointContainer.o: CloudPointContainer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c CloudPointContainer.cpp -o $(OBJDIR_DEBUG)/CloudPointContainer.o
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
@@ -106,8 +112,8 @@ release: before_release out_release after_release
 out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE) $(LIB_RELEASE)
 
-$(OBJDIR_RELEASE)/Mutex.o: Mutex.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Mutex.cpp -o $(OBJDIR_RELEASE)/Mutex.o
+$(OBJDIR_RELEASE)/Matrices.o: Matrices.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Matrices.cpp -o $(OBJDIR_RELEASE)/Matrices.o
 
 $(OBJDIR_RELEASE)/cpp_pc_view.o: cpp_pc_view.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c cpp_pc_view.cpp -o $(OBJDIR_RELEASE)/cpp_pc_view.o
@@ -118,11 +124,11 @@ $(OBJDIR_RELEASE)/SceneCamera.o: SceneCamera.cpp
 $(OBJDIR_RELEASE)/MyFreenectDevice.o: MyFreenectDevice.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c MyFreenectDevice.cpp -o $(OBJDIR_RELEASE)/MyFreenectDevice.o
 
-$(OBJDIR_RELEASE)/CloudPointContainer.o: CloudPointContainer.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c CloudPointContainer.cpp -o $(OBJDIR_RELEASE)/CloudPointContainer.o
+$(OBJDIR_RELEASE)/Mutex.o: Mutex.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Mutex.cpp -o $(OBJDIR_RELEASE)/Mutex.o
 
-$(OBJDIR_RELEASE)/Matrices.o: Matrices.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Matrices.cpp -o $(OBJDIR_RELEASE)/Matrices.o
+$(OBJDIR_RELEASE)/Carte.o: Carte.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Carte.cpp -o $(OBJDIR_RELEASE)/Carte.o
 
 $(OBJDIR_RELEASE)/Main.o: Main.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Main.cpp -o $(OBJDIR_RELEASE)/Main.o
@@ -130,8 +136,14 @@ $(OBJDIR_RELEASE)/Main.o: Main.cpp
 $(OBJDIR_RELEASE)/Decodeur.o: Decodeur.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Decodeur.cpp -o $(OBJDIR_RELEASE)/Decodeur.o
 
+$(OBJDIR_RELEASE)/Convertisseur.o: Convertisseur.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Convertisseur.cpp -o $(OBJDIR_RELEASE)/Convertisseur.o
+
 $(OBJDIR_RELEASE)/Config.o: Config.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Config.cpp -o $(OBJDIR_RELEASE)/Config.o
+
+$(OBJDIR_RELEASE)/CloudPointContainer.o: CloudPointContainer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c CloudPointContainer.cpp -o $(OBJDIR_RELEASE)/CloudPointContainer.o
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
