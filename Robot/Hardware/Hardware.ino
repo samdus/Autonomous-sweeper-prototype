@@ -3,6 +3,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_L3GD20_U.h>
 #include <Adafruit_LSM303_U.h>
+#include <MadgwickAHRS.h>
 #include <MahonyAHRS.h>
 #include <TimerOne.h>
 
@@ -67,16 +68,6 @@ void transmettreDonnee(int donnee, bool entier)
 		Serial.write(donnee);
 }
 
-//void attendre(unsigned long duree)
-//{
-//    elapsedMillis timeElapsed = 0;
-//    while (timeElapsed < duree)
-//    {
-//		controlleur.verifierObstacle();
-//		controlleur.calibrerMoteur();
-//    }
-//}
-
 void resetTemps()
 {
 	timeElapsed = 0;
@@ -110,17 +101,21 @@ void setup()
 	Timer1.attachInterrupt(stepMoteur);
 
 	Serial.write(IControlleurPrincipal::Fonction::FinInit);
+	Serial.println("FIN debut");
 }
+
+unsigned long dernierTemps = 0;
+unsigned long tot_DiffTemps = 0;
+int nbEchantillon = 0;
 
 void loop()
 {
 	controlleur.verifierObstacle();
 	controlleur.calibrerMoteur();
 	compas.update();
-
+	
+	retourInt = true;
 	controlleur.obtenirOrientation();
-
-	//--> Calibrer le temps: millis();	
 
 	if (retourDeFonction != NULL)
 	{
@@ -135,6 +130,8 @@ void loop()
 			Serial.write(*retourDeFonction);
 		}
 		Serial.flush();
+
+		delete retourDeFonction;
 		retourDeFonction = NULL;
 	}
 
@@ -175,6 +172,7 @@ void loop()
 			controlleur.tourneDroitePendant(lireInt());
 			break;
 
+		case 'D':
         case IControlleurPrincipal::Fonction::Orientation:
 			retourInt = true;
             controlleur.obtenirOrientation();

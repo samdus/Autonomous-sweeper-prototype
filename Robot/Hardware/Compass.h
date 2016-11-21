@@ -6,10 +6,13 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_LSM303_U.h>
 #include <Adafruit_L3GD20_U.h>
-#include <MahonyAHRS.h>
+#include <MadgwickAHRS.h>
 
 #define DECLINATION_ANGLE 0.27
 #define SENSOR_ID 12345
+
+#define COMPASS_REFRESH_RATE_MS 15
+#define COMPASS_NB_REFRESH_PER_SEC (1000 / COMPASS_REFRESH_RATE_MS)
 
 class Compass : public ICompass
 {
@@ -18,7 +21,7 @@ private:
 	Adafruit_LSM303_Accel_Unified *_accel;
 	Adafruit_LSM303_Mag_Unified   *_mag;
 
-	Mahony *_filter;
+	Madgwick *_filter;
 
 	// Offsets applied to raw x/y/z values
 	const float mag_offsets[3] = { -3.99F, -5.93F, -10.85F };

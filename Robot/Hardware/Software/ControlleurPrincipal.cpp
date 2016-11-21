@@ -268,7 +268,7 @@ void ControlleurPrincipal::tourneDroitePendant(int16_t dixiemeSec)
 
 void ControlleurPrincipal::obtenirOrientation()
 {
-	(*_retourDeFonction) = new int(_compassDriver->getOrientation());
+	(*_retourDeFonction) = new int(round(_compassDriver->getOrientation()));
 }
 
  void ControlleurPrincipal::setDebug()
