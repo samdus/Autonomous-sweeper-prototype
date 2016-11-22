@@ -1,15 +1,5 @@
 # depslib dependency file v1.0
-1479778091 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
-	<cstdlib>
-	<iostream>
-	<vector>
-	"SceneCamera.h"
-	"Decodeur.h"
-	"../lib/Vectors.h"
-	"CloudPointContainer.h"
-	"Config.h"
-	<GLUT/glut.h>
-	<GL/glut.h>
+1479779513 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 
 1479500677 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
@@ -72,7 +62,12 @@
 1477060752 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
 	"MyFreenectDevice.h"
 
-1479778091 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+1479779513 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+	<cstdlib>
+	<ctime>
+	<iostream>
+	<vector>
+	"Decodeur.h"
 
 1478720434 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
@@ -88,7 +83,7 @@
 	<algorithm>
 	"Matrices.h"
 
-1479777934 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1479779499 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
 1479777915 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
@@ -201,7 +196,7 @@
 	"wqueue.cpp"
 	<mongocxx/instance.hpp>
 
-1479776485 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoJob.cpp
+1479844349 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoJob.cpp
 	<stdio.h>
 	<stdlib.h>
 	<string>
