@@ -6,7 +6,7 @@ Compass::Compass()
 	_mag = new Adafruit_LSM303_Mag_Unified(30302);
 	_accel = new Adafruit_LSM303_Accel_Unified(30301);
 
-	_filter = new Mahony();
+	_filter = new Madgwick();
 }
 
 Compass::~Compass()
@@ -16,7 +16,7 @@ Compass::~Compass()
 
 bool Compass::init()
 {
-	_filter->begin(50);
+	_filter->begin(COMPASS_NB_REFRESH_PER_SEC);
 	return _gyro->begin() && _accel->begin() && _mag->begin();
 }
 
