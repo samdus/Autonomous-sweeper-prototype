@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "segment.cpp"
+#include "../lib/Segment.h"
+#include "../lib/Vectors.h"
 #include <vector>
 typedef struct _jobinfo
 {
