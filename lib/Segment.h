@@ -1,3 +1,5 @@
+#ifndef SEGMENT
+#define SEGMENT
 #include "Vectors.h"
 #include <string>
 
@@ -61,3 +63,4 @@ class segment
         std::to_string(nbPoint) + "\n";
     }
 };
+#endif

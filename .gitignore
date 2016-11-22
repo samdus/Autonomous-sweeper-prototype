@@ -213,3 +213,7 @@ ModelManifest.xml
 
 #Meteor
 node_modules/
+
+#makefile
+*.a
+*.o

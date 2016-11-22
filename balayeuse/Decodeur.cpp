@@ -1,6 +1,7 @@
 #include "Decodeur.h"
 
 Freenect::Freenect freenect;
+MongoWrapper serveur;
 
 Decodeur::Decodeur(){ }
 
@@ -37,6 +38,14 @@ void Decodeur::InitCommunicationArduino()
 
 void Decodeur::InitCommunicationServeur()
 {
+    if(DebugConsole || DebugServeur)
+    {
+        std::string message = "test de connection avec le serveur";
+        if(DebugConsole)
+            std::cout << message;
+        if(DebugServeur)
+            serveur.writeConsole(message , "error");
+    }
 }
 
 void Decodeur::InitConfiguration()
@@ -48,6 +57,8 @@ void Decodeur::InitConfiguration()
     DistanceMax = std::stof(Config::Instance().GetString("FAR_CLIPPING")) + OffsetKin;
     DistanceMin = std::stof(Config::Instance().GetString("NEAR_CLIPPING")) + OffsetKin;
     MultithreadActiver = std::stoi(Config::Instance().GetString("MULTITHREAD")) == 1;
+    DebugConsole = std::stoi(Config::Instance().GetString("DEBUG_MESSAGE_CONSOLE")) == 1;
+    DebugServeur = std::stoi(Config::Instance().GetString("DEBUG_MESSAGE_SERVEUR")) == 1;
 }
 
 void Decodeur::Init()
@@ -63,7 +74,7 @@ void Decodeur::Init()
     }
 }
 
-void Decodeur::UpdateFPS(bool showFpsConsole)
+void Decodeur::UpdateFPS()
 {
     if(updateFPS)
     {
@@ -80,9 +91,13 @@ void Decodeur::UpdateFPS(bool showFpsConsole)
         {
             updateFPS = true;
 
-            if(showFpsConsole)
+            if(DebugConsole || DebugServeur)
             {
-                std::cout << "fps: " << frame << " nombre d'echantillons par seconde : " << nbEchantillonsParSecond << " next sampling " << nextSampling << std::endl;
+                std::string message = "fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n";
+                if(DebugConsole)
+                    std::cout << message;
+                if(DebugServeur)
+                    serveur.writeConsole(message, "info");
             }
         }
     }
@@ -130,7 +145,7 @@ void Decodeur::UpdateCloudOfPoint()
         clock_t now = std::clock();
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
-            //updateCloud = true;
+            updateCloud = true;
             nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile d'être en dessous de 30 image seconde
         }
     }
@@ -146,6 +161,7 @@ void Decodeur::RunLoop()
         }
         return;
     }
+
     if(ArduinoAccessible && !ModeAutomatique)
     {
         //aller chercher les commandes et les executer
@@ -160,7 +176,7 @@ void Decodeur::RunLoop()
         try
         {
             device->setTiltDegrees(0.0);
-            UpdateFPS(false);
+            UpdateFPS();
             UpdateCloudOfPoint();
             if(!MultithreadActiver)
             {
@@ -170,7 +186,15 @@ void Decodeur::RunLoop()
         catch(std::runtime_error e)
         {
             freenect.deleteDevice(0);
-            std::cout << "\nError: Kinect deconnectee !" << std::endl;
+
+            if(DebugConsole || DebugServeur)
+            {
+                string message = "\nError: Kinect deconnectee !\n";
+                if(DebugConsole)
+                    std::cout << message;
+                if(DebugServeur)
+                    serveur.writeConsole(message, "error");
+            }
             KinectAccessible = false;
         }
     }

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1479498385 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1479778091 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 	<cstdlib>
 	<iostream>
 	<vector>
@@ -11,7 +11,7 @@
 	<GLUT/glut.h>
 	<GL/glut.h>
 
-1479498319 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
+1479500677 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
 	<stdexcept>
 	<sstream>
@@ -39,10 +39,10 @@
 1475773991 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Camera.h
 	<iostream>
 
-1478902999 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
+1479775216 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
 	"CloudPointContainer.h"
 
-1479418318 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+1479499059 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
 	<vector>
 	"../lib/Vectors.h"
 	<iostream>
@@ -53,7 +53,7 @@
 1477253798 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.cpp
 	"SceneCamera.h"
 
-1479417429 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
+1479499059 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/SceneCamera.h
 	<iostream>
 	"../lib/Vectors.h"
 	"Matrices.h"
@@ -72,13 +72,13 @@
 1477060752 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/MyFreenectDevice.cpp
 	"MyFreenectDevice.h"
 
-1479498385 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
+1479778091 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Main.cpp
 
 1478720434 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Vectors.h
 	<cmath>
 	<iostream>
 
-1479417432 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Matrices.h
+1479499059 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Matrices.h
 	<iostream>
 	<iomanip>
 	"../lib/Vectors.h"
@@ -88,10 +88,10 @@
 	<algorithm>
 	"Matrices.h"
 
-1479498273 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1479777934 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
-1479496806 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
+1479777915 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
 	<iostream>
 	<vector>
 	"MyFreenectDevice.h"
@@ -102,8 +102,10 @@
 	"Convertisseur.h"
 	"../Robot/CommunicatorArduino/ArduinoCommunicator.h"
 	<stdexcept>
+	"../mongoWrapper/MongoWrapper.cpp"
+	<string>
 
-1479078610 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
+1479775227 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
 	"Config.h"
 
 1477007823 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.h
@@ -111,10 +113,10 @@
 	<fstream>
 	<string>
 
-1479414432 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
+1479499059 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
 	"Carte.h"
 
-1479419307 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
+1479499059 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
 	<iostream>
 	<fstream>
 	"../lib/Segment.h"
@@ -122,7 +124,7 @@
 	<vector>
 	"Config.h"
 
-1479327283 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
+1479775304 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
 	"Convertisseur.h"
 
 1479072386 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
@@ -145,11 +147,11 @@
 1479416757 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Segment.h
 	"Vectors.h"
 
-1479417986 /home/local/USHERBROOKE/grod2404/gsd/lib/Segment.h
+1479773533 /home/local/USHERBROOKE/grod2404/gsd/lib/Segment.h
 	"Vectors.h"
 	<string>
 
-1478720434 /home/local/USHERBROOKE/grod2404/gsd/lib/Vectors.h
+1479499059 /home/local/USHERBROOKE/grod2404/gsd/lib/Vectors.h
 	<cmath>
 	<iostream>
 
@@ -186,4 +188,739 @@
 	<stddef.h>
 	<stdio.h>
 	<stdint.h>
+
+1479520318 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoWrapper.cpp
+	<iostream>
+	<string>
+	<thread>
+	"thread.h"
+	"MongoCommand.cpp"
+	"MongoCommandListener.cpp"
+	"MongoJob.cpp"
+	"MongoWorker.cpp"
+	"wqueue.cpp"
+	<mongocxx/instance.hpp>
+
+1479776485 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoJob.cpp
+	<stdio.h>
+	<stdlib.h>
+	<string>
+	<vector>
+
+1478714684 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/wqueue.cpp
+	<pthread.h>
+	<list>
+
+1478714684 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/thread.h
+	<pthread.h>
+
+1479414432 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/segment.cpp
+
+1479520318 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoWorker.cpp
+	<bsoncxx/builder/stream/document.hpp>
+	<bsoncxx/json.hpp>
+	<mongocxx/client.hpp>
+	<mongocxx/instance.hpp>
+	<ctime>
+	"MongoJob.cpp"
+	"wqueue.cpp"
+	<sstream>
+	<vector>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/stream/document.hpp
+	<bsoncxx/builder/core.hpp>
+	<bsoncxx/builder/stream/key_context.hpp>
+	<bsoncxx/builder/stream/single_context.hpp>
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/core.hpp
+	<memory>
+	<stdexcept>
+	<type_traits>
+	<bsoncxx/array/value.hpp>
+	<bsoncxx/array/view.hpp>
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/string_view.hpp>
+	<bsoncxx/types.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/array/value.hpp
+	<cstdlib>
+	<memory>
+	<bsoncxx/array/view.hpp>
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/array/view.hpp
+	<cstddef>
+	<cstdint>
+	<iterator>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/array/element.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/document/view.hpp
+	<cstddef>
+	<cstdint>
+	<iterator>
+	<bsoncxx/document/element.hpp>
+	<bsoncxx/stdx/string_view.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/document/element.hpp
+	<cstddef>
+	<cstdint>
+	<bsoncxx/stdx/string_view.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/stdx/string_view.hpp
+	<bsoncxx/config/prelude.hpp>
+	<core/string.hpp>
+	<bsoncxx/third_party/mnmlstc/core/string.hpp>
+	<boost/utility/string_ref.hpp>
+	<experimental/string_view>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/config/prelude.hpp
+	<bsoncxx/config/config.hpp>
+	<bsoncxx/config/version.hpp>
+	<bsoncxx/config/export.hpp>
+	<bsoncxx/config/compiler.hpp>
+
+1479503883 /usr/local/include/bsoncxx/v_noabi/bsoncxx/config/config.hpp
+
+1479503883 /usr/local/include/bsoncxx/v_noabi/bsoncxx/config/version.hpp
+
+1479503883 /usr/local/include/bsoncxx/v_noabi/bsoncxx/config/export.hpp
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/config/compiler.hpp
+
+1479503985 /usr/local/include/bsoncxx/v_noabi/bsoncxx/third_party/mnmlstc/core/string.hpp
+	<initializer_list>
+	<functional>
+	<stdexcept>
+	<algorithm>
+	<iterator>
+	<string>
+	<limits>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/config/postlude.hpp
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/array/element.hpp
+	<cstddef>
+	<cstdint>
+	<bsoncxx/document/element.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/document/value.hpp
+	<cstdlib>
+	<memory>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/types.hpp
+	<chrono>
+	<cstring>
+	<bsoncxx/array/view.hpp>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/oid.hpp>
+	<bsoncxx/stdx/string_view.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/enums/type.hpp>
+	<bsoncxx/enums/binary_sub_type.hpp>
+	<bsoncxx/enums/type.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/oid.hpp
+	<array>
+	<ctime>
+	<string>
+	<bsoncxx/stdx/string_view.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/enums/type.hpp
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/enums/binary_sub_type.hpp
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/stream/key_context.hpp
+	<bsoncxx/builder/core.hpp>
+	<bsoncxx/builder/stream/closed_context.hpp>
+	<bsoncxx/builder/stream/value_context.hpp>
+	<bsoncxx/stdx/string_view.hpp>
+	<bsoncxx/util/functor.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/stream/closed_context.hpp
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/stream/value_context.hpp
+	<bsoncxx/builder/core.hpp>
+	<bsoncxx/builder/stream/array_context.hpp>
+	<bsoncxx/builder/stream/closed_context.hpp>
+	<bsoncxx/builder/stream/helpers.hpp>
+	<bsoncxx/util/functor.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/stream/array_context.hpp
+	<bsoncxx/array/value.hpp>
+	<bsoncxx/builder/concatenate.hpp>
+	<bsoncxx/builder/core.hpp>
+	<bsoncxx/builder/stream/closed_context.hpp>
+	<bsoncxx/builder/stream/helpers.hpp>
+	<bsoncxx/util/functor.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/concatenate.hpp
+	<bsoncxx/array/view_or_value.hpp>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/array/view_or_value.hpp
+	<bsoncxx/array/value.hpp>
+	<bsoncxx/array/view.hpp>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/view_or_value.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/view_or_value.hpp
+	<type_traits>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/stdx/optional.hpp
+	<bsoncxx/config/prelude.hpp>
+	<core/optional.hpp>
+	<bsoncxx/third_party/mnmlstc/core/optional.hpp>
+	<boost/none.hpp>
+	<boost/optional/optional.hpp>
+	<experimental/optional>
+	<bsoncxx/config/postlude.hpp>
+
+1479503985 /usr/local/include/bsoncxx/v_noabi/bsoncxx/third_party/mnmlstc/core/optional.hpp
+	<initializer_list>
+	<system_error>
+	<functional>
+	<exception>
+	<stdexcept>
+	<memory>
+	<cstdint>
+	<bsoncxx/third_party/mnmlstc/core/type_traits.hpp>
+	<bsoncxx/third_party/mnmlstc/core/functional.hpp>
+	<bsoncxx/third_party/mnmlstc/core/utility.hpp>
+
+1479503985 /usr/local/include/bsoncxx/v_noabi/bsoncxx/third_party/mnmlstc/core/type_traits.hpp
+	<type_traits>
+	<utility>
+
+1479503985 /usr/local/include/bsoncxx/v_noabi/bsoncxx/third_party/mnmlstc/core/functional.hpp
+	<bsoncxx/third_party/mnmlstc/core/type_traits.hpp>
+	<bsoncxx/third_party/mnmlstc/core/utility.hpp>
+	<functional>
+	<tuple>
+	<array>
+
+1479503985 /usr/local/include/bsoncxx/v_noabi/bsoncxx/third_party/mnmlstc/core/utility.hpp
+	<functional>
+	<cstddef>
+	<bsoncxx/third_party/mnmlstc/core/type_traits.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/document/view_or_value.hpp
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/view_or_value.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/stream/helpers.hpp
+	<bsoncxx/builder/concatenate.hpp>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/util/functor.hpp
+	<type_traits>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/builder/stream/single_context.hpp
+	<bsoncxx/builder/core.hpp>
+	<bsoncxx/builder/stream/array_context.hpp>
+	<bsoncxx/builder/stream/value_context.hpp>
+	<bsoncxx/builder/stream/key_context.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/json.hpp
+	<string>
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/client.hpp
+	<memory>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/database.hpp>
+	<mongocxx/options/client.hpp>
+	<mongocxx/read_concern.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/uri.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/string/view_or_value.hpp
+	<string>
+	<bsoncxx/stdx/string_view.hpp>
+	<bsoncxx/view_or_value.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/database.hpp
+	<memory>
+	<string>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/collection.hpp>
+	<mongocxx/options/modify_collection.hpp>
+	<mongocxx/options/create_collection.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/collection.hpp
+	<algorithm>
+	<cstdint>
+	<memory>
+	<string>
+	<bsoncxx/builder/stream/document.hpp>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/bulk_write.hpp>
+	<mongocxx/cursor.hpp>
+	<mongocxx/insert_many_builder.hpp>
+	<mongocxx/options/aggregate.hpp>
+	<mongocxx/options/bulk_write.hpp>
+	<mongocxx/options/count.hpp>
+	<mongocxx/options/delete.hpp>
+	<mongocxx/options/distinct.hpp>
+	<mongocxx/options/find.hpp>
+	<mongocxx/options/find_one_and_delete.hpp>
+	<mongocxx/options/find_one_and_replace.hpp>
+	<mongocxx/options/find_one_and_update.hpp>
+	<mongocxx/options/index.hpp>
+	<mongocxx/options/insert.hpp>
+	<mongocxx/options/update.hpp>
+	<mongocxx/read_concern.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/result/bulk_write.hpp>
+	<mongocxx/result/delete.hpp>
+	<mongocxx/result/insert_many.hpp>
+	<mongocxx/result/insert_one.hpp>
+	<mongocxx/result/replace_one.hpp>
+	<mongocxx/result/update.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/bulk_write.hpp
+	<mongocxx/options/bulk_write.hpp>
+	<mongocxx/model/write.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/bulk_write.hpp
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/write_concern.hpp
+	<chrono>
+	<cstdint>
+	<stdexcept>
+	<memory>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/stdx/string_view.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/stdx.hpp
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/config/prelude.hpp
+	<mongocxx/config/config.hpp>
+	<mongocxx/config/version.hpp>
+	<mongocxx/config/export.hpp>
+	<mongocxx/config/compiler.hpp>
+
+1479503883 /usr/local/include/mongocxx/v_noabi/mongocxx/config/config.hpp
+
+1479503883 /usr/local/include/mongocxx/v_noabi/mongocxx/config/version.hpp
+
+1479503883 /usr/local/include/mongocxx/v_noabi/mongocxx/config/export.hpp
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/config/compiler.hpp
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/config/postlude.hpp
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/model/write.hpp
+	<cstdint>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/write_type.hpp>
+	<mongocxx/model/insert_one.hpp>
+	<mongocxx/model/delete_one.hpp>
+	<mongocxx/model/delete_many.hpp>
+	<mongocxx/model/update_one.hpp>
+	<mongocxx/model/update_many.hpp>
+	<mongocxx/model/replace_one.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/write_type.hpp
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/model/insert_one.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/model/delete_one.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/model/delete_many.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/model/update_one.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/model/update_many.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/model/replace_one.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/cursor.hpp
+	<memory>
+	<bsoncxx/document/view.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/insert_many_builder.hpp
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/bulk_write.hpp>
+	<mongocxx/options/insert.hpp>
+	<mongocxx/result/insert_many.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/insert.hpp
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/result/insert_many.hpp
+	<cstdint>
+	<map>
+	<bsoncxx/types.hpp>
+	<mongocxx/result/bulk_write.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/result/bulk_write.hpp
+	<cstdint>
+	<map>
+	<vector>
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/types.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/aggregate.hpp
+	<chrono>
+	<cstdint>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/read_preference.hpp
+	<cstdint>
+	<string>
+	<memory>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/count.hpp
+	<chrono>
+	<cstdint>
+	<string>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/hint.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/hint.hpp
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/builder/stream/document.hpp>
+	<bsoncxx/builder/stream/helpers.hpp>
+	<bsoncxx/builder/stream/key_context.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/delete.hpp
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/distinct.hpp
+	<chrono>
+	<cstdint>
+	<string>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/find.hpp
+	<chrono>
+	<cstdint>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/cursor.hpp>
+	<mongocxx/hint.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/find_one_and_delete.hpp
+	<chrono>
+	<cstdint>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/find_one_and_replace.hpp
+	<chrono>
+	<cstdint>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/options/find_one_common_options.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/find_one_common_options.hpp
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/find_one_and_update.hpp
+	<chrono>
+	<cstdint>
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/options/find_one_common_options.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/index.hpp
+	<chrono>
+	<memory>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/update.hpp
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/read_concern.hpp
+	<memory>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/stdx/string_view.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/result/delete.hpp
+	<cstdint>
+	<mongocxx/result/bulk_write.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/result/insert_one.hpp
+	<bsoncxx/types.hpp>
+	<bsoncxx/types/value.hpp>
+	<mongocxx/result/bulk_write.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/bsoncxx/v_noabi/bsoncxx/types/value.hpp
+	<cstddef>
+	<cstdint>
+	<type_traits>
+	<bsoncxx/types.hpp>
+	<bsoncxx/config/prelude.hpp>
+	<bsoncxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/result/replace_one.hpp
+	<cstdint>
+	<bsoncxx/types.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/result/bulk_write.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/result/update.hpp
+	<cstdint>
+	<bsoncxx/types.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/result/bulk_write.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/modify_collection.hpp
+	<chrono>
+	<bsoncxx/document/value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/validation_criteria.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/validation_criteria.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/create_collection.hpp
+	<bsoncxx/document/view_or_value.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/validation_criteria.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/client.hpp
+	<string>
+	<mongocxx/options/ssl.hpp>
+	<bsoncxx/stdx/optional.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/options/ssl.hpp
+	<string>
+	<bsoncxx/stdx/optional.hpp>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/stdx.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/uri.hpp
+	<memory>
+	<string>
+	<vector>
+	<bsoncxx/document/view.hpp>
+	<bsoncxx/string/view_or_value.hpp>
+	<mongocxx/read_concern.hpp>
+	<mongocxx/read_preference.hpp>
+	<mongocxx/write_concern.hpp>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479501550 /usr/local/include/mongocxx/v_noabi/mongocxx/instance.hpp
+	<memory>
+	<mongocxx/config/prelude.hpp>
+	<mongocxx/config/postlude.hpp>
+
+1479520318 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoCommand.cpp
+	<stdio.h>
+	<stdlib.h>
+	<string>
+
+1479520318 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoCommandListener.cpp
+	<bsoncxx/builder/stream/document.hpp>
+	<bsoncxx/json.hpp>
+	<mongocxx/client.hpp>
+	<mongocxx/instance.hpp>
+	"MongoCommand.cpp"
+	"wqueue.cpp"
+	<chrono>
+	<bsoncxx/types.hpp>
 

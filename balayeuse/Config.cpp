@@ -27,7 +27,6 @@ std::string Config::GetString(std::string var)
     {
         while ( getline (RobotConfig, line) )
         {
-            //std::cout << "line : " << line << " var : " << var << std::endl;
             pos = line.find(var);
             if(pos != std::string::npos)
             {

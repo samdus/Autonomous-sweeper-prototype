@@ -14,16 +14,28 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="../../../../../../usr/include/libusb-1.0" />
+					<Add directory="../Robot/Serial_wjwwood/include/" />
+					<Add directory="../../../../../../usr/local/include" />
+					<Add directory="../../../../../../usr/local/include/mongocxx/v_noabi" />
+					<Add directory="../../../../../../usr/local/include/libbson-1.0" />
+					<Add directory="../../../../../../usr/local/include/bsoncxx/v_noabi" />
+					<Add directory="../../../../../../usr/local/include/libmongoc-1.0" />
 				</Compiler>
 				<Linker>
 					<Add option="-pthread" />
 					<Add option="-lusb-1.0" />
+					<Add option="-lmongocxx" />
+					<Add option="-lbsoncxx" />
 					<Add library="../../../../../../usr/lib/x86_64-linux-gnu/libGL.so" />
 					<Add library="../../../../../../usr/lib/x86_64-linux-gnu/libGLU.so" />
 					<Add library="../../../../../../usr/lib/x86_64-linux-gnu/libglut.so" />
 					<Add library="lib/libfreenect.a" />
 					<Add library="lib/libfreenect.so" />
 					<Add library="../../../../../../usr/lib/x86_64-linux-gnu/libusb-1.0.so" />
+					<Add library="../Robot/RaspberryBin/CommunicatorArduino.a" />
+					<Add library="../Robot/RaspberryBin/Serial.a" />
+					<Add library="../Robot/RaspberryBin/Software.a" />
+					<Add library="../mongoWrapper/mongoWrapper.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -73,12 +85,9 @@
 		<Unit filename="Robot.config" />
 		<Unit filename="SceneCamera.cpp" />
 		<Unit filename="SceneCamera.h" />
-		<Unit filename="Vectors.h" />
 		<Unit filename="cpp_pc_view.cpp" />
 		<Unit filename="libfreenect.h" />
 		<Unit filename="libfreenect.hpp" />
-		<Unit filename="linreg.cpp" />
-		<Unit filename="linreg.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />

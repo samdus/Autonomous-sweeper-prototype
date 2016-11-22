@@ -10,6 +10,8 @@
 #include "Convertisseur.h"
 #include "../Robot/CommunicatorArduino/ArduinoCommunicator.h"
 #include <stdexcept>
+#include "../mongoWrapper/MongoWrapper.cpp"
+#include <string>
 
 class Decodeur
 {
@@ -30,6 +32,8 @@ class Decodeur
     float DistanceMax = 0.0;
     float DistanceMin = 0.0;
     bool MultithreadActiver = false; //utiliser en debug probablement pas necessaire
+    bool DebugConsole = false;
+    bool DebugServeur = false;
     bool KinectAccessible = false;
     bool ArduinoAccessible = false;
     bool ModeAutomatique = true;
@@ -51,7 +55,7 @@ class Decodeur
     ~Decodeur();
 
     void Init();
-    void UpdateFPS(bool showFpsConsole);
+    void UpdateFPS();
 
     void UpdateCloudOfPoint();
 

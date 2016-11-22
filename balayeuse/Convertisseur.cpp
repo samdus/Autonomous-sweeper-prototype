@@ -333,7 +333,7 @@ void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
 
         {//DEBUG
             //std::cout << "Copy pour le debug..." << std::endl;
-            for(int i = 0; i < ClustersList.size(); ++i)
+            /*for(int i = 0; i < ClustersList.size(); ++i)
             {
                 Clusters.push_back(std::vector<Vector3>());
 
@@ -341,7 +341,7 @@ void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
                 {
                     Clusters[i].push_back(points[ClustersList[i][j]]);
                 }
-            }
+            }*/
             //std::cout << "Fin de la copy" << std::endl;
         }
 
