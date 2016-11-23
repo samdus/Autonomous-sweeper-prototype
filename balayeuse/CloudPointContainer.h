@@ -17,7 +17,7 @@ class CloudPointContainer
     size_t indexInsertion = 0;
     size_t indexSuppression = 0;
 
-    std::vector<uint8_t> rgb[CLOUD_POINT_CIRCULAR_BUFFER];
+    std::vector<uint8_t> rgbImage;
     std::vector<Vector3> depth[CLOUD_POINT_CIRCULAR_BUFFER];
     int ProchainIndex(size_t index);
     int IndexPrecedent(size_t index);
@@ -30,11 +30,10 @@ class CloudPointContainer
 
     ~CloudPointContainer();
 
-    bool Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer);
+    bool InsertColor(std::vector<uint8_t>& rgbBuffer);
     bool InsertDepth(std::vector<Vector3>& depthBuffer);
 
     const std::vector<uint8_t>& GetCloudPointColor()const;
-    const std::vector<uint8_t>& GetCloudPointColor(size_t index)const;
 
     const std::vector<Vector3>& GetCloudPointDepth()const;
     const std::vector<Vector3>& GetCloudPointDepth(size_t idx)const;

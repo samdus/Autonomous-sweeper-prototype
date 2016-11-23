@@ -217,3 +217,5 @@ node_modules/
 #makefile
 *.a
 *.o
+balayeuse/lib/libfreenect.so
+balayeuse/lib/libfreenect.so.0.5

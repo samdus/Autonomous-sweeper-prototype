@@ -35,6 +35,7 @@ class Decodeur
     bool DebugConsole = false;
     bool DebugServeur = false;
     bool KinectAccessible = false;
+    bool KinectCameraActiver = false;
     bool ArduinoAccessible = false;
     bool ModeAutomatique = true;
 

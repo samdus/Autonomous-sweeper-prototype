@@ -2,9 +2,9 @@
 
 CloudPointContainer::CloudPointContainer()
 {
+    rgbImage = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
     for(size_t i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {
-        rgb[i] = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
         depth[i] = std::vector<Vector3>();
         Converted[i] = true;
     }
@@ -33,21 +33,15 @@ int CloudPointContainer::IndexPrecedent(size_t index)
     return index;
 }
 
-bool CloudPointContainer::Insert(std::vector<uint8_t>& rgbBuffer, std::vector<Vector3>& depthBuffer)
+bool CloudPointContainer::InsertColor(std::vector<uint8_t>& rgbBuffer)
 {
-    Mutex::ScopedLock lock(Array_mutex[indexInsertion]);
-    //PrintDebugInfo();
-    if(InsertDepth(depthBuffer))
-    {
-        rgb[IndexPrecedent(indexInsertion)].swap(rgbBuffer);
-        //PrintDebugInfo();
-        return true;
-    }
-    return false;
+    rgbImage.swap(rgbBuffer);
+    return true;
 }
 
 bool CloudPointContainer::InsertDepth(std::vector<Vector3>& depthBuffer)
 {
+    Mutex::ScopedLock lock(Array_mutex[indexInsertion]);
     if(Converted[indexInsertion] == false)
     {
         return false;
@@ -60,16 +54,7 @@ bool CloudPointContainer::InsertDepth(std::vector<Vector3>& depthBuffer)
 
 const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor()const
 {
-    return rgb[indexInsertion];
-}
-
-const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor(size_t idx)const
-{
-    if(idx >=0 && idx < CLOUD_POINT_CIRCULAR_BUFFER)
-    {
-        return rgb[idx];
-    }
-    return rgb[indexInsertion];
+    return rgbImage;
 }
 
 const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth()const
@@ -126,11 +111,6 @@ void CloudPointContainer::PrintDebugInfo()
     std::cout << "===CloudContainer===" << std::endl;
     std::cout << "indexInsertion " << indexInsertion << std::endl;
     std::cout << "indexSuppression " << indexSuppression << std::endl;
-    std::cout << "rgb.size() " << CLOUD_POINT_CIRCULAR_BUFFER << std::endl;
-    for(size_t i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
-    {
-        std::cout << rgb[i].size() << " ";
-    }
     std::cout << "\ndepth.size() " << CLOUD_POINT_CIRCULAR_BUFFER << std::endl;
     for(size_t i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {

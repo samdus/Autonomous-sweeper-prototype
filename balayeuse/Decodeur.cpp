@@ -1,7 +1,7 @@
 #include "Decodeur.h"
 
 Freenect::Freenect freenect;
-MongoWrapper serveur;
+//MongoWrapper serveur;
 Config ConfigHelper;
 
 Decodeur::Decodeur(){ }
@@ -45,7 +45,7 @@ void Decodeur::InitCommunicationServeur()
         if(DebugConsole)
             std::cout << message;
         if(DebugServeur)
-            serveur.writeConsole(message , "error");
+            return;//serveur.writeConsole(message , "error");
     }
 }
 
@@ -60,6 +60,7 @@ void Decodeur::InitConfiguration()
     MultithreadActiver = std::stoi(ConfigHelper.GetString("MULTITHREAD")) == 1;
     DebugConsole = std::stoi(ConfigHelper.GetString("DEBUG_MESSAGE_CONSOLE")) == 1;
     DebugServeur = std::stoi(ConfigHelper.GetString("DEBUG_MESSAGE_SERVEUR")) == 1;
+    KinectCameraActiver = std::stoi(ConfigHelper.GetString("CAMERA_COULEUR")) == 1;
 }
 
 void Decodeur::Init()
@@ -99,7 +100,7 @@ void Decodeur::UpdateFPS()
                 if(DebugConsole)
                     std::cout << message;
                 if(DebugServeur)
-                    serveur.writeConsole(message, "info");
+                    return;//serveur.writeConsole(message, "info");
             }
         }
     }
@@ -107,7 +108,10 @@ void Decodeur::UpdateFPS()
 
 void Decodeur::UpdateCloudOfPoint()
 {
-    device->getRGB(rgb);
+    if(KinectCameraActiver /*&& Pret a l'envoie de photo au serveur*/)
+    {
+        device->getRGB(rgb);
+    }
     device->getDepth(depth);
     if(updateCloud)
     {
@@ -137,7 +141,7 @@ void Decodeur::UpdateCloudOfPoint()
         CloudSamplingTime = std::clock();
         updateCloud = false;
 
-        if(!cloudBuffer.Insert(rgb, snapshot))
+        if(!cloudBuffer.InsertDepth(snapshot))
         {
             nextSampling += nextSampling / 2;//slow down the sampling
         }
@@ -195,7 +199,7 @@ void Decodeur::RunLoop()
                 if(DebugConsole)
                     std::cout << message;
                 if(DebugServeur)
-                    serveur.writeConsole(message, "error");
+                    return;//serveur.writeConsole(message, "error");
             }
             KinectAccessible = false;
         }
