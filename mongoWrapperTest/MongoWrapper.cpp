@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include <thread>
 #include "mythread.cpp"
 #include "MongoCommand.cpp"
@@ -22,15 +23,19 @@ class MongoWrapper
         mongoWorker[0] = new MongoWorker(queue);
         mongoWorker[1] = new MongoWorker(queue);
 
-        mongoWorker[0]->init();
-        mongoWorker[1]->init();
-        
-        mongoWorker[0]->start();
-        mongoWorker[1]->start(); 
+        try {
+            mongoWorker[0]->init();
+            mongoWorker[1]->init();
+            mongoWorker[0]->start();
+            mongoWorker[1]->start(); 
 
-        commandListener = new MongoCommandListener(commandqueu);
-        commandListener->init();
-        commandListener->start();
+            commandListener = new MongoCommandListener(commandqueu);
+            commandListener->init();
+            commandListener->start();
+        } catch( const mongo::DBException &e ) {
+            std::cout << "caught " << e.what() << std::endl;
+        }
+
     }
     void addUpdate(string identifier, const char* value){
         JobInfo thejob;
