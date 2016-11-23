@@ -18,7 +18,7 @@ LDFLAGS = -lpthread
 
 # List of sources:
 INCLUDES= 
-SOURCES = thread.cpp main.cpp 
+SOURCES = main.cpp 
 OBJECTS = $(SOURCES:.cpp=.o)
  
 # Name of executable target:

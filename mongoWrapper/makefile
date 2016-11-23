@@ -18,7 +18,7 @@ LDFLAGS = -lpthread
 
 # List of sources:
 INCLUDES= 
-SOURCES = MongoWrapper.cpp thread.cpp
+SOURCES = MongoWrapper.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
  
 # Name of executable target:

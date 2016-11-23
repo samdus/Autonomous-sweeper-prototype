@@ -19,8 +19,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#ifndef __thread_h__
+#define __thread_h__
+#include <pthread.h>
 
-#include "thread.h"
+class Thread
+{
+  public:
+    Thread();
+    virtual ~Thread();
+
+    int start();
+    int join();
+    int detach();
+    pthread_t self();
+    
+    virtual void* run() = 0;
+    
+  private:
+    pthread_t  m_tid;
+    int        m_running;
+    int        m_detached;
+};
 
 static void* runThread(void* arg)
 {
@@ -75,3 +95,5 @@ int Thread::detach()
 pthread_t Thread::self() {
     return m_tid;
 }
+
+#endif
