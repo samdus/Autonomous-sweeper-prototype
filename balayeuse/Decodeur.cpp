@@ -191,7 +191,7 @@ void Decodeur::RunLoop()
 
             if(DebugConsole || DebugServeur)
             {
-                string message = "\nError: Kinect deconnectee !\n";
+                std::string message = "\nError: Kinect deconnectee !\n";
                 if(DebugConsole)
                     std::cout << message;
                 if(DebugServeur)

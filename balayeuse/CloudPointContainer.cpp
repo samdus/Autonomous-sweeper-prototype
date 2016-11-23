@@ -26,7 +26,7 @@ int CloudPointContainer::ProchainIndex(size_t index)
 
 int CloudPointContainer::IndexPrecedent(size_t index)
 {
-    if(--index < 0)
+    if(--index > CLOUD_POINT_CIRCULAR_BUFFER)
     {
         return CLOUD_POINT_CIRCULAR_BUFFER - 1;
     }

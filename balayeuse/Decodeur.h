@@ -16,7 +16,7 @@
 class Decodeur
 {
     private:
-    int nextSampling = 5000; //millisecond
+    int nextSampling = 500; //millisecond
     int frame = 0;
     int nbEchantillonsParSecond = 0;
     clock_t FPSStarTime = 0;
