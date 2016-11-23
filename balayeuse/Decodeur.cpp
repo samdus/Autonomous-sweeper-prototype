@@ -1,7 +1,7 @@
 #include "Decodeur.h"
 
 Freenect::Freenect freenect;
-//MongoWrapper serveur;
+
 Config ConfigHelper;
 
 Decodeur::Decodeur(){ }

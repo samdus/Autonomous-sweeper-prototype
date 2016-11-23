@@ -12,14 +12,14 @@ LD = g++
 WINDRES = windres
 
 INC = 
-CFLAGS = -std=c++11 -Wall -v
+CFLAGS = -std=c++11 -Wall -v `pkg-config --cflags libmongocxx` -Wl,-rpath /usr/local/lib
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = 
+LDFLAGS = `pkg-config --libs libmongocxx` -Wl,-rpath /usr/local/lib
 
 INC_DEBUG = $(INC) -I../../../../../../usr/include/libusb-1.0 -I../Robot/Serial_wjwwood/include/
-CFLAGS_DEBUG = $(CFLAGS) -g `pkg-config --libs libmongocxx` `pkg-config --cflags libmongocxx`
+CFLAGS_DEBUG = $(CFLAGS) -g
 RESINC_DEBUG = $(RESINC)
 RCFLAGS_DEBUG = $(RCFLAGS)
 LIBDIR_DEBUG = $(LIBDIR)

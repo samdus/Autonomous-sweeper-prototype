@@ -10,7 +10,7 @@
 #include "Convertisseur.h"
 #include "../Robot/CommunicatorArduino/ArduinoCommunicator.h"
 #include <stdexcept>
-#include "../mongoWrapper/MongoWrapper.cpp"
+
 #include <string>
 
 class Decodeur
