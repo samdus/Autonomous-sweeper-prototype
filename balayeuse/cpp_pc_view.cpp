@@ -52,15 +52,16 @@
 //
 //void InitRobotMesh()
 //{
-//    float w = std::stof(Config::Instance().GetString("LARGEUR_ROBOT")) / 2;
-//    float l = std::stof(Config::Instance().GetString("LONGEUR_ROBOT")) / 2;
-//    float h = std::stof(Config::Instance().GetString("HAUTEUR_ROBOT"));
-//    float kh = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
-//    float ko = std::stof(Config::Instance().GetString("OFFSET_KINECT"));
-//    float fv = std::stof(Config::Instance().GetString("VERTICAL_FOV"));
-//    float fh = std::stof(Config::Instance().GetString("HORIZONTAL_FOV"));
-//    float nc = std::stof(Config::Instance().GetString("NEAR_CLIPPING"));
-//    float fc = std::stof(Config::Instance().GetString("FAR_CLIPPING"));
+//    Config ConfigHelper;
+//    float w = std::stof(ConfigHelper.GetString("LARGEUR_ROBOT")) / 2;
+//    float l = std::stof(ConfigHelper.GetString("LONGEUR_ROBOT")) / 2;
+//    float h = std::stof(ConfigHelper.GetString("HAUTEUR_ROBOT"));
+//    float kh = std::stof(ConfigHelper.GetString("HAUTEUR_KINECT"));
+//    float ko = std::stof(ConfigHelper.GetString("OFFSET_KINECT"));
+//    float fv = std::stof(ConfigHelper.GetString("VERTICAL_FOV"));
+//    float fh = std::stof(ConfigHelper.GetString("HORIZONTAL_FOV"));
+//    float nc = std::stof(ConfigHelper.GetString("NEAR_CLIPPING"));
+//    float fc = std::stof(ConfigHelper.GetString("FAR_CLIPPING"));
 //
 ////bottom
 //    robot[0]  = Vector3(w,0.0,l);
@@ -182,6 +183,7 @@
 //
 //void DrawGLScene()
 //{
+//    Config ConfigHelper;
 //    InitRobotMesh();
 //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //    std::vector<uint8_t> currentRgb;
@@ -238,9 +240,9 @@
 //
 //    if(!currentRgb.empty() && !realTimeDepth.empty())
 //    {
-//        float HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
-//        float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
-//        float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
+//        float HauteurMax = std::stof(ConfigHelper.GetString("HAUTEUR_MAX"));
+//        float HauteurMin = std::stof(ConfigHelper.GetString("HAUTEUR_MIN"));
+//        float HauteurKin = std::stof(ConfigHelper.GetString("HAUTEUR_KINECT"));
 //        float f = 595.f;
 //        for (size_t i = 0; i < realTimeDepth.size(); ++i)
 //        {
@@ -404,7 +406,7 @@
 //            DecodeurScene.updateCloud = true;
 //            break;
 //        case  '1':
-//            DecodeurScene.convertisseur.ConvertiFichier();
+////            DecodeurScene.convertisseur.ConvertiFichier();
 //            break;
 //        case  '2':
 //            CarteVisible = !CarteVisible;
@@ -413,7 +415,7 @@
 //            RobotVisible = !RobotVisible;
 //            break;
 //        case  '4':
-//            DecodeurScene.cloudBuffer.EcrirePoint();
+////            DecodeurScene.cloudBuffer.EcrirePoint();
 //            break;
 //        case  '5':
 //            DecodeurScene.convertisseur.Environnement.SaveCarte();

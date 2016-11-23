@@ -11,7 +11,10 @@ Decodeur::~Decodeur()
     if(KinectAccessible)
     {
         device->stopDepth();
-        device->stopVideo();
+        if(KinectCameraActiver)
+        {
+            device->stopVideo();
+        }
     }
     convertisseur.ContinuerConvertion = false;
 }
@@ -23,8 +26,13 @@ void Decodeur::InitKinect()
     {
         device = &freenect.createDevice<MyFreenectDevice>(0);
         KinectAccessible = true;
-        device->startVideo();
+
         device->startDepth();
+        if(KinectCameraActiver)
+        {
+            device->startVideo();
+        }
+        updateCloud = true;
         std::cout << "\nKinect demarree!" << std::endl;
     }
     catch(std::runtime_error e)
@@ -112,10 +120,8 @@ void Decodeur::UpdateCloudOfPoint()
     {
         device->getRGB(rgb);
     }
-    device->getDepth(depth);
-    if(updateCloud)
+    if(updateCloud && device->getDepth(depth))
     {
-        ++nbEchantillonsParSecond;
         //std::cout << "Echantillonnage!!!!" << std::endl;
         std::vector<Vector3> snapshot = std::vector<Vector3>();
         //transforme les donnees du buffer en coordonne monde
@@ -145,6 +151,10 @@ void Decodeur::UpdateCloudOfPoint()
         {
             nextSampling += nextSampling / 2;//slow down the sampling
         }
+        else
+        {
+            ++nbEchantillonsParSecond;
+        }
     }
     else
     {
@@ -152,7 +162,7 @@ void Decodeur::UpdateCloudOfPoint()
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
             updateCloud = true;
-            nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile d'être en dessous de 30 image seconde
+            nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/2));//inutile de prendre plus de 2 image seconde
         }
     }
 }
