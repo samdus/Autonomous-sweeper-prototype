@@ -20,7 +20,7 @@ using bsoncxx::builder::stream::open_document;
 
 
 
-class MongoWorker : public Thread
+class MongoWorker : public Mythread
 {
         workqueu<MongoJob*>& m_queue;
         mongocxx::uri uri;

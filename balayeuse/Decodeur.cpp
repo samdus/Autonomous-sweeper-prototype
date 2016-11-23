@@ -1,7 +1,7 @@
 #include "Decodeur.h"
 
 Freenect::Freenect freenect;
-
+MongoWrapper test;
 Config ConfigHelper;
 
 Decodeur::Decodeur(){ }
@@ -21,6 +21,7 @@ Decodeur::~Decodeur()
 
 void Decodeur::InitKinect()
 {
+   test.writeConsole("Test from raspberryjfjfjfjfjfj", "warning");
     KinectInitTime = std::clock();
     try
     {

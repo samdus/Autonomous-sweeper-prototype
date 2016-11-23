@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 #include "Decodeur.h"
-#include "../mongoWrapper/MongoWrapper.cpp"
-MongoWrapper test;
+
+
 
 Decodeur DecodeurScene = Decodeur();
 
@@ -18,7 +18,6 @@ void printInfo()
 int main(int argc, char **argv)
 {
     DecodeurScene.Init();
-	test.writeConsole("Test from raspberry", "warning");
     printInfo();
 
     while(1)
