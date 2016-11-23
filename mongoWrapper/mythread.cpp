@@ -23,11 +23,11 @@
 #define __thread_h__
 #include <pthread.h>
 
-class Thread
+class Mythread
 {
   public:
-    Thread();
-    virtual ~Thread();
+    Mythread();
+    virtual ~Mythread();
 
     int start();
     int join();
@@ -44,12 +44,12 @@ class Thread
 
 static void* runThread(void* arg)
 {
-    return ((Thread*)arg)->run();
+    return ((Mythread*)arg)->run();
 }
 
-Thread::Thread() : m_tid(0), m_running(0), m_detached(0) {}
+Mythread::Mythread() : m_tid(0), m_running(0), m_detached(0) {}
 
-Thread::~Thread()
+Mythread::~Mythread()
 {
     if (m_running == 1 && m_detached == 0) {
         pthread_detach(m_tid);
@@ -59,7 +59,7 @@ Thread::~Thread()
     }
 }
 
-int Thread::start()
+int Mythread::start()
 {
     int result = pthread_create(&m_tid, NULL, runThread, this);
     if (result == 0) {
@@ -68,7 +68,7 @@ int Thread::start()
     return result;
 }
 
-int Thread::join()
+int Mythread::join()
 {
     int result = -1;
     if (m_running == 1) {
@@ -80,7 +80,7 @@ int Thread::join()
     return result;
 }
 
-int Thread::detach()
+int Mythread::detach()
 {
     int result = -1;
     if (m_running == 1 && m_detached == 0) {
@@ -92,7 +92,7 @@ int Thread::detach()
     return result;
 }
 
-pthread_t Thread::self() {
+pthread_t Mythread::self() {
     return m_tid;
 }
 

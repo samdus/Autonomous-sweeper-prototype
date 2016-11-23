@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
-#include <thread>
-#include "thread.cpp"
+#include "mythread.cpp"
 #include "MongoCommand.cpp"
 #include "MongoCommandListener.cpp"
 #include "MongoJob.cpp"

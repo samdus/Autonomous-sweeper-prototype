@@ -33,7 +33,7 @@ namespace utilities {
 };
 
 
-class MongoCommandListener : public Thread
+class MongoCommandListener : public Mythread
 {
         workqueu<MongoCommand*>& m_queue;
         mongocxx::uri uri;
