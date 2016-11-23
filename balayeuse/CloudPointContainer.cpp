@@ -2,7 +2,7 @@
 
 CloudPointContainer::CloudPointContainer()
 {
-    for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
+    for(size_t i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {
         rgb[i] = std::vector<uint8_t>(IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y*3);
         depth[i] = std::vector<Vector3>();
@@ -15,7 +15,7 @@ CloudPointContainer::~CloudPointContainer()
     //clear stuff
 }
 
-int CloudPointContainer::ProchainIndex(int index)
+int CloudPointContainer::ProchainIndex(size_t index)
 {
     if(++index >= CLOUD_POINT_CIRCULAR_BUFFER)
     {
@@ -24,7 +24,7 @@ int CloudPointContainer::ProchainIndex(int index)
     return index;
 }
 
-int CloudPointContainer::IndexPrecedent(int index)
+int CloudPointContainer::IndexPrecedent(size_t index)
 {
     if(--index < 0)
     {
@@ -63,7 +63,7 @@ const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor()const
     return rgb[indexInsertion];
 }
 
-const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor(int idx)const
+const std::vector<uint8_t>& CloudPointContainer::GetCloudPointColor(size_t idx)const
 {
     if(idx >=0 && idx < CLOUD_POINT_CIRCULAR_BUFFER)
     {
@@ -77,7 +77,7 @@ const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth()const
     return depth[indexInsertion];
 }
 
-const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth(int idx)const
+const std::vector<Vector3>& CloudPointContainer::GetCloudPointDepth(size_t idx)const
 {
     if(idx >=0 && idx < CLOUD_POINT_CIRCULAR_BUFFER)
     {
@@ -99,7 +99,7 @@ int CloudPointContainer::GetCopyCloudPointToConvert(std::vector<Vector3>& outPoi
     return -1;
 }
 
-void CloudPointContainer::EcrirePoint()
+/*void CloudPointContainer::EcrirePoint()
 {
     std::fstream Fichier;
     std::string line;
@@ -108,7 +108,7 @@ void CloudPointContainer::EcrirePoint()
     std::cout << "Ecriture dans le fichier " << nomFichier << std::endl;
     if(Fichier.is_open())
     {
-        for(int i = 0; i < depth[0].size(); ++i)
+        for(size_t i = 0; i < depth[0].size(); ++i)
         {
             Fichier << depth[0][i].x << " " << depth[0][i].y << " " << depth[0][i].z << std::endl;
         }
@@ -119,7 +119,7 @@ void CloudPointContainer::EcrirePoint()
     {
         std::cout << "Error de l'ecriture dans le fichier " << nomFichier << std::endl;
     }
-}
+}*/
 
 void CloudPointContainer::PrintDebugInfo()
 {
@@ -127,17 +127,17 @@ void CloudPointContainer::PrintDebugInfo()
     std::cout << "indexInsertion " << indexInsertion << std::endl;
     std::cout << "indexSuppression " << indexSuppression << std::endl;
     std::cout << "rgb.size() " << CLOUD_POINT_CIRCULAR_BUFFER << std::endl;
-    for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
+    for(size_t i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {
         std::cout << rgb[i].size() << " ";
     }
     std::cout << "\ndepth.size() " << CLOUD_POINT_CIRCULAR_BUFFER << std::endl;
-    for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
+    for(size_t i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {
         std::cout << depth[i].size() << " ";
     }
     std::cout << "\nConverted " << CLOUD_POINT_CIRCULAR_BUFFER << std::endl;
-    for(int i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
+    for(size_t i = 0; i < CLOUD_POINT_CIRCULAR_BUFFER; ++i)
     {
         std::cout << Converted[i] << " ";
     }

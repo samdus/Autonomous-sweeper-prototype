@@ -193,7 +193,7 @@
 //    glBegin(GL_POINTS);
 //
 //
-//    for(int k = 0; k < CLOUD_POINT_CIRCULAR_BUFFER; ++k)
+//    for(size_t k = 0; k < CLOUD_POINT_CIRCULAR_BUFFER; ++k)
 //    {
 //        currentRgb = DecodeurScene.cloudBuffer.GetCloudPointColor(k);
 //        currentDepth = DecodeurScene.cloudBuffer.GetCloudPointDepth(k);
@@ -202,7 +202,7 @@
 //
 //        if(!currentRgb.empty() && !currentDepth.empty())
 //        {
-//            for (int i = 0; i < currentDepth.size(); ++i)
+//            for (size_t i = 0; i < currentDepth.size(); ++i)
 //            {
 //                glVertex3f(currentDepth[i].x, currentDepth[i].y, currentDepth[i].z);
 //            }
@@ -213,14 +213,14 @@
 //    //CLUSTER
 //    glPointSize(3.0f);
 //    glBegin(GL_POINTS);
-//    for(int k = 0; k < DecodeurScene.convertisseur.Clusters.size(); ++k)
+//    for(size_t k = 0; k < DecodeurScene.convertisseur.Clusters.size(); ++k)
 //    {
 //        glColor3ub(125 + k*k*k*k/255, k * 255 / DecodeurScene.convertisseur.Clusters.size(),k);
 //        currentDepth = DecodeurScene.convertisseur.Clusters[k];
 //
 //        if(!currentDepth.empty())
 //        {
-//            for (int i = 0; i < currentDepth.size(); ++i)
+//            for (size_t i = 0; i < currentDepth.size(); ++i)
 //            {
 //                glVertex3f(currentDepth[i].x, 0, currentDepth[i].z);
 //            }
@@ -242,7 +242,7 @@
 //        float HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
 //        float HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
 //        float f = 595.f;
-//        for (int i = 0; i < realTimeDepth.size(); ++i)
+//        for (size_t i = 0; i < realTimeDepth.size(); ++i)
 //        {
 //            Vector3 vec = Vector3((i%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * realTimeDepth[i] / f,
 //                                  (-(i/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * realTimeDepth[i] / f) + HauteurKin,
@@ -286,7 +286,7 @@
 //        glColor3ub(255, 0, 0);  // Red   X-axis
 //
 //        std::vector<segment> segments = DecodeurScene.convertisseur.Environnement.GetSegments();
-//        for(int i = 0; i < segments.size(); ++i)
+//        for(size_t i = 0; i < segments.size(); ++i)
 //        {
 //            glVertex3f(segments[i].debut.x, 0, segments[i].debut.y);
 //            glVertex3f(segments[i].fin.x, 0, segments[i].fin.y);
@@ -299,7 +299,7 @@
 //    {
 //        glBegin(GL_TRIANGLES);
 //            glColor4f(0.75, 0.75, 0.75, 0.5);
-//            for(int i = 0; i < 36; ++i)
+//            for(size_t i = 0; i < 36; ++i)
 //            {
 //                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robot[i];
 //                glVertex3f(vec.x, vec.y, vec.z);
@@ -309,7 +309,7 @@
 //            glLineWidth(3.0f);
 //            glBegin(GL_LINES);
 //            glColor3ub(0, 0, 0);
-//            for(int i = 0; i < 24; ++i)
+//            for(size_t i = 0; i < 24; ++i)
 //            {
 //                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robotMesh[i];
 //                glVertex3f(vec.x, vec.y, vec.z);
@@ -318,7 +318,7 @@
 //
 //        glBegin(GL_TRIANGLES);
 //            glColor4f(0.75, 0.75, 0.0, 0.5);
-//            for(int i = 36; i < 48; ++i)
+//            for(size_t i = 36; i < 48; ++i)
 //            {
 //                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * robot[i];
 //                glVertex3f(vec.x, vec.y, vec.z);
@@ -328,7 +328,7 @@
 //            glLineWidth(1.0f);
 //            glBegin(GL_LINES);
 //            glColor3ub(0, 0, 0);
-//            for(int i = 0; i < 24; ++i)
+//            for(size_t i = 0; i < 24; ++i)
 //            {
 //                Vector3 vec = DecodeurScene.RealCam.matrixToWorld * kinectFOV[i];
 //                glVertex3f(vec.x, vec.y, vec.z);

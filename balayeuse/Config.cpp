@@ -1,18 +1,11 @@
 #include "Config.h"
 
-Config Config::m_instance=Config();
-
 Config::Config()
 {
 }
 
 Config::~Config()
 {
-}
-
-Config& Config::Instance()
-{
-    return m_instance;
 }
 
 std::string Config::GetString(std::string var)
@@ -36,8 +29,10 @@ std::string Config::GetString(std::string var)
         }
         RobotConfig.close();
 
-        return "var not found";
+        std::cout << "var not found" << std::endl;
+        return "0";
     }
 
-    return "file not open";
+        std::cout << "file not open" << std::endl;
+    return "0";
 }

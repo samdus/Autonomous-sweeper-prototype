@@ -2,6 +2,7 @@
 
 Freenect::Freenect freenect;
 MongoWrapper serveur;
+Config ConfigHelper;
 
 Decodeur::Decodeur(){ }
 
@@ -50,19 +51,20 @@ void Decodeur::InitCommunicationServeur()
 
 void Decodeur::InitConfiguration()
 {
-    HauteurMax = std::stof(Config::Instance().GetString("HAUTEUR_MAX"));
-    HauteurMin = std::stof(Config::Instance().GetString("HAUTEUR_MIN"));
-    HauteurKin = std::stof(Config::Instance().GetString("HAUTEUR_KINECT"));
-    OffsetKin = std::stof(Config::Instance().GetString("OFFSET_KINECT"));
-    DistanceMax = std::stof(Config::Instance().GetString("FAR_CLIPPING")) + OffsetKin;
-    DistanceMin = std::stof(Config::Instance().GetString("NEAR_CLIPPING")) + OffsetKin;
-    MultithreadActiver = std::stoi(Config::Instance().GetString("MULTITHREAD")) == 1;
-    DebugConsole = std::stoi(Config::Instance().GetString("DEBUG_MESSAGE_CONSOLE")) == 1;
-    DebugServeur = std::stoi(Config::Instance().GetString("DEBUG_MESSAGE_SERVEUR")) == 1;
+    HauteurMax = std::stof(ConfigHelper.GetString("HAUTEUR_MAX"));
+    HauteurMin = std::stof(ConfigHelper.GetString("HAUTEUR_MIN"));
+    HauteurKin = std::stof(ConfigHelper.GetString("HAUTEUR_KINECT"));
+    OffsetKin = std::stof(ConfigHelper.GetString("OFFSET_KINECT"));
+    DistanceMax = std::stof(ConfigHelper.GetString("FAR_CLIPPING")) + OffsetKin;
+    DistanceMin = std::stof(ConfigHelper.GetString("NEAR_CLIPPING")) + OffsetKin;
+    MultithreadActiver = std::stoi(ConfigHelper.GetString("MULTITHREAD")) == 1;
+    DebugConsole = std::stoi(ConfigHelper.GetString("DEBUG_MESSAGE_CONSOLE")) == 1;
+    DebugServeur = std::stoi(ConfigHelper.GetString("DEBUG_MESSAGE_SERVEUR")) == 1;
 }
 
 void Decodeur::Init()
 {
+    convertisseur.InitialisationConfig(ConfigHelper);
     InitKinect();
     InitCommunicationArduino();
     InitCommunicationServeur();
@@ -116,9 +118,9 @@ void Decodeur::UpdateCloudOfPoint()
 
 
         float f = 595.f;
-        for(int i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
+        for(size_t i = 0; i < IR_CAMERA_RESOLUTION_X*IR_CAMERA_RESOLUTION_Y; ++i)
         {
-            int j = i%IR_CAMERA_RESOLUTION_Y * IR_CAMERA_RESOLUTION_X + i/IR_CAMERA_RESOLUTION_Y;
+            size_t j = i%IR_CAMERA_RESOLUTION_Y * IR_CAMERA_RESOLUTION_X + i/IR_CAMERA_RESOLUTION_Y;
             Vector3 vec = Vector3((j%IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_X-1)/2.f) * depth[j] / f,
                                   (-(j/IR_CAMERA_RESOLUTION_X - (IR_CAMERA_RESOLUTION_Y-1)/2.f) * depth[j] / f) + HauteurKin,
                                   -depth[j]);

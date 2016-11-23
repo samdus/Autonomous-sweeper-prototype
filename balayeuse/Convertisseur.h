@@ -37,7 +37,7 @@ public :
     Convertisseur();
     ~Convertisseur();
 
-    void InitilasationConfig();
+    void InitialisationConfig(Config& ConfigHelper);
     void Convertir(CloudPointContainer& cloudBuffer);
     void ConvertiFichier();
 

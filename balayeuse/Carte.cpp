@@ -2,9 +2,19 @@
 
 Carte::Carte()
 {
+}
+
+Carte::~Carte()
+{
+    //SaveCarte();
+}
+
+void Carte::InitialisationConfig(Config& ConfigHelper)
+{
     std::fstream Fichier;
     std::string line;
-    Fichier.open(Config::Instance().GetString("FICHIER_DE_LA_CARTE"));
+    FichierCarte = ConfigHelper.GetString("FICHIER_DE_LA_CARTE");
+    Fichier.open(FichierCarte);
 
     if(Fichier.is_open())
     {
@@ -17,23 +27,18 @@ Carte::Carte()
 
         Fichier.close();
     }
-    RayonDeFusion = std::stof(Config::Instance().GetString("DISTANCE_ENTRE_POINT_DE_SEGMENTS"));
-    AngleMaximum = std::stof(Config::Instance().GetString("ANGLE_ENTRE_LES_SEGMENTS"));
-}
-
-Carte::~Carte()
-{
-    //SaveCarte();
+    RayonDeFusion = std::stof(ConfigHelper.GetString("DISTANCE_ENTRE_POINT_DE_SEGMENTS"));
+    AngleMaximum = std::stof(ConfigHelper.GetString("ANGLE_ENTRE_LES_SEGMENTS"));
 }
 
 void Carte::FusionCarte(std::vector<segment>& nouveauSegments)
 {
     bool *ignorer = new bool[nouveauSegments.size()]();
 
-    for(int i = 0; i < nouveauSegments.size(); i++)
+    for(size_t i = 0; i < nouveauSegments.size(); i++)
     {
 
-        for(int j = 0; j < segments.size(); ++j)
+        for(size_t j = 0; j < segments.size(); ++j)
         {
             if(segments[j].DisancePoint(nouveauSegments[i].debut) < RayonDeFusion ||
                segments[j].DisancePoint(nouveauSegments[i].fin) < RayonDeFusion )
@@ -45,7 +50,7 @@ void Carte::FusionCarte(std::vector<segment>& nouveauSegments)
             }
         }
     }
-    for(int i = 0; i < nouveauSegments.size(); i++)
+    for(size_t i = 0; i < nouveauSegments.size(); i++)
     {
         if(!ignorer[i])
             segments.push_back(nouveauSegments[i]);
@@ -53,9 +58,9 @@ void Carte::FusionCarte(std::vector<segment>& nouveauSegments)
     //segments.insert(segments.end(), nouveauSegments.begin(), nouveauSegments.end());
 
     float RayonDeFusion2 = RayonDeFusion * RayonDeFusion;
-    for(int i = 0; i < segments.size(); ++i)
+    for(size_t i = 0; i < segments.size(); ++i)
     {
-        for(int j = 0; j < segments.size(); ++j)
+        for(size_t j = 0; j < segments.size(); ++j)
         {
             if(j == i) continue;
 
@@ -79,11 +84,11 @@ void Carte::SaveCarte()
 {
     std::fstream Fichier;
     std::string line;
-    Fichier.open(Config::Instance().GetString("FICHIER_DE_LA_CARTE"));
+    Fichier.open(FichierCarte);
 
     if(Fichier.is_open())
     {
-        for(int i = 0; i < segments.size(); ++i)
+        for(size_t i = 0; i < segments.size(); ++i)
         {
             Fichier << segments[i].ToString();
         }

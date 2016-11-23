@@ -13,10 +13,12 @@ class Carte
     std::vector<segment> segments;
     float RayonDeFusion;
     float AngleMaximum;
+    std::string FichierCarte;
 
     public:
     Carte();
     ~Carte();
+    void InitialisationConfig(Config& ConfigHelper);
 
     void FusionCarte(std::vector<segment>& nouveauSegments);
     std::vector<segment>& GetSegments() { return segments; }

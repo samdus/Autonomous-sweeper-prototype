@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1479779513 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
+1479858259 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/cpp_pc_view.cpp
 
 1479500677 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/libfreenect.hpp
 	"libfreenect.h"
@@ -29,10 +29,10 @@
 1475773991 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Camera.h
 	<iostream>
 
-1479775216 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
+1479859699 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.cpp
 	"CloudPointContainer.h"
 
-1479499059 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
+1479858326 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/CloudPointContainer.h
 	<vector>
 	"../lib/Vectors.h"
 	<iostream>
@@ -83,10 +83,10 @@
 	<algorithm>
 	"Matrices.h"
 
-1479779499 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
+1479858259 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.cpp
 	"Decodeur.h"
 
-1479777915 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
+1479859286 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Decodeur.h
 	<iostream>
 	<vector>
 	"MyFreenectDevice.h"
@@ -100,18 +100,18 @@
 	"../mongoWrapper/MongoWrapper.cpp"
 	<string>
 
-1479775227 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
+1479859141 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.cpp
 	"Config.h"
 
-1477007823 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.h
+1479859322 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Config.h
 	<iostream>
 	<fstream>
 	<string>
 
-1479499059 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
+1479860279 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.cpp
 	"Carte.h"
 
-1479499059 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
+1479860285 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Carte.h
 	<iostream>
 	<fstream>
 	"../lib/Segment.h"
@@ -119,10 +119,10 @@
 	<vector>
 	"Config.h"
 
-1479775304 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
+1479860031 source:/home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.cpp
 	"Convertisseur.h"
 
-1479072386 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
+1479860019 /home/local/USHERBROOKE/grod2404/gsd/balayeuse/Convertisseur.h
 	<iostream>
 	<fstream>
 	<string>
@@ -196,10 +196,12 @@
 	"wqueue.cpp"
 	<mongocxx/instance.hpp>
 
-1479844349 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoJob.cpp
+1479850976 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoJob.cpp
 	<stdio.h>
 	<stdlib.h>
 	<string>
+	"../lib/Segment.h"
+	"../lib/Vectors.h"
 	<vector>
 
 1478714684 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/wqueue.cpp
@@ -209,7 +211,7 @@
 1478714684 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/thread.h
 	<pthread.h>
 
-1479414432 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/segment.cpp
+1479850003 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/segment.cpp
 
 1479520318 /home/local/USHERBROOKE/grod2404/gsd/mongoWrapper/MongoWorker.cpp
 	<bsoncxx/builder/stream/document.hpp>

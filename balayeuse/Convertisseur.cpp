@@ -9,7 +9,6 @@ struct thread_arg
 Convertisseur::Convertisseur()
 {
     ContinuerConvertion = true;
-    InitilasationConfig();
 }
 
 Convertisseur::~Convertisseur()
@@ -17,14 +16,14 @@ Convertisseur::~Convertisseur()
 
 }
 
-std::vector<std::vector<int>> DannyScan(std::vector<Vector3>& ensembleDePoints, float distance, int minimumPoints)
+std::vector<std::vector<int>> DannyScan(std::vector<Vector3>& ensembleDePoints, float distance, size_t minimumPoints)
 {
     float distanceMax = distance * distance;
     std::vector<std::vector<int>> Clusters = std::vector<std::vector<int>>();
     std::vector<int>Cluster = std::vector<int>();
     std::vector<Flag> flags = std::vector<Flag>(ensembleDePoints.size(), Flag::NONE);
 
-    for(int i = 0; i < ensembleDePoints.size(); ++i)
+    for(size_t i = 0; i < ensembleDePoints.size(); ++i)
     {
         if(flags[i] == Flag::VISITE)
         {
@@ -33,7 +32,7 @@ std::vector<std::vector<int>> DannyScan(std::vector<Vector3>& ensembleDePoints, 
 
         flags[i] = Flag::VISITE;
         Cluster.push_back(i);
-        for(int j = i; j < ensembleDePoints.size(); ++j)
+        for(size_t j = i; j < ensembleDePoints.size(); ++j)
         {
             if(flags[j] != Flag::VISITE)
             {
@@ -89,20 +88,21 @@ void Convertisseur::DemarreThread(CloudPointContainer* donnees)
     pthread_create(&convertisseur_thread, NULL, ConvertirThread, (void*)&args);
 }
 
-void Convertisseur::InitilasationConfig()
+void Convertisseur::InitialisationConfig(Config& ConfigHelper)
 {
-    dist_max = std::stof(Config::Instance().GetString("TRESHOLD_BETWEEN_POINT"));
-    MinNumberOfPoint = std::stoi(Config::Instance().GetString("MIN_NUMBER_OF_POINT"));
-    distMinPourCassure = std::stof(Config::Instance().GetString("DISTANCE_POUR_LE_SECTIONNEMENT"));
-    nbPointParVertice = std::stoi(Config::Instance().GetString("NOMBRE_DE_POINT_POUR_LES_VERTICES_DU_MESH"));
-    enleverbruit = std::stoi(Config::Instance().GetString("ENLEVE_BRUIT_DU_CLUSTER"));
-    distMaxPourFusion = std::stof(Config::Instance().GetString("DISTANCE_ENTRE_SEGMENT_POUR_FUSION"));
+    dist_max = std::stof(ConfigHelper.GetString("TRESHOLD_BETWEEN_POINT"));
+    MinNumberOfPoint = std::stoi(ConfigHelper.GetString("MIN_NUMBER_OF_POINT"));
+    distMinPourCassure = std::stof(ConfigHelper.GetString("DISTANCE_POUR_LE_SECTIONNEMENT"));
+    nbPointParVertice = std::stoi(ConfigHelper.GetString("NOMBRE_DE_POINT_POUR_LES_VERTICES_DU_MESH"));
+    enleverbruit = std::stoi(ConfigHelper.GetString("ENLEVE_BRUIT_DU_CLUSTER"));
+    distMaxPourFusion = std::stof(ConfigHelper.GetString("DISTANCE_ENTRE_SEGMENT_POUR_FUSION"));
+    Environnement.InitialisationConfig(ConfigHelper);
 }
 
-Vector2 MoyenneVector2(int index, std::vector<int>& ensIndex, std::vector<Vector3>& ensPoints, int nbPoint)
+Vector2 MoyenneVector2(size_t index, std::vector<int>& ensIndex, std::vector<Vector3>& ensPoints, size_t nbPoint)
 {
     Vector2 vect = Vector2();
-    for(int i = 0; i < nbPoint; ++i)
+    for(size_t i = 0; i < nbPoint; ++i)
     {
         vect.x += ensPoints[ensIndex[index + i]].x;
         vect.y += ensPoints[ensIndex[index + i]].z;
@@ -112,7 +112,7 @@ Vector2 MoyenneVector2(int index, std::vector<int>& ensIndex, std::vector<Vector
     return vect;
 }
 
-std::vector<segment> CoupeSegment(segment& seg, std::vector<int>& ensIndex, std::vector<Vector3>& ensPoints, float dist, int nbPointParVertice)
+std::vector<segment> CoupeSegment(segment& seg, std::vector<int>& ensIndex, std::vector<Vector3>& ensPoints, float dist, size_t nbPointParVertice)
 {
     std::vector<segment> segments = std::vector<segment>();
     std::vector<int> debutSegment = std::vector<int>();
@@ -123,8 +123,8 @@ std::vector<segment> CoupeSegment(segment& seg, std::vector<int>& ensIndex, std:
 
 
 
-    int pointPlusLoin = 0;
-    for(int i = 0; i < segments.size(); ++i)
+    size_t pointPlusLoin = 0;
+    for(size_t i = 0; i < segments.size(); ++i)
     {
         float distPaP = 0.0;
         float distMax = dist;
@@ -141,7 +141,7 @@ std::vector<segment> CoupeSegment(segment& seg, std::vector<int>& ensIndex, std:
         }
         b = seg.fin.y - m * seg.fin.x;
 
-        for(int j = debutSegment[i] + nbPointParVertice; j < finSegment[i] && j < ensIndex.size() - nbPointParVertice; ++j)
+        for(size_t j = debutSegment[i] + nbPointParVertice; j < size_t(finSegment[i]) && j < ensIndex.size() - nbPointParVertice; ++j)
         {
             distPaP = std::abs(m * ensPoints[ensIndex[j]].x - ensPoints[ensIndex[j]].z + b)/ sqrtf(m*m+1);
             if(distPaP > distMax)
@@ -178,7 +178,7 @@ void LisserSegment(std::vector<segment>& segments, float distMaxPourFusion)
 {
     segment ligne = segments[0];
     bool Fusion = true;
-    int i,j,k = 0;
+    size_t i,j,k = 0;
     std::vector<segment> resultat = std::vector<segment>();
     for( i = 1; i < segments.size(); ++i)
     {
@@ -225,7 +225,7 @@ void EnleverBruit(std::vector<int>& index, std::vector<Vector3>& points)
     double ecartType = 0.0;
     moy += points[index[0]].distanceXZfast(points[index[1]]) * 2;
     moy += points[index[index.size()-1]].distanceXZfast(points[index[index.size()-2]]) * 2;
-    for(int i = 1; i < index.size() - 1; ++i)
+    for(size_t i = 1; i < index.size() - 1; ++i)
     {
         moy += points[index[i]].distanceXZfast(points[index[i-1]]) + points[index[i]].distanceXZfast(points[index[i+1]]);
     }
@@ -234,7 +234,7 @@ void EnleverBruit(std::vector<int>& index, std::vector<Vector3>& points)
 
     ecartType += ((points[index[0]].distanceXZfast(points[index[1]]) * 2) - moy) * ((points[index[0]].distanceXZfast(points[index[1]]) * 2) - moy);
     ecartType += ((points[index[index.size()-1]].distanceXZfast(points[index[index.size()-2]]) * 2) - moy) * ((points[index[index.size()-1]].distanceXZfast(points[index[index.size()-2]]) * 2) - moy);
-    for(int i = 1; i < index.size() - 1; ++i)
+    for(size_t i = 1; i < index.size() - 1; ++i)
     {
         ecartType += ((points[index[i]].distanceXZfast(points[index[i-1]]) + points[index[i]].distanceXZfast(points[index[i+1]])) - moy) * ((points[index[i]].distanceXZfast(points[index[i-1]]) + points[index[i]].distanceXZfast(points[index[i+1]])) - moy);
     }
@@ -243,7 +243,7 @@ void EnleverBruit(std::vector<int>& index, std::vector<Vector3>& points)
 
     float minDist = moy - ecartType;
     float maxDist = moy + ecartType;
-    for(int i = 1; i < index.size() - 1; ++i)
+    for(size_t i = 1; i < index.size() - 1; ++i)
     {
         float distance = (points[index[i]].distanceXZfast(points[index[i-1]]) + points[index[i]].distanceXZfast(points[index[i+1]]));
         if(distance < minDist || distance > maxDist)
@@ -268,7 +268,7 @@ void* Convertisseur::ConvertirThread(void* parent)
         {
             convertisseur->parent->Clusters = std::vector<std::vector<Vector3>>();
             std::vector<std::vector<int>> ClustersList = DannyScan(points, convertisseur->parent->dist_max, convertisseur->parent->MinNumberOfPoint);
-            for(int i = 0; i < ClustersList.size(); ++i)
+            for(size_t i = 0; i < ClustersList.size(); ++i)
             {
                 if(convertisseur->parent->enleverbruit)
                 {
@@ -278,11 +278,11 @@ void* Convertisseur::ConvertirThread(void* parent)
 
             {//DEBUG
                 //std::cout << "Copy pour le debug..." << std::endl;
-                /*for(int i = 0; i < ClustersList.size(); ++i)
+                /*for(size_t i = 0; i < ClustersList.size(); ++i)
                 {
                     convertisseur->parent->Clusters.push_back(std::vector<Vector3>());
 
-                    for(int j = 0; j < ClustersList[i].size(); ++j)
+                    for(size_t j = 0; j < ClustersList[i].size(); ++j)
                     {
                         convertisseur->parent->Clusters[i].push_back(points[ClustersList[i][j]]);
                     }
@@ -294,7 +294,7 @@ void* Convertisseur::ConvertirThread(void* parent)
             convertisseur->cloudBuffer->Converted[indiceTraite] = true;
 
             //std::cout << "Debut de la generation du mesh..." << std::endl;
-            for(int i = 0; i < ClustersList.size(); ++i)
+            for(size_t i = 0; i < ClustersList.size(); ++i)
             {
                 segment seg = segment();
 
@@ -309,6 +309,7 @@ void* Convertisseur::ConvertirThread(void* parent)
             //std::cout << "Fin de la generation du mesh..." << std::endl;
         }
     }
+    return 0;
 }
 
 void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
@@ -323,7 +324,7 @@ void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
     {
         Clusters = std::vector<std::vector<Vector3>>();
         std::vector<std::vector<int>> ClustersList = DannyScan(points, dist_max, MinNumberOfPoint);
-        for(int i = 0; i < ClustersList.size(); ++i)
+        for(size_t i = 0; i < ClustersList.size(); ++i)
         {
             if(enleverbruit)
             {
@@ -333,11 +334,11 @@ void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
 
         {//DEBUG
             //std::cout << "Copy pour le debug..." << std::endl;
-            /*for(int i = 0; i < ClustersList.size(); ++i)
+            /*for(size_t i = 0; i < ClustersList.size(); ++i)
             {
                 Clusters.push_back(std::vector<Vector3>());
 
-                for(int j = 0; j < ClustersList[i].size(); ++j)
+                for(size_t j = 0; j < ClustersList[i].size(); ++j)
                 {
                     Clusters[i].push_back(points[ClustersList[i][j]]);
                 }
@@ -349,7 +350,7 @@ void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
         cloudBuffer.Converted[indiceTraite] = true;
 
         //std::cout << "Debut de la generation du mesh..." << std::endl;
-        for(int i = 0; i < ClustersList.size(); ++i)
+        for(size_t i = 0; i < ClustersList.size(); ++i)
         {
             segment seg = segment();
 
@@ -369,8 +370,8 @@ void Convertisseur::Convertir(CloudPointContainer& cloudBuffer)
 Vector3 Convertisseur::FromString(std::string text)
 {
     Vector3 vec = Vector3();
-    int deb = 0;
-    int pos = text.find(" ");
+    size_t deb = 0;
+    size_t pos = text.find(" ");
 
     vec.x = std::stof(text.substr(0,pos));
     deb = pos + 1;
@@ -383,7 +384,7 @@ Vector3 Convertisseur::FromString(std::string text)
     return vec;
 }
 
-void Convertisseur::ConvertiFichier()
+/*void Convertisseur::ConvertiFichier()
 {
     std::vector<Vector3> points = std::vector<Vector3>();
     std::fstream Fichier;
@@ -403,4 +404,4 @@ void Convertisseur::ConvertiFichier()
     std::cout << "Nombre de point a traite : " << points.size() << std::endl;
     std::vector<std::vector<int>> Clusters = DannyScan(points, dist_max, MinNumberOfPoint);
     std::cout << "Nombre de Cluster trouve : " << Clusters.size() << std::endl;
-}
+}*/
