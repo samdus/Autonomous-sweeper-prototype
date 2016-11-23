@@ -32,9 +32,10 @@ class MongoWrapper
             commandListener = new MongoCommandListener(commandqueu);
             commandListener->init();
             commandListener->start();
-        } catch( const mongo::DBException &e ) {
-            std::cout << "caught " << e.what() << std::endl;
-        }
+        } catch (const std::exception& xcp) {
+            std::cout << "connection failed: " << xcp.what() << "\n";
+            return EXIT_FAILURE;
+         }
 
     }
     void addUpdate(string identifier, const char* value){
