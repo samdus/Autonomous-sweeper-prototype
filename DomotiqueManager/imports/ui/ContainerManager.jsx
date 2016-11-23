@@ -5,6 +5,7 @@ import FullContainer from './FullContainer.jsx';
 import ModalContainer from './ModalContainer.jsx';
 import Map from './mapDisplay/Map.jsx';
 import Console from './consoleDisplay/Console.jsx';
+import CommandDisplay from './commandDisplay/CommandDisplay.jsx';
 
 class ContainerManager extends Component {
   constructor(props) {
@@ -21,6 +22,7 @@ class ContainerManager extends Component {
   handleClose(theProp){
     this.setState({[theProp]: false});
   }
+
   render() {
         return (
             <div className="container-manager">
@@ -29,6 +31,8 @@ class ContainerManager extends Component {
                     this.state.showMap &&
                     <FullContainer onClose={() => this.handleClose('showMap')} title={"Vaccum Map"} addedClassName={"map-wrapper"}>
                         <Map />
+                         <img src="/icon/console.svg" className="showConsole icon" alt="Chart" title="Show Console" onClick={() => this.activateContainer('showConsole')}  />
+                        <CommandDisplay showConsole={() => this.activateContainer('showConsole')} />
                     </FullContainer>      
                 }
                 <img src="/icon/map-alt.svg" className="containerActivation icon" alt="Chart" title="Show Map"   onClick={() => this.activateContainer('showMap') }  /> 

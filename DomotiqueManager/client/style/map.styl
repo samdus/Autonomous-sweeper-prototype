@@ -1,9 +1,14 @@
+@import 'mixins.styl'
 .content.map-wrapper
     height calc(100% - 10rem)
     .canvas-wrapper
         width 100%
         height 100%
-    canvas
-        border 1px solid yellow
     .loading.true
         display none
+    .showConsole
+        position absolute
+        top 2em
+        right 4em
+    .loading
+        margin-top: 2em

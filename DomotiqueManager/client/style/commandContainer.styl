@@ -1,0 +1,30 @@
+@import "mixins.styl"
+.command-wrapper
+    display flex
+    flex-direction column
+    flex-wrap wrap
+    justify-content center
+    align-content flex-start
+    align-items center
+    position absolute
+    bottom 2em
+    right 1.5em
+    position absolute
+    right 0
+    width 10%
+    .manualCommand-wrapper
+        display flex
+        flex-direction column
+        flex-wrap wrap
+        justify-content center
+        align-content flex-start
+        align-items center
+        margin-top 2em
+        padding 1em
+        & > *:not(:last-child)
+            margin-bottom 1em
+        &.true
+            background-color: rgba(153, 153, 153, 0.47);
+            &>img:not(.showConsole), input:not(.toggleAutomatic):not(.toggleDebug), label:not(.toggleAutomatic):not(.toggleDebug)
+                pointer-events: none
+                cursor default
