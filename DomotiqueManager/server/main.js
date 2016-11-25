@@ -6,6 +6,8 @@ import StatStringContainer from '../imports/api/statStringContainer.js';
 import ConsoleContainer from '../imports/api/consoleContainer.js';
 import CommandContainer from '../imports/api/commandContainer.js';
 import MapContainer from '../imports/api/mapContainer.js';
+import FilesContainer from '../imports/api/filesContainer.js';
+
 Meteor.startup(() => {
     StatNumberContainer.StatContainer._collection._ensureIndex({ "history.createdAt": -1});
     StatBoolContainer.StatContainer._collection._ensureIndex({ "history.createdAt": -1});
@@ -13,4 +15,7 @@ Meteor.startup(() => {
     ConsoleContainer.ConsoleContainer._collection._ensureIndex({ "createdAt": 1});
     CommandContainer.CommandContainer._collection._ensureIndex({ "createdAt": -1});
     MapContainer.MapContainer._collection._ensureIndex({ "createdAt": 1});
+
+
 });
+
