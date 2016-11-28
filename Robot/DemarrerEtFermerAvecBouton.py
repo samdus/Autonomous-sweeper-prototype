@@ -8,8 +8,7 @@ def callback_rouge(channel):
     os.system("stty -F /dev/ttyACM0 -hupcl &")
 
 def callback_jaune(channel):
-    os.system("cd /home/pi/Documents/Projet-RepoGit/gsd/balayeuse/bin/Release")
-    os.system("sudo ./balayeuse")
+    os.system("cd /home/pi/Documents/Projet-RepoGit/gsd/balayeuse/bin/Release & sudo ./balayeuse")
     #os.system("make -C /home/pi/Documents/Projet-RepoGit/gsd/Robot run &")
 
 boutonRougePin = 19
