@@ -24,8 +24,8 @@ bool retourInt;
 void(*fonctionAsync)(ControlleurPrincipal&);
 
 byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
-	{ 6,7,8,9 },
-	{ 2,3,4,5 }
+	{ 2,3,4,5 },
+	{ 6,7,8,9 }
 };
 StepperDriver moteurGauche(new StepperMotor(), STEPPER_GAUCHE),
               moteurDroit(new StepperMotor(), STEPPER_DROIT);
@@ -101,22 +101,14 @@ void setup()
 	Timer1.attachInterrupt(stepMoteur);
 
 	Serial.write(IControlleurPrincipal::Fonction::FinInit);
-	Serial.println("FIN debut");
 }
-
-unsigned long dernierTemps = 0;
-unsigned long tot_DiffTemps = 0;
-int nbEchantillon = 0;
 
 void loop()
 {
-	controlleur.verifierObstacle();
+	//controlleur.verifierObstacle();
 	controlleur.calibrerMoteur();
 	compas.update();
 	
-	retourInt = true;
-	controlleur.obtenirOrientation();
-
 	if (retourDeFonction != NULL)
 	{
 		if (retourInt)
@@ -172,11 +164,20 @@ void loop()
 			controlleur.tourneDroitePendant(lireInt());
 			break;
 
-		case 'D':
         case IControlleurPrincipal::Fonction::Orientation:
 			retourInt = true;
             controlleur.obtenirOrientation();
             break;
+
+		case IControlleurPrincipal::Fonction::ObtenirDistanceDevant:
+			retourInt = true;
+			controlleur.obtenirDistanceDevant();
+			break;
+
+		case IControlleurPrincipal::Fonction::ObtenirObstacle:
+			retourInt = false;
+			controlleur.obtenirObstacle();
+			break;
 
         case IControlleurPrincipal::Fonction::Gauche:
 			retourInt = false;

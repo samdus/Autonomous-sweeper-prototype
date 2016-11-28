@@ -290,6 +290,18 @@ int16_t ArduinoCommunicator::obtenirOrientation()
 	return getRetour();
 }
 
+int16_t ArduinoCommunicator::obtenirDistanceDevant()
+{
+	ecrire(Fonction::ObtenirDistanceDevant);
+	return getRetour();
+}
+
+bool ArduinoCommunicator::obtenirObstacle()
+{
+	ecrire(Fonction::ObtenirObstacle);
+	return getRetour();
+}
+
  void ArduinoCommunicator::setDebug()
 {
     ecrire(Fonction::SetDebug);

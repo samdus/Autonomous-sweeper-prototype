@@ -65,6 +65,8 @@ public:
 	 virtual void tourneGauchePendant(int16_t dixiemeSec);
 	 virtual void tourneDroitePendant(int16_t dixiemeSec);
 	 virtual void obtenirOrientation();
+	 virtual void obtenirDistanceDevant();
+	 virtual void obtenirObstacle();
 	 virtual void setDebug();
 	 virtual void stopDebug();
 	 virtual void resetErreur();

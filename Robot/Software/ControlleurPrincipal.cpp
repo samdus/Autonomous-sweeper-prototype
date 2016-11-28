@@ -33,7 +33,7 @@ bool ControlleurPrincipal::init(void(*transmettreDonnee)(int, bool), void(*reset
 	return true;
 }
 
- void ControlleurPrincipal::stepMoteur()
+void ControlleurPrincipal::stepMoteur()
 {
     _moteurGauche->step();
     _moteurDroit->step();
@@ -90,7 +90,7 @@ void ControlleurPrincipal::calibrerMoteur()
 	}
 }
 
- void ControlleurPrincipal::verifierObstacle()
+void ControlleurPrincipal::verifierObstacle()
 {
 	if (_avance)
 	{
@@ -174,22 +174,22 @@ void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 	
 	if (fabs(diff) <= CTRL_PRINC_DIFF_ANGLE_ACCEPTE || fabs(diff) >= 360 - CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
 	{
-		_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
-		_transmettreDonnee(0, true);
+		/*_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
+		_transmettreDonnee(0, true);*/
 		return;
 	}
 	else if ((diff < 0 && diff > -180) || diff > 180)
 	{
-		_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
-		_transmettreDonnee(1, true);
+		/*_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
+		_transmettreDonnee(1, true);*/
 
 		_moteurGauche->gauche();
 		_moteurDroit->gauche();
 	}
 	else
 	{
-		_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
-		_transmettreDonnee(2, true);
+		/*_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
+		_transmettreDonnee(2, true);*/
 
 		_moteurGauche->droite();
 		_moteurDroit->droite();
@@ -209,7 +209,7 @@ void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &sel
 	self._derniereOrientation = self._compassDriver->getOrientation();
 	diff = self._destinationRotation - self._derniereOrientation;
 	
-	if (fabs(diff) > CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
+	if (fabs(diff) <= CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
 	{
 		self._moteurGauche->stop();
 		self._moteurDroit->stop();
@@ -269,6 +269,18 @@ void ControlleurPrincipal::tourneDroitePendant(int16_t dixiemeSec)
 void ControlleurPrincipal::obtenirOrientation()
 {
 	(*_retourDeFonction) = new int(round(_compassDriver->getOrientation()));
+}
+
+void ControlleurPrincipal::obtenirDistanceDevant()
+{
+	_sonarDriver->updateDist();
+	(*_retourDeFonction) = new int(round(_sonarDriver->getDist()));
+}
+
+void ControlleurPrincipal::obtenirObstacle()
+{
+	_sonarDriver->updateDist();
+	(*_retourDeFonction) = new int(_sonarDriver->isObstacle());
 }
 
  void ControlleurPrincipal::setDebug()
