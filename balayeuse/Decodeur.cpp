@@ -1,7 +1,7 @@
 #include "Decodeur.h"
 
 Freenect::Freenect freenect;
-MongoWrapper test;
+MongoWrapper serveur;
 Config ConfigHelper;
 
 Decodeur::Decodeur(){ }
@@ -21,7 +21,10 @@ Decodeur::~Decodeur()
 
 void Decodeur::InitKinect()
 {
-   test.writeConsole("Test from raspberryjfjfjfjfjfj", "warning");
+    if(KinectInitTime < std::clock() - 10000000)
+    {
+        return;
+    }
     KinectInitTime = std::clock();
     try
     {
@@ -38,23 +41,44 @@ void Decodeur::InitKinect()
     }
     catch(std::runtime_error e)
     {
-        std::cout << "Impossible de demarrer la Kinect" << std::endl;
+        if(DebugConsole || DebugServeur)
+        {
+            std::string message = "Impossible de demarrer la Kinect";
+            if(DebugConsole)
+                std::cout << message;
+            if(DebugServeur)
+                serveur.writeConsole(message , "error");
+        }
     }
 }
 
 void Decodeur::InitCommunicationArduino()
 {
+    if(ArduinoInitTime < std::clock() - 10000000)
+    {
+        return;
+    }
+    ArduinoInitTime = std::clock();
+    ArduinoAccessible = false;//ArduinoCommunicator.init();
+    if(!ArduinoAccessible && (DebugConsole || DebugServeur))
+    {
+        std::string message = "Initialisation d'Arduino impossible";
+        if(DebugConsole)
+            std::cout << message;
+        if(DebugServeur)
+            serveur.writeConsole(message , "error");
+    }
 }
 
 void Decodeur::InitCommunicationServeur()
 {
-    if(DebugConsole || DebugServeur)
+    if(/* !testdeconnection ||*/ DebugConsole || DebugServeur)
     {
         std::string message = "test de connection avec le serveur";
         if(DebugConsole)
             std::cout << message;
         if(DebugServeur)
-            return;//serveur.writeConsole(message , "error");
+            serveur.writeConsole(message , "error");
     }
 }
 
@@ -74,11 +98,12 @@ void Decodeur::InitConfiguration()
 
 void Decodeur::Init()
 {
+    serveur.writeConsole("Demarrage" , "info");
+    InitConfiguration();
     convertisseur.InitialisationConfig(ConfigHelper);
     InitKinect();
     InitCommunicationArduino();
     InitCommunicationServeur();
-    InitConfiguration();
 
     if(MultithreadActiver)
     {
@@ -109,7 +134,7 @@ void Decodeur::UpdateFPS()
                 if(DebugConsole)
                     std::cout << message;
                 if(DebugServeur)
-                    return;//serveur.writeConsole(message, "info");
+                    serveur.writeConsole(message, "info");
             }
         }
     }
@@ -172,16 +197,30 @@ void Decodeur::RunLoop()
 {
     if(!KinectAccessible)
     {
-        if(KinectInitTime < std::clock() - 5000000)
-        {
-            InitKinect();
-        }
+        InitKinect();
         return;
     }
 
-    if(ArduinoAccessible && !ModeAutomatique)
+    if(!ArduinoAccessible /*|| !ArduinoCommunicator.isLectureEnFonction()*/)
     {
-        //aller chercher les commandes et les executer
+        ArduinoAccessible = false;
+        InitCommunicationArduino();
+        return;
+    }
+
+    if(!ModeAutomatique)
+    {
+        aller chercher les commandes et les executer
+        if(serveur.getCommand()->getMessage() == "scan")
+        {
+            ArduinoCommunicator.tourneAuDegresX(45);
+            RealCam.RotateY(45);
+        }
+    }
+
+    if(ListeDeCommandes.size() != 0)
+    {
+
     }
 
     if(ArduinoAccessible && ModeAutomatique)
@@ -203,16 +242,16 @@ void Decodeur::RunLoop()
         catch(std::runtime_error e)
         {
             freenect.deleteDevice(0);
+            KinectAccessible = false;
 
             if(DebugConsole || DebugServeur)
             {
-                std::string message = "\nError: Kinect deconnectee !\n";
+                std::string message = "Error: lors de la loop principale\n";
                 if(DebugConsole)
                     std::cout << message;
                 if(DebugServeur)
-                    return;//serveur.writeConsole(message, "error");
+                    serveur.writeConsole(message, "error");
             }
-            KinectAccessible = false;
         }
     }
 }

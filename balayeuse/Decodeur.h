@@ -25,6 +25,7 @@ class Decodeur
     float fps = 0.0;
     clock_t CloudSamplingTime = 0;
     clock_t KinectInitTime = 0;
+    clock_t ArduinoInitTime = 0;
     MyFreenectDevice* device;
     float HauteurMax = 0.0;
     float HauteurMin = 0.0;
@@ -39,6 +40,8 @@ class Decodeur
     bool KinectCameraActiver = false;
     bool ArduinoAccessible = false;
     bool ModeAutomatique = true;
+
+    std::vector<_commandInfo> ListeDeCommandes;
 
     void InitKinect();
     void InitCommunicationArduino();
