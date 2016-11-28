@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
 
     // Ctrl-C to end program
-    MongoCommand* itema mongoWrapper.getCommand();
+    MongoCommand* itema  =mongoWrapper.getCommand();
     MongoCommand* item = mongoWrapper.getBlockingCommand();
 	
     switch(item->m_commandInfo.thecommand){
@@ -39,8 +39,8 @@ int main(int argc, char** argv)
         case GOTO:
             printf("test GOTO");
         break;
-        case GOTO:
-            printf("test GOTO");
+        case CLOSE:
+            printf("test close");
         break;
         case STARTDEBUG:
             printf("test STARTDEBUG");
