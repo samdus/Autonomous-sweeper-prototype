@@ -100,6 +100,12 @@ public:
     /// \overload
 	 virtual int16_t obtenirOrientation();
 
+	 /// \overload
+	 virtual int16_t obtenirDistanceDevant();
+
+	 /// \overload
+	 virtual bool obtenirObstacle();
+
     /// \overload
 	 virtual void setDebug();
 
