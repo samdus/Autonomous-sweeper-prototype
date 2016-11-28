@@ -3,7 +3,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <mongocxx/client.hpp>
-#include <mongocxx/gridfs.h>
+//#include <mongo/client/gridfs.h>
 #include <mongocxx/instance.hpp>
 #include <ctime>
 #include "MongoJob.cpp"
@@ -199,8 +199,8 @@ class MongoWorker : public Mythread
             coll.insert_one(mapInsert.view());
         }
         void saveFile(string filename, string filecontent){
-            GridFS gfs = GridFS(client, "domotique_manager", "FilesContainer");
-            gfs.storeFile(&filecontent, filecontent.size()-1, filename);
+            //GridFS gfs = GridFS(client, "domotique_manager", "FilesContainer");
+            //gfs.storeFile(&filecontent, filecontent.size()-1, filename);
         }
 };
 #endif /* !MONGOWORKER */

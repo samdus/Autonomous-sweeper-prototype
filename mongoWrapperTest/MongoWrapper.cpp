@@ -34,7 +34,7 @@ class MongoWrapper
             commandListener->start();
         } catch (const std::exception& xcp) {
             std::cout << "connection failed: " << xcp.what() << "\n";
-            return EXIT_FAILURE;
+            //return EXIT_FAILURE;
          }
 
     }
@@ -151,40 +151,25 @@ class MongoWrapper
     }
 
     commandEnum getCommandEnum(string stringcommand){
-        switch (str2int(stringcommand))
-        {
-        case str2int("stopaction"):
-            return commandEnum.STOPACTION
-        break;
-        case str2int("goto"):
-            return commandEnum.GOTO
-        break;
-        case str2int("close"):
-            return commandEnum.CLOSE
-        break;
-        case str2int("startdebug"):
-            return commandEnum.STARTDEBUG
-        break;
-        case str2int("stopdebug"):
-            return commandEnum.STOPDEBUG
-        break;
-        case str2int("scan"):
-            return commandEnum.SCAN
-        break;
-        case str2int("turn"):
-             return commandEnum.TURN
-        break;
-        case str2int("resume"):
-             return commandEnum.RESUME
-        break;
-        case str2int("takephoto"):
-            return commandEnum.TAKEPHOTO
-        break;
+        if(strcmp(stringcommand, "stopaction")){
+            return commandEnum.STOPACTION;
+        }else if(strcmp(stringcommand, "goto")){
+            return commandEnum.GOTO;
+        }else if(strcmp(stringcommand, "close")){
+            return commandEnum.CLOSE;
+        }else if(strcmp(stringcommand, "startdebug")){
+            return commandEnum.STARTDEBUG;
+        }else if(strcmp(stringcommand, "stopdebug")){
+            return commandEnum.STOPDEBUG;
+        }else if(strcmp(stringcommand, "scan")){
+            return commandEnum.SCAN;
+        }else if(strcmp(stringcommand, "turn")){
+             return commandEnum.TURN;
+        }else if(strcmp(stringcommand, "resume")){
+             return commandEnum.RESUME;
+        }else if(strcmp(stringcommand, "takephoto")){
+            return commandEnum.TAKEPHOTO;
         }
-    }
-    constexpr unsigned int str2int(const char* str, int h = 0)
-    {
-        return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
     }
     ~MongoWrapper() {
  
