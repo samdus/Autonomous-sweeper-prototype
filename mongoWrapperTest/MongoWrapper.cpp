@@ -151,8 +151,8 @@ class MongoWrapper
     }
 
     commandEnum getCommandEnum(string stringcommand){
-        if(stringcommand == "stopaction"){
-            return STOPACTION;
+        if(stringcommand == "manual"){
+            return MANUAL;
         }else if(stringcommand == "goto"){
             return GOTO;
         }else if(stringcommand == "close"){
@@ -165,8 +165,8 @@ class MongoWrapper
             return SCAN;
         }else if(stringcommand == "turn"){
              return TURN;
-        }else if(stringcommand == "resume"){
-             return RESUME;
+        }else if(stringcommand == "automatic"){
+             return AUTOMATIC;
         }else if(stringcommand == "takephoto"){
             return TAKEPHOTO;
         }

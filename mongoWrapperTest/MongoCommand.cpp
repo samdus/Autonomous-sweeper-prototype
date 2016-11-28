@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string>
 enum commandEnum{
-    STOPACTION, GOTO, CLOSE, STARTDEBUG, STOPDEBUG, SCAN, TURN, RESUME, TAKEPHOTO, INVALID
+    MANUAL, GOTO, CLOSE, STARTDEBUG, STOPDEBUG, SCAN, TURN, AUTOMATIC, TAKEPHOTO, INVALID
 };
 typedef struct _commandInfo
 {

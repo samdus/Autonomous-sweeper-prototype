@@ -22,20 +22,14 @@ class MongoWrapper
     MongoWrapper(){
         mongoWorker[0] = new MongoWorker(queue);
         mongoWorker[1] = new MongoWorker(queue);
+        mongoWorker[0]->init();
+        mongoWorker[1]->init();
+        mongoWorker[0]->start();
+        mongoWorker[1]->start(); 
 
-        try {
-            mongoWorker[0]->init();
-            mongoWorker[1]->init();
-            mongoWorker[0]->start();
-            mongoWorker[1]->start(); 
-
-            commandListener = new MongoCommandListener(commandqueu);
-            commandListener->init();
-            commandListener->start();
-        } catch (const std::exception& xcp) {
-            std::cout << "connection failed: " << xcp.what() << "\n";
-            //return EXIT_FAILURE;
-         }
+        commandListener = new MongoCommandListener(commandqueu);
+        commandListener->init();
+        commandListener->start();
 
     }
     void addUpdate(string identifier, const char* value){

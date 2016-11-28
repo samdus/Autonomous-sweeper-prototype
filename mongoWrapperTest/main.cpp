@@ -33,8 +33,8 @@ int main(int argc, char** argv)
     MongoCommand* item = mongoWrapper.getBlockingCommand();
 	
     switch(item->m_commandInfo.thecommand){
-        case STOPACTION:
-            printf("test STOPACTION\n");
+        case MANUAL:
+            printf("test MANUAL\n");
         break;
         case GOTO:
             printf("test GOTO\n");
@@ -54,8 +54,8 @@ int main(int argc, char** argv)
         case TURN:
             printf("test TURN\n");
         break;
-        case RESUME:
-            printf("test RESUME\n");
+        case AUTOMATIC:
+            printf("test AUTOMATIC\n");
         break;
         case TAKEPHOTO:
             printf("test TAKEPHOTO\n");
