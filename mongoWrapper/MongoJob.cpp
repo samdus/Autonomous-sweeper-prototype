@@ -14,7 +14,7 @@ typedef struct _jobinfo
     bool boolvalue;
     std::string level; // warning, sucesss, info, error, none 
 
-    int jobtype; //1 update 2 write 3write console 4setmap
+    int jobtype; //1 update 2 write 3write console 4setmap 5savefile
     int valuetype;// 1 int  2float 3string 4bool
     std::string identifier;
     

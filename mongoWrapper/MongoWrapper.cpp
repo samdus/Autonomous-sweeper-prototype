@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include <thread>
 #include "mythread.cpp"
 #include "MongoCommand.cpp"
@@ -22,15 +23,20 @@ class MongoWrapper
         mongoWorker[0] = new MongoWorker(queue);
         mongoWorker[1] = new MongoWorker(queue);
 
-        mongoWorker[0]->init();
-        mongoWorker[1]->init();
-        
-        mongoWorker[0]->start();
-        mongoWorker[1]->start(); 
+        try {
+            mongoWorker[0]->init();
+            mongoWorker[1]->init();
+            mongoWorker[0]->start();
+            mongoWorker[1]->start(); 
 
-        commandListener = new MongoCommandListener(commandqueu);
-        commandListener->init();
-        commandListener->start();
+            commandListener = new MongoCommandListener(commandqueu);
+            commandListener->init();
+            commandListener->start();
+        } catch (const std::exception& xcp) {
+            std::cout << "connection failed: " << xcp.what() << "\n";
+            //return EXIT_FAILURE;
+         }
+
     }
     void addUpdate(string identifier, const char* value){
         JobInfo thejob;
@@ -121,17 +127,50 @@ class MongoWrapper
         thejob.themap = map;
         queue.add(new MongoJob(thejob));
     }
-    
+      //level : // warning, sucesss, info, error, none
+    void sendFile(string filename, string filecontent){
+        JobInfo thejob;
+        thejob.jobtype = 5;
+        thejob.identifier = filename;
+        thejob.stringvalue = filecontent;
+        queue.add(new MongoJob(thejob));
+    }
     MongoCommand* getCommand(){
         if(commandqueu.size() >0){
             MongoCommand* item = (MongoCommand*)commandqueu.remove();
+            item->m_commandInfo.thecommand = getCommandEnum(item->m_commandInfo.command); 
             return item; 
         }
         return NULL;
     }
+
     MongoCommand* getBlockingCommand(){
          MongoCommand* item = (MongoCommand*)commandqueu.remove();
+         item->m_commandInfo.thecommand = getCommandEnum(item->m_commandInfo.command); 
     	 return item;
+    }
+
+    commandEnum getCommandEnum(string stringcommand){
+        if(stringcommand == "stopaction"){
+            return STOPACTION;
+        }else if(stringcommand == "goto"){
+            return GOTO;
+        }else if(stringcommand == "close"){
+            return CLOSE;
+        }else if(stringcommand == "startdebug"){
+            return STARTDEBUG;
+        }else if(stringcommand == "stopdebug"){
+            return STOPDEBUG;
+        }else if(stringcommand == "scan"){
+            return SCAN;
+        }else if(stringcommand == "turn"){
+             return TURN;
+        }else if(stringcommand == "resume"){
+             return RESUME;
+        }else if(stringcommand == "takephoto"){
+            return TAKEPHOTO;
+        }
+        return INVALID;
     }
     ~MongoWrapper() {
  

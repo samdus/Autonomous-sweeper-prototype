@@ -89,9 +89,9 @@ function getInitialCommand(){
     var now = Date.now();
     return [
         //Levels : warning, sucess, error, ''
-        {command:"goTo",  // Manuel (stopacction goto close startdebug stopdebug scan turn x) Automatique (resume)
-        goToX:24, 
-        goToY:25, 
+        {command:"goto",  // Manuel (stopacction goto close startdebug stopdebug scan turn x) Automatique (resume)
+        gotoX:24, 
+        gotoY:25, 
         createdAt:now},
     ]
 }
@@ -217,7 +217,7 @@ function simulateConsole(){
 
 function simulateCommand(){
    var now = Date.now();
-    db.collection('commandContainer').insert({command:"goTo",  goToX:24, goToY:25, createdAt:now}, function(error, value){
+    db.collection('commandContainer').insert({command:"goto",  gotoX:24, gotoY:25, createdAt:now}, function(error, value){
         console.log(error || value)
     });
 
