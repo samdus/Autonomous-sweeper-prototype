@@ -2,30 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
 import { MapContainer } from '../../api/mapContainer.js';
- 
-//vector<segment> 
+import { CommandContainer } from '../../api/commandContainer.js';
 
-var robotMap = [{
-x1:150,
-y1:100,
-x2:200,
-y2:25,
-nbpts:5,
-},
-{
-x1:200,
-y1:25,
-x2:200,
-y2:150,
-nbpts:5,
-},
-{
-x1:200,
-y1:150,
-x2:150,
-y2:100,
-nbpts:5,
-},]
 //Map width and height from the robot
 var robotMapWidth ;
 var robotMapHeight;
@@ -58,6 +36,7 @@ class Map extends Component {
   }
 
   clickCanvas(e){
+     var now = Date.now();
     var mapCanvas=document.getElementById("mapCanvas");
     var rect = mapCanvas.getBoundingClientRect();
     var ctx = mapCanvas.getContext("2d")
@@ -65,6 +44,7 @@ class Map extends Component {
     var y = e.clientY - rect.top;
     robotClickX = (x/scaleX)-cadrantFixX;
     robotClickY = (y/scaleY)-cadrantFixY;
+    CommandContainer.insert({command:"goto", goToX: Math.round(robotClickX), goToY: Math.round(robotClickY),createdAt:now})
     this.draw();
   }
 
@@ -110,13 +90,16 @@ class Map extends Component {
 
     actualWidth = ctx.canvas.width  = wrapper.offsetWidth;
     actuelHeight = ctx.canvas.height = (robotMapHeight / robotMapWidth) * actualWidth;
+
     if(actuelHeight > maxCanvasHeight){
       var resizeRatio = maxCanvasHeight  / actuelHeight;
       actuelHeight = ctx.canvas.height = actuelHeight * resizeRatio;
       actualWidth = ctx.canvas.width  = (robotMapWidth / robotMapHeight) * actuelHeight;
+      
     }
     scaleX = actualWidth / robotMapWidth;
     scaleY = actuelHeight / robotMapHeight;
+
   }
 
 
@@ -188,6 +171,7 @@ Map.propTypes = {
 
 export default createContainer(() => {
   var handleSub=Meteor.subscribe('mapContainer');
+  var handleSub=Meteor.subscribe('commandContainer');
   return {
     dataReady:handleSub.ready(),
     mapContainer:MapContainer.findOne({}, {sort: {createdAt: -1}, limit:1 })

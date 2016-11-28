@@ -1,8 +1,8 @@
 var mongojs = require('mongojs')
 //For prod
-var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
+//var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
 //For dev
-//var db = mongojs("mongodb://127.0.0.1:3001/meteor");
+var db = mongojs("mongodb://127.0.0.1:3001/meteor");
 
 
 function getInitialNumberData(){
@@ -53,7 +53,7 @@ function getInitialMapData(){
                                 x1:0,
                                 y1:0,
                                 x2:150,
-                                y2:101500,
+                                y2:150,
                                 nbpts:5,
                                 },]
     , robotX:0, robotY:0}
@@ -107,16 +107,16 @@ db.createCollection("consoleContainer", {}, function(error, value){
 /********** MAPDATA ***************/
 db.createCollection("mapContainer", {}, function(error, value){
     db.collection('mapContainer').remove({}, function(e, doc){
-        /*db.collection('mapContainer').insert(getInitialMapData(), function(error, value){
+        db.collection('mapContainer').insert(getInitialMapData(), function(error, value){
       
-        })*/
+        })
       });
 });
 /********** MAPDATA ***************/
 db.createCollection("commandContainer", {}, function(error, value){
     db.collection('commandContainer').remove({}, function(e, doc){
         db.collection('commandContainer').insert(getInitialCommand(), function(error, value){
-            setInterval(simulateCommand, 6*1000);
+            //setInterval(simulateCommand, 6*1000);
         });
       });
 });

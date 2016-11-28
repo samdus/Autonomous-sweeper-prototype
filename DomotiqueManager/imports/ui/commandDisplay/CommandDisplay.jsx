@@ -30,9 +30,9 @@ class CommandDisplay extends Component {
       this.setState({debug: !this.state.debug});
        var now = Date.now();
       if(! this.state.debug){
-        CommandContainer.insert({command:"startdebug", createdAt:now})
-      }else{
         CommandContainer.insert({command:"stopdebug", createdAt:now})
+      }else{
+        CommandContainer.insert({command:"startdebug", createdAt:now})
       }
   }
   handlePowerOff(){
