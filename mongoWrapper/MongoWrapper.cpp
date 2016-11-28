@@ -22,14 +22,20 @@ class MongoWrapper
     MongoWrapper(){
         mongoWorker[0] = new MongoWorker(queue);
         mongoWorker[1] = new MongoWorker(queue);
-        mongoWorker[0]->init();
-        mongoWorker[1]->init();
-        mongoWorker[0]->start();
-        mongoWorker[1]->start(); 
 
-        commandListener = new MongoCommandListener(commandqueu);
-        commandListener->init();
-        commandListener->start();
+        try {
+            mongoWorker[0]->init();
+            mongoWorker[1]->init();
+            mongoWorker[0]->start();
+            mongoWorker[1]->start(); 
+
+            commandListener = new MongoCommandListener(commandqueu);
+            commandListener->init();
+            commandListener->start();
+        } catch (const std::exception& xcp) {
+            std::cout << "connection failed: " << xcp.what() << "\n";
+            //return EXIT_FAILURE;
+         }
 
     }
     void addUpdate(string identifier, const char* value){
@@ -145,8 +151,8 @@ class MongoWrapper
     }
 
     commandEnum getCommandEnum(string stringcommand){
-        if(stringcommand == "stopaction"){
-            return STOPACTION;
+        if(stringcommand == "manual"){
+            return MANUAL;
         }else if(stringcommand == "goto"){
             return GOTO;
         }else if(stringcommand == "close"){
@@ -159,8 +165,8 @@ class MongoWrapper
             return SCAN;
         }else if(stringcommand == "turn"){
              return TURN;
-        }else if(stringcommand == "resume"){
-             return RESUME;
+        }else if(stringcommand == "automatic"){
+             return AUTOMATIC;
         }else if(stringcommand == "takephoto"){
             return TAKEPHOTO;
         }

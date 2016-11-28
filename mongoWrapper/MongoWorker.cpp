@@ -31,36 +31,43 @@ class MongoWorker : public Mythread
 
     private:
         void updateStat(string identifier, string value, string containerName){
-            mongocxx::collection coll = db[containerName];
-            coll.update_one(bsoncxx::builder::stream::document{} << "statIdentifier" << identifier << finalize,
-                            bsoncxx::builder::stream::document{} <<
-                            "$set" << open_document <<
-                                "statValue" << value <<
-                            close_document <<
-                            "$push" << open_document << "history" << open_document <<
-                                "value" << value <<
-                                "createdAt" << utilities::DateTime::millisSinceEpoch() <<
-                            close_document << close_document <<
-                            finalize);
+            try {
+                mongocxx::collection coll = db[containerName];
+                coll.update_one(bsoncxx::builder::stream::document{} << "statIdentifier" << identifier << finalize,
+                                bsoncxx::builder::stream::document{} <<
+                                "$set" << open_document <<
+                                    "statValue" << value <<
+                                close_document <<
+                                "$push" << open_document << "history" << open_document <<
+                                    "value" << value <<
+                                    "createdAt" << utilities::DateTime::millisSinceEpoch() <<
+                                close_document << close_document <<
+                                finalize);
+            } catch (const std::exception& xcp) {
+                std::cout << "connection failed: " << xcp.what() << "\n";
+            }
         }
 
         void writeStat(string identifier, string value, string containerName){
+            try {
+                mongocxx::collection coll = db[containerName];
+                auto builder = bsoncxx::builder::stream::document{};
 
-            mongocxx::collection coll = db[containerName];
-            auto builder = bsoncxx::builder::stream::document{};
+                bsoncxx::document::value stat = builder
+                << "statIdentifier" << identifier
+                << "statValue" << value
+                << "history" << bsoncxx::builder::stream::open_array
+                    << bsoncxx::builder::stream::open_document
+                        << "value" << value
+                        << "createdAt" << utilities::DateTime::millisSinceEpoch()
+                    << bsoncxx::builder::stream::close_document
+                << close_array
+                << bsoncxx::builder::stream::finalize;
 
-            bsoncxx::document::value stat = builder
-            << "statIdentifier" << identifier
-            << "statValue" << value
-            << "history" << bsoncxx::builder::stream::open_array
-                << bsoncxx::builder::stream::open_document
-                    << "value" << value
-                    << "createdAt" << utilities::DateTime::millisSinceEpoch()
-                << bsoncxx::builder::stream::close_document
-            << close_array
-            << bsoncxx::builder::stream::finalize;
-
-            coll.insert_one(stat.view());
+                coll.insert_one(stat.view());
+            } catch (const std::exception& xcp) {
+                std::cout << "connection failed: " << xcp.what() << "\n";
+            }
         }
 
         void identifyJob(MongoJob* job){
@@ -163,44 +170,55 @@ class MongoWorker : public Mythread
             }
         }
         void writeConsole(string message, string stringLevel){
+            try{
+                mongocxx::collection coll = db["consoleContainer"];
+                auto builder = bsoncxx::builder::stream::document{};
 
-            mongocxx::collection coll = db["consoleContainer"];
-            auto builder = bsoncxx::builder::stream::document{};
+                bsoncxx::document::value consoleMessageDB = builder
+                << "messageValue" << message
+                << "messageLevel" << stringLevel
+                << "createdAt" << utilities::DateTime::millisSinceEpoch()
+                << bsoncxx::builder::stream::finalize;
 
-            bsoncxx::document::value consoleMessageDB = builder
-            << "messageValue" << message
-            << "messageLevel" << stringLevel
-            << "createdAt" << utilities::DateTime::millisSinceEpoch()
-            << bsoncxx::builder::stream::finalize;
-
-            coll.insert_one(consoleMessageDB.view());
+                coll.insert_one(consoleMessageDB.view());
+            } catch (const std::exception& xcp) {
+                std::cout << "connection failed: " << xcp.what() << "\n";
+            }
         }
         void mapInsert(std::vector<segment> map, int robotx=0, int roboty=0){
-            mongocxx::collection coll = db["mapContainer"];
-            bsoncxx::builder::stream::document doc{};
-            
-            auto builder = doc
-            << "createdAt" << utilities::DateTime::millisSinceEpoch()
-            << "robotX" << robotx
-            << "robotY" << roboty
-            << "lines" << bsoncxx::builder::stream::open_array;
-            
-            for(auto i=map.begin(); i!=map.end(); ++i){
-                builder << bsoncxx::builder::stream::open_document
-                    << "x1" << i->debut.x
-                    << "y1" << i->debut.y
-                    << "x2" << i->fin.x
-                    << "y2" << i->fin.y
-                    << "nbpts" << i->nbPoint
-                << bsoncxx::builder::stream::close_document;
+            try{
+                mongocxx::collection coll = db["mapContainer"];
+                bsoncxx::builder::stream::document doc{};
+                
+                auto builder = doc
+                << "createdAt" << utilities::DateTime::millisSinceEpoch()
+                << "robotX" << robotx
+                << "robotY" << roboty
+                << "lines" << bsoncxx::builder::stream::open_array;
+                
+                for(auto i=map.begin(); i!=map.end(); ++i){
+                    builder << bsoncxx::builder::stream::open_document
+                        << "x1" << i->debut.x
+                        << "y1" << i->debut.y
+                        << "x2" << i->fin.x
+                        << "y2" << i->fin.y
+                        << "nbpts" << i->nbPoint
+                    << bsoncxx::builder::stream::close_document;
+                }
+                auto mapInsert = builder << close_array
+                << bsoncxx::builder::stream::finalize;
+                coll.insert_one(mapInsert.view());
+            } catch (const std::exception& xcp) {
+                std::cout << "connection failed: " << xcp.what() << "\n";
             }
-            auto mapInsert = builder << close_array
-            << bsoncxx::builder::stream::finalize;
-            coll.insert_one(mapInsert.view());
         }
         void saveFile(string filename, string filecontent){
+            try{
             //GridFS gfs = GridFS(client, "domotique_manager", "FilesContainer");
             //gfs.storeFile(&filecontent, filecontent.size()-1, filename);
+            } catch (const std::exception& xcp) {
+                std::cout << "connection failed: " << xcp.what() << "\n";
+            }
         }
 };
 #endif /* !MONGOWORKER */

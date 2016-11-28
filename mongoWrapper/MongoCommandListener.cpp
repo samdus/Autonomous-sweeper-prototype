@@ -43,26 +43,30 @@ class MongoCommandListener : public Mythread
 
     private:
         void pollCommand(){
-           mongocxx::collection coll = db["commandContainer"]; 
-           mongocxx::cursor cursor = coll.find(
-            document{} << "createdAt" << bsoncxx::builder::stream::open_document <<
-                "$gt" << this->fromTime
-            << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize);
-            for(auto doc : cursor) {
-            	auto commandValue  = doc["command"];
-            	auto newFromTime  = doc["createdAt"];
-            	auto gox = doc["goToX"];
-            	auto goy = doc["goToY"];  	
-                CommandInfo thecommand;
-                thecommand.command = commandValue.get_utf8().value.to_string();
-                if(gox){
-               	   thecommand.x = gox.get_int32();
+            try{
+                mongocxx::collection coll = db["commandContainer"]; 
+                mongocxx::cursor cursor = coll.find(
+                document{} << "createdAt" << bsoncxx::builder::stream::open_document <<
+                    "$gt" << this->fromTime
+                << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize);
+                for(auto doc : cursor) {
+                    auto commandValue  = doc["command"];
+                    auto newFromTime  = doc["createdAt"];
+                    auto gox = doc["goToX"];
+                    auto goy = doc["goToY"];  	
+                    CommandInfo thecommand;
+                    thecommand.command = commandValue.get_utf8().value.to_string();
+                    if(gox){
+                    thecommand.x = gox.get_int32();
+                    }
+                    if(goy){
+                    thecommand.y = goy.get_int32();
+                    }
+                    m_queue.add(new MongoCommand(thecommand));
+                    this->fromTime = newFromTime.get_double();
                 }
-                if(goy){
-               	   thecommand.y = goy.get_int32();
-                }
-                m_queue.add(new MongoCommand(thecommand));
-                this->fromTime = newFromTime.get_double();
+            } catch (const std::exception& xcp) {
+                std::cout << "connection failed: " << xcp.what() << "\n";
             }
             
         }

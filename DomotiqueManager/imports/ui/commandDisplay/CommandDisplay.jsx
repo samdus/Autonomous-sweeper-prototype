@@ -21,9 +21,9 @@ class CommandDisplay extends Component {
       this.setState({automatic: !this.state.automatic});
        var now = Date.now();
       if(! this.state.automatic){
-        CommandContainer.insert({command:"resume", createdAt:now})
+        CommandContainer.insert({command:"automatic", createdAt:now})
       }else{
-        CommandContainer.insert({command:"stopAction", createdAt:now})
+        CommandContainer.insert({command:"manual", createdAt:now})
       }
   }
   handleDebug(){
