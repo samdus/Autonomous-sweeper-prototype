@@ -34,31 +34,34 @@ int main(int argc, char** argv)
 	
     switch(item->m_commandInfo.thecommand){
         case STOPACTION:
-            printf("test STOPACTION");
+            printf("test STOPACTION\n");
         break;
         case GOTO:
-            printf("test GOTO");
+            printf("test GOTO\n");
         break;
         case CLOSE:
-            printf("test close");
+            printf("test close\n");
         break;
         case STARTDEBUG:
-            printf("test STARTDEBUG");
+            printf("test STARTDEBUG\n");
         break;
         case STOPDEBUG:
-            printf("test STOPDEBUG");
+            printf("test STOPDEBUG\n");
         break;
         case SCAN:
-            printf("test SCAN");
+            printf("test SCAN\n");
         break;
         case TURN:
-            printf("test TURN");
+            printf("test TURN\n");
         break;
         case RESUME:
-            printf("test RESUME");
+            printf("test RESUME\n");
         break;
         case TAKEPHOTO:
-            printf("test TAKEPHOTO");
+            printf("test TAKEPHOTO\n");
+        break;
+         case INVALID:
+            printf("test INVALID\n");
         break;
     }
 
