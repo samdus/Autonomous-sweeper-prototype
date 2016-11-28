@@ -151,24 +151,24 @@ class MongoWrapper
     }
 
     commandEnum getCommandEnum(string stringcommand){
-        if(strcmp(stringcommand, "stopaction")){
-            return commandEnum.STOPACTION;
-        }else if(strcmp(stringcommand, "goto")){
-            return commandEnum.GOTO;
-        }else if(strcmp(stringcommand, "close")){
-            return commandEnum.CLOSE;
-        }else if(strcmp(stringcommand, "startdebug")){
-            return commandEnum.STARTDEBUG;
-        }else if(strcmp(stringcommand, "stopdebug")){
-            return commandEnum.STOPDEBUG;
-        }else if(strcmp(stringcommand, "scan")){
-            return commandEnum.SCAN;
-        }else if(strcmp(stringcommand, "turn")){
-             return commandEnum.TURN;
-        }else if(strcmp(stringcommand, "resume")){
-             return commandEnum.RESUME;
-        }else if(strcmp(stringcommand, "takephoto")){
-            return commandEnum.TAKEPHOTO;
+        if(stringcommand == "stopaction"){
+            return STOPACTION;
+        }else if(stringcommand == "goto"){
+            return GOTO;
+        }else if(stringcommand == "close"){
+            return CLOSE;
+        }else if(stringcommand == "startdebug"){
+            return STARTDEBUG;
+        }else if(stringcommand == "stopdebug"){
+            return STOPDEBUG;
+        }else if(stringcommand == "scan"){
+            return SCAN;
+        }else if(stringcommand == "turn"){
+             return TURN;
+        }else if(stringcommand == "resume"){
+             return RESUME;
+        }else if(stringcommand == "takephoto"){
+            return TAKEPHOTO;
         }
     }
     ~MongoWrapper() {
