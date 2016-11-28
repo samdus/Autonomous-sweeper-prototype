@@ -40,7 +40,9 @@ public:
 		RetourBool = 17,
 		RetourInt = 18 ,
 		FinInit = 19,
-		DirectionChoisie = 20
+		DirectionChoisie = 20,
+		ObtenirDistanceDevant = 21,
+		ObtenirObstacle = 22
     };
 
     enum TypeErreur
@@ -90,6 +92,10 @@ public:
     /// \brief Obtient l'orientation actuel
     /// \return L'orientation
 	 virtual int16_t obtenirOrientation() = 0;
+
+	 /// \brief Obtient la distance de l'objet devant
+	 /// \return La distance
+	 virtual int16_t obtenirDistanceDevant() = 0;
 
     /// \brief Met en mode debug
     ///        Attention, des données seront reçu 5x/seconde par la suite

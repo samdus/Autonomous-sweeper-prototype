@@ -13,7 +13,7 @@ void afficherDebug(int16_t debug[4])
 {
 	switch (debug[0])
 	{
-	/*case ArduinoCommunicator::Fonction::InfoDistanceObjet:
+	case ArduinoCommunicator::Fonction::InfoDistanceObjet:
 		cout << "Distance: " << debug[1] << endl;
 		break;
 	case ArduinoCommunicator::Fonction::InfoOrientation:
@@ -24,12 +24,12 @@ void afficherDebug(int16_t debug[4])
 			cout << "Vitesse du moteur gauche: " << debug[2] << endl;
 		else
 			cout << "Vitesse du moteur droit: " << debug[2] << endl;
-		break;*/
+		break;
 	case ArduinoCommunicator::Fonction::DirectionChoisie:
 		cout << debug[1];
 		EnvoiWeb += std::to_string(debug[1]);
 		break;
-	/*case ArduinoCommunicator::Fonction::Erreur:
+	case ArduinoCommunicator::Fonction::Erreur:
 		switch (debug[1])
 		{
 		case ArduinoCommunicator::TypeErreur::Obstacle:
@@ -49,7 +49,7 @@ void afficherDebug(int16_t debug[4])
 			cout << "Entree inconnue: " << endl << binaire << endl;			
 			break;
 		}
-		break;*/
+		break;
 	}
 }
 
@@ -72,19 +72,6 @@ int getSensSuppose(int depart, int arrive)
 	}
 }
 
-void test()
-{
-	ArduinoCommunicator communicator;
-	communicator.init(afficherDebug);
-
-	communicator.tourneAuDegresX(0);
-	for (int i = 0; i < 12; ++i)
-	{	
-		//Echantillions
-		communicator.tourneDroite(30);
-	}
-}
-
 int main(int argc, char **argv)
 {
 	const int NB_TEST = 1000000;
@@ -99,16 +86,20 @@ int main(int argc, char **argv)
 
         return -1;
     }
-	for (int i = 0; i < NB_TEST; ++i)
-	{
-		cout << communicator.obtenirOrientation() << endl;
-	}
-/*
+
 	static std::random_device seeder;
 	static std::mt19937 rng(seeder());
 	static std::uniform_int_distribution<int> gen(0, 359);
+	//communicator.setDebug();
+	communicator.tourneAuDegresX(150);
+	cout << communicator.obtenirOrientation() << endl;
+	cin.get();
+	//communicator.stopDebug();
+	//communicator.avancePendantXDixiemeSec(100);
+	/*while (1)
+		cout << communicator.obtenirDistanceDevant() << ": " << communicator.obtenirObstacle() << endl;*/
 
-	cout << "================================" << endl
+	/*cout << "================================" << endl
 		 << "            DEBUT               " << endl
 		 << "================================" << endl;
 
@@ -143,13 +134,13 @@ int main(int argc, char **argv)
 		 << "            FIN                " << endl 
 		 << "===============================" << endl;
 	//cin.get();
-
-	//Attendre que les donnees sont 
+	*/
+	//Attendre que les donnees soient envoyes 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-	Sleep(1000);
+	//Sleep(1000);
 #else
 	usleep(1000 * 1000); // takes microseconds
-#endif*/
-
+#endif
+	
 	return 0;
 }

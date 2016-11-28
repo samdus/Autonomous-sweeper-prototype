@@ -1,7 +1,7 @@
 #include "Decodeur.h"
 
 Freenect::Freenect freenect;
-MongoWrapper test;
+MongoWrapper serveur;
 Config ConfigHelper;
 
 Decodeur::Decodeur(){ }
@@ -19,9 +19,52 @@ Decodeur::~Decodeur()
     convertisseur.ContinuerConvertion = false;
 }
 
+void afficherDebug(int16_t debug[4])
+{
+	/*switch (debug[0])
+	{
+	case ArduinoCommunicator::Fonction::InfoDistanceObjet:
+		cout << "Distance: " << debug[1] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::InfoOrientation:
+		cout << "Orientation: " << debug[1] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::InfoVitesseMoteur:
+		if(debug[1] == 0)
+			cout << "Vitesse du moteur gauche: " << debug[2] << endl;
+		else
+			cout << "Vitesse du moteur droit: " << debug[2] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::DirectionChoisie:
+		cout << debug[1];
+		EnvoiWeb += std::to_string(debug[1]);
+		break;
+	case ArduinoCommunicator::Fonction::Erreur:
+		switch (debug[1])
+		{
+		case ArduinoCommunicator::TypeErreur::Obstacle:
+			cout << "Obstacle!!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::FonctionInconnue:
+			cout << "Fonction inconnue!!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::IO:
+			cout << "Erreur de IO!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::ErreurInitialisation:
+			cout << "Erreur d'initialisation!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::EntreeInconnue:
+			std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
+			cout << "Entree inconnue: " << endl << binaire << endl;
+			break;
+		}
+		break;
+	}*/
+}
+
 void Decodeur::InitKinect()
 {
-   test.writeConsole("Test from raspberryjfjfjfjfjfj", "warning");
     KinectInitTime = std::clock();
     try
     {
@@ -38,23 +81,40 @@ void Decodeur::InitKinect()
     }
     catch(std::runtime_error e)
     {
-        std::cout << "Impossible de demarrer la Kinect" << std::endl;
+        if(DebugConsole || DebugServeur)
+        {
+            std::string message = "Impossible de demarrer la Kinect";
+            if(DebugConsole)
+                std::cout << message;
+            if(DebugServeur)
+                serveur.writeConsole(message , "error");
+        }
     }
 }
 
 void Decodeur::InitCommunicationArduino()
 {
+    ArduinoInitTime = std::clock();
+    ArduinoAccessible = arduinoCommunicator.init(afficherDebug);
+    if(!ArduinoAccessible && (DebugConsole || DebugServeur))
+    {
+        std::string message = "Initialisation d'Arduino impossible";
+        if(DebugConsole)
+            std::cout << message;
+        if(DebugServeur)
+            serveur.writeConsole(message , "error");
+    }
 }
 
 void Decodeur::InitCommunicationServeur()
 {
-    if(DebugConsole || DebugServeur)
+    if(/* !testdeconnection ||*/ DebugConsole || DebugServeur)
     {
         std::string message = "test de connection avec le serveur";
         if(DebugConsole)
             std::cout << message;
         if(DebugServeur)
-            return;//serveur.writeConsole(message , "error");
+            serveur.writeConsole(message , "error");
     }
 }
 
@@ -72,13 +132,64 @@ void Decodeur::InitConfiguration()
     KinectCameraActiver = std::stoi(ConfigHelper.GetString("CAMERA_COULEUR")) == 1;
 }
 
+void Decodeur::UpdateCommande()
+{
+    if(ListeDeCommandes.size() == 0)
+    {
+        ListeDeCommandes.push_back(MongoCommand().m_commandInfo);
+    }
+}
+
+void Decodeur::ExecuteCommande()
+{
+    if(ListeDeCommandes.size() != 0)
+    {
+        arduinoCommunicator.tourneAuDegresX(ListeDeCommandes[0].x);
+        RealCam.RotateY(ListeDeCommandes[0].x);
+
+        /*switch(ListeDeCommandes[0].command)
+        {
+            case "scan":
+            break;
+        }*/
+    }
+}
+
+void Decodeur::PrendreEchantillonEnvironnement()
+{
+    try
+    {
+        device->setTiltDegrees(0.0);
+        UpdateCloudOfPoint();
+        if(!MultithreadActiver)
+        {
+            convertisseur.Convertir(cloudBuffer);
+        }
+    }
+    catch(std::runtime_error e)
+    {
+        freenect.deleteDevice(0);
+        KinectAccessible = false;
+
+        if(DebugConsole || DebugServeur)
+        {
+            std::string message = "Error: lors de la loop principale\n";
+            if(DebugConsole)
+                std::cout << message;
+            if(DebugServeur)
+                serveur.writeConsole(message, "error");
+        }
+    }
+}
+
 void Decodeur::Init()
 {
+    serveur.writeConsole("Demarrage" , "info");
+    InitConfiguration();
     convertisseur.InitialisationConfig(ConfigHelper);
     InitKinect();
     InitCommunicationArduino();
     InitCommunicationServeur();
-    InitConfiguration();
 
     if(MultithreadActiver)
     {
@@ -109,7 +220,7 @@ void Decodeur::UpdateFPS()
                 if(DebugConsole)
                     std::cout << message;
                 if(DebugServeur)
-                    return;//serveur.writeConsole(message, "info");
+                    serveur.writeConsole(message, "info");
             }
         }
     }
@@ -172,47 +283,24 @@ void Decodeur::RunLoop()
 {
     if(!KinectAccessible)
     {
-        if(KinectInitTime < std::clock() - 5000000)
+        if(KinectInitTime < std::clock() - 10000000)
         {
             InitKinect();
         }
         return;
     }
 
-    if(ArduinoAccessible && !ModeAutomatique)
+    if(!ArduinoAccessible || !arduinoCommunicator.isLectureEnFonction())
     {
-        //aller chercher les commandes et les executer
+        ArduinoAccessible = false;
+        if(ArduinoInitTime < std::clock() - 10000000)
+        {
+            InitCommunicationArduino();
+        }
+        return;
     }
 
-    if(ArduinoAccessible && ModeAutomatique)
-    {
-        //deplacement autonome
-    }
-    else
-    {
-        try
-        {
-            device->setTiltDegrees(0.0);
-            UpdateFPS();
-            UpdateCloudOfPoint();
-            if(!MultithreadActiver)
-            {
-                convertisseur.Convertir(cloudBuffer);
-            }
-        }
-        catch(std::runtime_error e)
-        {
-            freenect.deleteDevice(0);
-
-            if(DebugConsole || DebugServeur)
-            {
-                std::string message = "\nError: Kinect deconnectee !\n";
-                if(DebugConsole)
-                    std::cout << message;
-                if(DebugServeur)
-                    return;//serveur.writeConsole(message, "error");
-            }
-            KinectAccessible = false;
-        }
-    }
+    UpdateFPS();
+    UpdateCommande();
+    ExecuteCommande();
 }

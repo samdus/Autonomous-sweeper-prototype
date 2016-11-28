@@ -25,7 +25,9 @@ class Decodeur
     float fps = 0.0;
     clock_t CloudSamplingTime = 0;
     clock_t KinectInitTime = 0;
+    clock_t ArduinoInitTime = 0;
     MyFreenectDevice* device;
+    ArduinoCommunicator arduinoCommunicator;
     float HauteurMax = 0.0;
     float HauteurMin = 0.0;
     float HauteurKin = 0.0;
@@ -40,10 +42,16 @@ class Decodeur
     bool ArduinoAccessible = false;
     bool ModeAutomatique = true;
 
+    std::vector<_commandInfo> ListeDeCommandes;
+
     void InitKinect();
     void InitCommunicationArduino();
     void InitCommunicationServeur();
     void InitConfiguration();
+    void UpdateCommande();
+    void ExecuteCommande();
+    void PrendreEchantillonEnvironnement();
+
 
     public:
     Convertisseur convertisseur;
