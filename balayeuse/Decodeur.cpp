@@ -19,12 +19,52 @@ Decodeur::~Decodeur()
     convertisseur.ContinuerConvertion = false;
 }
 
+void afficherDebug(int16_t debug[4])
+{
+	/*switch (debug[0])
+	{
+	case ArduinoCommunicator::Fonction::InfoDistanceObjet:
+		cout << "Distance: " << debug[1] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::InfoOrientation:
+		cout << "Orientation: " << debug[1] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::InfoVitesseMoteur:
+		if(debug[1] == 0)
+			cout << "Vitesse du moteur gauche: " << debug[2] << endl;
+		else
+			cout << "Vitesse du moteur droit: " << debug[2] << endl;
+		break;
+	case ArduinoCommunicator::Fonction::DirectionChoisie:
+		cout << debug[1];
+		EnvoiWeb += std::to_string(debug[1]);
+		break;
+	case ArduinoCommunicator::Fonction::Erreur:
+		switch (debug[1])
+		{
+		case ArduinoCommunicator::TypeErreur::Obstacle:
+			cout << "Obstacle!!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::FonctionInconnue:
+			cout << "Fonction inconnue!!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::IO:
+			cout << "Erreur de IO!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::ErreurInitialisation:
+			cout << "Erreur d'initialisation!" << endl;
+			break;
+		case ArduinoCommunicator::TypeErreur::EntreeInconnue:
+			std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
+			cout << "Entree inconnue: " << endl << binaire << endl;
+			break;
+		}
+		break;
+	}*/
+}
+
 void Decodeur::InitKinect()
 {
-    if(KinectInitTime < std::clock() - 10000000)
-    {
-        return;
-    }
     KinectInitTime = std::clock();
     try
     {
@@ -54,12 +94,8 @@ void Decodeur::InitKinect()
 
 void Decodeur::InitCommunicationArduino()
 {
-    if(ArduinoInitTime < std::clock() - 10000000)
-    {
-        return;
-    }
     ArduinoInitTime = std::clock();
-    ArduinoAccessible = false;//ArduinoCommunicator.init();
+    ArduinoAccessible = arduinoCommunicator.init(afficherDebug);
     if(!ArduinoAccessible && (DebugConsole || DebugServeur))
     {
         std::string message = "Initialisation d'Arduino impossible";
@@ -94,6 +130,56 @@ void Decodeur::InitConfiguration()
     DebugConsole = std::stoi(ConfigHelper.GetString("DEBUG_MESSAGE_CONSOLE")) == 1;
     DebugServeur = std::stoi(ConfigHelper.GetString("DEBUG_MESSAGE_SERVEUR")) == 1;
     KinectCameraActiver = std::stoi(ConfigHelper.GetString("CAMERA_COULEUR")) == 1;
+}
+
+void Decodeur::UpdateCommande()
+{
+    if(ListeDeCommandes.size() == 0)
+    {
+        ListeDeCommandes.push_back(MongoCommand().m_commandInfo);
+    }
+}
+
+void Decodeur::ExecuteCommande()
+{
+    if(ListeDeCommandes.size() != 0)
+    {
+        arduinoCommunicator.tourneAuDegresX(ListeDeCommandes[0].x);
+        RealCam.RotateY(ListeDeCommandes[0].x);
+
+        /*switch(ListeDeCommandes[0].command)
+        {
+            case "scan":
+            break;
+        }*/
+    }
+}
+
+void Decodeur::PrendreEchantillonEnvironnement()
+{
+    try
+    {
+        device->setTiltDegrees(0.0);
+        UpdateCloudOfPoint();
+        if(!MultithreadActiver)
+        {
+            convertisseur.Convertir(cloudBuffer);
+        }
+    }
+    catch(std::runtime_error e)
+    {
+        freenect.deleteDevice(0);
+        KinectAccessible = false;
+
+        if(DebugConsole || DebugServeur)
+        {
+            std::string message = "Error: lors de la loop principale\n";
+            if(DebugConsole)
+                std::cout << message;
+            if(DebugServeur)
+                serveur.writeConsole(message, "error");
+        }
+    }
 }
 
 void Decodeur::Init()
@@ -197,61 +283,24 @@ void Decodeur::RunLoop()
 {
     if(!KinectAccessible)
     {
-        InitKinect();
+        if(KinectInitTime < std::clock() - 10000000)
+        {
+            InitKinect();
+        }
         return;
     }
 
-    if(!ArduinoAccessible /*|| !ArduinoCommunicator.isLectureEnFonction()*/)
+    if(!ArduinoAccessible || !arduinoCommunicator.isLectureEnFonction())
     {
         ArduinoAccessible = false;
-        InitCommunicationArduino();
+        if(ArduinoInitTime < std::clock() - 10000000)
+        {
+            InitCommunicationArduino();
+        }
         return;
     }
 
-    if(!ModeAutomatique)
-    {
-        aller chercher les commandes et les executer
-        if(serveur.getCommand()->getMessage() == "scan")
-        {
-            ArduinoCommunicator.tourneAuDegresX(45);
-            RealCam.RotateY(45);
-        }
-    }
-
-    if(ListeDeCommandes.size() != 0)
-    {
-
-    }
-
-    if(ArduinoAccessible && ModeAutomatique)
-    {
-        //deplacement autonome
-    }
-    else
-    {
-        try
-        {
-            device->setTiltDegrees(0.0);
-            UpdateFPS();
-            UpdateCloudOfPoint();
-            if(!MultithreadActiver)
-            {
-                convertisseur.Convertir(cloudBuffer);
-            }
-        }
-        catch(std::runtime_error e)
-        {
-            freenect.deleteDevice(0);
-            KinectAccessible = false;
-
-            if(DebugConsole || DebugServeur)
-            {
-                std::string message = "Error: lors de la loop principale\n";
-                if(DebugConsole)
-                    std::cout << message;
-                if(DebugServeur)
-                    serveur.writeConsole(message, "error");
-            }
-        }
-    }
+    UpdateFPS();
+    UpdateCommande();
+    ExecuteCommande();
 }
