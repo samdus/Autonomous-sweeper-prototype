@@ -3,7 +3,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <mongocxx/client.hpp>
-#include <mongocxx/gridfs.hpp>
+#include <mongocxx/gridfs.h>
 #include <mongocxx/instance.hpp>
 #include <ctime>
 #include "MongoJob.cpp"
