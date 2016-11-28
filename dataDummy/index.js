@@ -1,8 +1,8 @@
 var mongojs = require('mongojs')
 //For prod
-//var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
+var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
 //For dev
-var db = mongojs("mongodb://127.0.0.1:3001/meteor");
+//var db = mongojs("mongodb://127.0.0.1:3001/meteor");
 
 
 function getInitialNumberData(){

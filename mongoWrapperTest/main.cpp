@@ -29,9 +29,39 @@ int main(int argc, char** argv)
 
 
     // Ctrl-C to end program
-    mongoWrapper.getCommand();
-    mongoWrapper.getBlockingCommand();
+    MongoCommand* itema mongoWrapper.getCommand();
+    MongoCommand* item = mongoWrapper.getBlockingCommand();
 	
+    switch(item->m_commandInfo.thecommand){
+        case STOPACTION:
+            printf("test STOPACTION");
+        break;
+        case GOTO:
+            printf("test GOTO");
+        break;
+        case GOTO:
+            printf("test GOTO");
+        break;
+        case STARTDEBUG:
+            printf("test STARTDEBUG");
+        break;
+        case STOPDEBUG:
+            printf("test STOPDEBUG");
+        break;
+        case SCAN:
+            printf("test SCAN");
+        break;
+        case TURN:
+            printf("test TURN");
+        break;
+        case RESUME:
+            printf("test RESUME");
+        break;
+        case TAKEPHOTO:
+            printf("test TAKEPHOTO");
+        break;
+    }
+
     printf("Enter Ctrl-C to end the program...\n");
     while (1);
     exit(0);

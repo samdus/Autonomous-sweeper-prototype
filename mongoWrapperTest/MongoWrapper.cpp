@@ -170,6 +170,7 @@ class MongoWrapper
         }else if(stringcommand == "takephoto"){
             return TAKEPHOTO;
         }
+        return INVALID;
     }
     ~MongoWrapper() {
  
