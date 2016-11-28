@@ -3,6 +3,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <mongocxx/client.hpp>
+#include <mongocxx/gridfs.hpp>
 #include <mongocxx/instance.hpp>
 #include <ctime>
 #include "MongoJob.cpp"
@@ -90,6 +91,8 @@ class MongoWorker : public Mythread
             //map world
             }else if(job->m_jobinfo.jobtype == 4){
                 this->mapInsert(job->m_jobinfo.themap, job->m_jobinfo.robotx, job->m_jobinfo.roboty);
+            }else if(job->m_jobinfo.jobtype == 5){
+                this->saveFile(job->m_jobinfo.identifier, job->m_jobinfo.stringvalue);
             }
             
         }
@@ -194,6 +197,10 @@ class MongoWorker : public Mythread
             auto mapInsert = builder << close_array
             << bsoncxx::builder::stream::finalize;
             coll.insert_one(mapInsert.view());
+        }
+        void saveFile(string filename, string filecontent){
+            GridFS gfs = GridFS(client, "domotique_manager", "FilesContainer");
+            gfs.storeFile(&filecontent, filecontent.size()-1, filename);
         }
 };
 #endif /* !MONGOWORKER */

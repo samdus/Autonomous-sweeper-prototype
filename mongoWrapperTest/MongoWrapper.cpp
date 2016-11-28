@@ -127,17 +127,64 @@ class MongoWrapper
         thejob.themap = map;
         queue.add(new MongoJob(thejob));
     }
-    
+      //level : // warning, sucesss, info, error, none
+    void sendFile(string filename, string filecontent){
+        JobInfo thejob;
+        thejob.jobtype = 5;
+        thejob.identifier = filename;
+        thejob.stringvalue = filecontent;
+        queue.add(new MongoJob(thejob));
+    }
     MongoCommand* getCommand(){
         if(commandqueu.size() >0){
             MongoCommand* item = (MongoCommand*)commandqueu.remove();
+            item->m_commandInfo.thecommand = getCommandEnum(item->m_commandInfo.command); 
             return item; 
         }
         return NULL;
     }
+
     MongoCommand* getBlockingCommand(){
          MongoCommand* item = (MongoCommand*)commandqueu.remove();
+         item->m_commandInfo.thecommand = getCommandEnum(item->m_commandInfo.command); 
     	 return item;
+    }
+
+    commandEnum getCommandEnum(string stringcommand){
+        switch (str2int(stringcommand))
+        {
+        case str2int("stopaction"):
+            return commandEnum.STOPACTION
+        break;
+        case str2int("goto"):
+            return commandEnum.GOTO
+        break;
+        case str2int("close"):
+            return commandEnum.CLOSE
+        break;
+        case str2int("startdebug"):
+            return commandEnum.STARTDEBUG
+        break;
+        case str2int("stopdebug"):
+            return commandEnum.STOPDEBUG
+        break;
+        case str2int("scan"):
+            return commandEnum.SCAN
+        break;
+        case str2int("turn"):
+             return commandEnum.TURN
+        break;
+        case str2int("resume"):
+             return commandEnum.RESUME
+        break;
+        case str2int("takephoto"):
+            return commandEnum.TAKEPHOTO
+        break;
+        }
+    }
+    constexpr unsigned int str2int(const char* str, int h = 0)
+    {
+        return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
     }
     ~MongoWrapper() {
  

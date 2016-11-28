@@ -3,11 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+enum {
+    STOPACTION, GOTO, CLOSE, STARTDEBUG, STOPDEBUG, SCAN, TURN, RESUME, TAKEPHOTO
+} commandEnum;
 typedef struct _commandInfo
 {
     std::string command; // Manuel (stopacction goto close startdebug stopdebug scan turn x) Automatique (resume)
     int x;
     int y;
+    commandEnum thecommand;
 } CommandInfo;
 
 class MongoCommand
