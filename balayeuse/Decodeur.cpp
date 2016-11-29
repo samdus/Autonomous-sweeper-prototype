@@ -131,6 +131,7 @@ void Decodeur::UpdateCommande()
             case GOTO:
                 std::cout << "test GOTO\n";
                 //calculer la rotation a faire et le deplacement ensuite
+                actions.push_back(Action(Avancer, 25));
             break;
             case CLOSE:
                 std::cout << "test close\n";
@@ -147,14 +148,14 @@ void Decodeur::UpdateCommande()
             break;
             case SCAN:
                 std::cout << "test SCAN\n";
-                actions.push_back(Action(Tourner, 45.0));
-                actions.push_back(Action(Tourner, 45.0));
-                actions.push_back(Action(Tourner, 45.0));
-                actions.push_back(Action(Tourner, 45.0));
-                actions.push_back(Action(Tourner, 45.0));
-                actions.push_back(Action(Tourner, 45.0));
-                actions.push_back(Action(Tourner, 45.0));
-                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45));
+                actions.push_back(Action(Tourner, 90));
+                actions.push_back(Action(Tourner, 135));
+                actions.push_back(Action(Tourner, 180));
+                actions.push_back(Action(Tourner, 225));
+                actions.push_back(Action(Tourner, 270));
+                actions.push_back(Action(Tourner, 315));
+                actions.push_back(Action(Tourner, 0));
             break;
             case TURN:
                 std::cout << "test TURN\n";
@@ -190,6 +191,9 @@ void Decodeur::ExecuteCommande()
         switch(actions[0].action)
         {
         case Avancer:
+            arduinoCommunicator.avancePendantXDixiemeSec(20);
+            RealCam.Avance(50.0);
+            PrendreEchantillonEnvironnement();
             break;
         case Tourner:
             arduinoCommunicator.tourneAuDegresX((int16_t)actions[0].valeur);
@@ -270,7 +274,7 @@ void Decodeur::UpdateFPS()
         {
             updateFPS = true;
 
-            EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
+            //EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
         }
     }
 }
