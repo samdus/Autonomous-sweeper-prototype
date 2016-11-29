@@ -18,7 +18,7 @@ void Carte::InitialisationConfig(Config& ConfigHelper)
 
     if(Fichier.is_open())
     {
-        while ( getline (Fichier, line) )
+        while ( getline (Fichier, line) && line != "" )
         {
             segment seg;
             seg.fromString(line);
@@ -82,9 +82,9 @@ void Carte::FusionCarte(std::vector<segment>& nouveauSegments)
 
 void Carte::SaveCarte()
 {
-    std::fstream Fichier;
+    std::ofstream Fichier;
     std::string line;
-    Fichier.open(FichierCarte);
+    Fichier.open(FichierCarte, std::ofstream::out | std::ofstream::trunc);
 
     if(Fichier.is_open())
     {

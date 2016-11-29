@@ -16,6 +16,7 @@ Decodeur::~Decodeur()
             device->stopVideo();
         }
     }
+    convertisseur.Environnement.SaveCarte();
     convertisseur.ContinuerConvertion = false;
 }
 
@@ -77,18 +78,11 @@ void Decodeur::InitKinect()
             device->startVideo();
         }
         updateCloud = true;
-        std::cout << "\nKinect demarree!" << std::endl;
+        EnvoieDebug(std::string("Kinect demarree!\n"), std::string("info"));
     }
     catch(std::runtime_error e)
     {
-        if(DebugConsole || DebugServeur)
-        {
-            std::string message = "Impossible de demarrer la Kinect";
-            if(DebugConsole)
-                std::cout << message;
-            if(DebugServeur)
-                serveur.writeConsole(message , "error");
-        }
+        EnvoieDebug("Impossible de demarrer la Kinect\n", "error");
     }
 }
 
@@ -96,26 +90,13 @@ void Decodeur::InitCommunicationArduino()
 {
     ArduinoInitTime = std::clock();
     ArduinoAccessible = arduinoCommunicator.init(afficherDebug);
-    if(!ArduinoAccessible && (DebugConsole || DebugServeur))
-    {
-        std::string message = "Initialisation d'Arduino impossible";
-        if(DebugConsole)
-            std::cout << message;
-        if(DebugServeur)
-            serveur.writeConsole(message , "error");
-    }
+    EnvoieDebug("Initialisation d'Arduino impossible\n", "error");
 }
 
 void Decodeur::InitCommunicationServeur()
 {
-    if(/* !testdeconnection ||*/ DebugConsole || DebugServeur)
-    {
-        std::string message = "test de connection avec le serveur";
-        if(DebugConsole)
-            std::cout << message;
-        if(DebugServeur)
-            serveur.writeConsole(message , "error");
-    }
+    //if(!testdeconnection)
+    EnvoieDebug("test de connection avec le serveur\n", "error");
 }
 
 void Decodeur::InitConfiguration()
@@ -134,24 +115,94 @@ void Decodeur::InitConfiguration()
 
 void Decodeur::UpdateCommande()
 {
-    if(ListeDeCommandes.size() == 0)
+    //Consomme toute les commandes
+    MongoCommand* commande = serveur.getCommand();
+    while(commande != NULL)
     {
-        ListeDeCommandes.push_back(MongoCommand().m_commandInfo);
+        switch(commande->m_commandInfo.thecommand)
+        {
+            case MANUAL:
+                std::cout << "test MANUAL\n";
+                if(ModeAutomatique)
+                {
+                    actions.clear();
+                }
+            break;
+            case GOTO:
+                std::cout << "test GOTO\n";
+                //calculer la rotation a faire et le deplacement ensuite
+            break;
+            case CLOSE:
+                std::cout << "test close\n";
+                convertisseur.ContinuerConvertion = false;
+                EnMarche = false;
+            break;
+            case STARTDEBUG:
+                std::cout << "test STARTDEBUG\n";
+                DebugServeur = true;
+            break;
+            case STOPDEBUG:
+                std::cout << "test STOPDEBUG\n";
+                DebugServeur = false;
+            break;
+            case SCAN:
+                std::cout << "test SCAN\n";
+                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45.0));
+                actions.push_back(Action(Tourner, 45.0));
+            break;
+            case TURN:
+                std::cout << "test TURN\n";
+                actions.push_back(Action(Tourner, commande->m_commandInfo.x));
+            break;
+            case AUTOMATIC:
+                std::cout << "test AUTOMATIC\n";
+                if(!ModeAutomatique)
+                {
+                    actions.clear();
+                }
+            break;
+            case TAKEPHOTO:
+                std::cout << "test TAKEPHOTO\n";
+            break;
+             case INVALID:
+                std::cout << "test INVALID\n";
+            break;
+            default:
+                std::cout << "invalid\n";
+            break;
+        };
+
+        commande = serveur.getCommand();
     }
 }
 
 void Decodeur::ExecuteCommande()
 {
-    if(ListeDeCommandes.size() != 0)
+    if(actions.size() != 0)
     {
-        arduinoCommunicator.tourneAuDegresX(ListeDeCommandes[0].x);
-        RealCam.RotateY(ListeDeCommandes[0].x);
-
-        /*switch(ListeDeCommandes[0].command)
+        std::cout << "execute commande\n";
+        switch(actions[0].action)
         {
-            case "scan":
+        case Avancer:
             break;
-        }*/
+        case Tourner:
+            arduinoCommunicator.tourneAuDegresX((int16_t)actions[0].valeur);
+            RealCam.RotateY(actions[0].valeur);
+            PrendreEchantillonEnvironnement();
+            break;
+        }
+
+        actions.erase(actions.begin(),actions.begin() + 1);
+    }
+    else//s'il n'a rien a faire continue de prendre des echantillons de son environnement
+    {
+        PrendreEchantillonEnvironnement();
     }
 }
 
@@ -171,29 +222,34 @@ void Decodeur::PrendreEchantillonEnvironnement()
         freenect.deleteDevice(0);
         KinectAccessible = false;
 
-        if(DebugConsole || DebugServeur)
-        {
-            std::string message = "Error: lors de la loop principale\n";
-            if(DebugConsole)
-                std::cout << message;
-            if(DebugServeur)
-                serveur.writeConsole(message, "error");
-        }
+        EnvoieDebug("Error: lors de la loop principale\n", "error");
     }
 }
 
 void Decodeur::Init()
 {
-    serveur.writeConsole("Demarrage" , "info");
+    EnvoieDebug("Demarrage", "info");
     InitConfiguration();
     convertisseur.InitialisationConfig(ConfigHelper);
     InitKinect();
     InitCommunicationArduino();
     InitCommunicationServeur();
-
+    quantiteDeSegmentEnvironnement = convertisseur.Environnement.GetSegments().size();
+    serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
     if(MultithreadActiver)
     {
         convertisseur.DemarreThread(&cloudBuffer);
+    }
+}
+
+void Decodeur::EnvoieDebug(std::string message, std::string categorie)
+{
+    if(DebugConsole || DebugServeur)
+    {
+        if(DebugConsole)
+            std::cout << message;
+        if(DebugServeur)
+            serveur.writeConsole(message, categorie);
     }
 }
 
@@ -214,14 +270,7 @@ void Decodeur::UpdateFPS()
         {
             updateFPS = true;
 
-            if(DebugConsole || DebugServeur)
-            {
-                std::string message = "fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n";
-                if(DebugConsole)
-                    std::cout << message;
-                if(DebugServeur)
-                    serveur.writeConsole(message, "info");
-            }
+            EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
         }
     }
 }
@@ -279,15 +328,22 @@ void Decodeur::UpdateCloudOfPoint()
     }
 }
 
-void Decodeur::RunLoop()
+bool Decodeur::RunLoop()
 {
+    if(!EnMarche)
+    {
+        return false;
+    }
+
+    UpdateCommande();
+
     if(!KinectAccessible)
     {
         if(KinectInitTime < std::clock() - 10000000)
         {
             InitKinect();
         }
-        return;
+        return true;
     }
 
     if(!ArduinoAccessible || !arduinoCommunicator.isLectureEnFonction())
@@ -297,10 +353,17 @@ void Decodeur::RunLoop()
         {
             InitCommunicationArduino();
         }
-        return;
+        return true;
+    }
+
+    if(quantiteDeSegmentEnvironnement == convertisseur.Environnement.GetSegments().size())
+    {
+        quantiteDeSegmentEnvironnement == convertisseur.Environnement.GetSegments().size();
+        serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
     }
 
     UpdateFPS();
-    UpdateCommande();
     ExecuteCommande();
+
+    return true;
 }

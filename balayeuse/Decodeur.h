@@ -13,6 +13,20 @@
 #include <stdexcept>
 #include "../mongoWrapper/MongoWrapper.cpp"
 #include <string>
+enum ActionEnum{
+    Avancer, Tourner
+};
+
+struct Action
+{
+    ActionEnum action;
+    int valeur;
+    Action(ActionEnum act, int val)
+    {
+        action = act;
+        valeur = val;
+    }
+};
 
 class Decodeur
 {
@@ -20,6 +34,7 @@ class Decodeur
     int nextSampling = 500; //millisecond
     int frame = 0;
     int nbEchantillonsParSecond = 0;
+    size_t quantiteDeSegmentEnvironnement = 0;
     clock_t FPSStarTime = 0;
     bool updateFPS = true;
     float fps = 0.0;
@@ -41,8 +56,8 @@ class Decodeur
     bool KinectCameraActiver = false;
     bool ArduinoAccessible = false;
     bool ModeAutomatique = true;
-
-    std::vector<_commandInfo> ListeDeCommandes;
+    bool EnMarche = true;
+    std::vector<Action> actions;
 
     void InitKinect();
     void InitCommunicationArduino();
@@ -65,11 +80,12 @@ class Decodeur
     ~Decodeur();
 
     void Init();
+    void EnvoieDebug(std::string message, std::string categorie);
     void UpdateFPS();
 
     void UpdateCloudOfPoint();
 
-    void RunLoop();
+    bool RunLoop();
 };
 
 #endif /* !DECODEURH */

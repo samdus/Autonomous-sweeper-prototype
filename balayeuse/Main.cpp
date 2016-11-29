@@ -20,10 +20,7 @@ int main(int argc, char **argv)
     DecodeurScene.Init();
     printInfo();
 
-    while(1)
-    {
-        DecodeurScene.RunLoop();
-    }
+    while(DecodeurScene.RunLoop());
 
     return 0;
 }
