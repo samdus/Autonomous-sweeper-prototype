@@ -356,9 +356,9 @@ bool Decodeur::RunLoop()
         return true;
     }
 
-    if(quantiteDeSegmentEnvironnement == convertisseur.Environnement.GetSegments().size())
+    if(quantiteDeSegmentEnvironnement != convertisseur.Environnement.GetSegments().size())
     {
-        quantiteDeSegmentEnvironnement == convertisseur.Environnement.GetSegments().size();
+        quantiteDeSegmentEnvironnement = convertisseur.Environnement.GetSegments().size();
         serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
     }
 
