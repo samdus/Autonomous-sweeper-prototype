@@ -68,6 +68,7 @@ class Decodeur
     void UpdateCommande();
     void ExecuteCommande();
     void PrendreEchantillonEnvironnement();
+    void afficherDebug();
 
 
     public:

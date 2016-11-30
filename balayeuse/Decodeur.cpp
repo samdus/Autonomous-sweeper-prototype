@@ -23,7 +23,7 @@ Decodeur::~Decodeur()
     convertisseur.ContinuerConvertion = false;
 }
 
-void afficherDebug(int16_t debug[4])
+void Decodeur::afficherDebug(int16_t debug[4])
 {
 	switch (debug[0])
 	{
@@ -51,8 +51,8 @@ void afficherDebug(int16_t debug[4])
 		switch (debug[1])
 		{
 		case ArduinoCommunicator::TypeErreur::Obstacle:
-            this->forcedStops++;
-            serveur.addUpdate("forcedStop", this->forcedStops); // voir avec sam
+            forcedStops++;
+            serveur.addUpdate("forcedStop", forcedStops); // voir avec sam
 			//cout << "Obstacle!!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::FonctionInconnue:
