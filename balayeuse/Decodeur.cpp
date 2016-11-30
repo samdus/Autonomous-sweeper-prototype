@@ -3,7 +3,7 @@
 Freenect::Freenect freenect;
 MongoWrapper serveur;
 Config ConfigHelper;
-
+int forcedStops = 0;
 Decodeur::Decodeur(){ 
     serveur.addUpdate("working", true);
 }
@@ -23,7 +23,7 @@ Decodeur::~Decodeur()
     convertisseur.ContinuerConvertion = false;
 }
 
-void Decodeur::afficherDebug(int16_t debug[4])
+void afficherDebug(int16_t debug[4])
 {
 	switch (debug[0])
 	{
@@ -102,7 +102,7 @@ void Decodeur::InitKinect()
 void Decodeur::InitCommunicationArduino()
 {
     ArduinoInitTime = std::clock();
-    ArduinoAccessible = arduinoCommunicator.init(this->afficherDebug);
+    ArduinoAccessible = arduinoCommunicator.init(afficherDebug);
     EnvoieDebug("Initialisation d'Arduino impossible\n", "error");
 }
 

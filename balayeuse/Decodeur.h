@@ -31,7 +31,7 @@ struct Action
 class Decodeur
 {
     private:
-    int forcedStops=0;
+ 
     int mapIter=0;
     int nextSampling = 500; //millisecond
     int frame = 0;
@@ -68,7 +68,6 @@ class Decodeur
     void UpdateCommande();
     void ExecuteCommande();
     void PrendreEchantillonEnvironnement();
-    void afficherDebug();
 
 
     public:
