@@ -1,8 +1,8 @@
 var mongojs = require('mongojs')
 //For prod
-var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
+//var db = mongojs("mongodb://mainapp:ygMs9GQ@ds049456.mlab.com:49456/domotique_manager");
 //For dev
-//var db = mongojs("mongodb://127.0.0.1:3001/meteor");
+var db = mongojs("mongodb://127.0.0.1:3001/meteor");
 
 
 function getInitialNumberData(){
@@ -12,6 +12,9 @@ function getInitialNumberData(){
         {statIdentifier:"rightWheel", statNiceName:"Right Wheel", statValue:0, statMesure:"rpm", history:[{value:0, createdAt:now}]},
         {statIdentifier:"kinectPolling", statNiceName:"Kinect Polling", statValue:0, statMesure:"poll/s", history:[{value:0, createdAt:now}]},
         {statIdentifier:"forcedStop", statNiceName:"Forced Stop", statValue:0, statMesure:"stops", history:[{value:0, createdAt:now}]},
+        {statIdentifier:"distanceSonar", statNiceName:"Sonar distance", statValue:0, statMesure:"cm", history:[{value:0, createdAt:now}]},
+        {statIdentifier:"mapIter", statNiceName:"Map update", statValue:0, statMesure:"updates", history:[{value:0, createdAt:now}]},
+        {statIdentifier:"nbCommands", statNiceName:"nb Commands", statValue:0, statMesure:"in queue", history:[{value:0, createdAt:now}]},
     ]
 }
 /*
@@ -120,7 +123,7 @@ db.createCollection("commandContainer", {}, function(error, value){
         });
       });
 });
-/********** STRING STATISTICS ***************
+/********** STRING STATISTICS ****************/
 db.createCollection("statStringContainer", {}, function(error, value){
     console.log(error)
     console.log(value)
@@ -130,8 +133,8 @@ db.createCollection("statStringContainer", {}, function(error, value){
         })
     });
 });
-*/
-/********** BOOLEAN STATISTICS **************
+
+/********** BOOLEAN STATISTICS ***************/
 db.createCollection("statBoolContainer", {}, function(error, value){
     db.collection('statBoolContainer').remove({}, function(e, doc){
         db.collection('statBoolContainer').insert(getInitialBoolData(), function(error, value){
@@ -139,9 +142,9 @@ db.createCollection("statBoolContainer", {}, function(error, value){
         })
     });
 });
-*/
 
-/********** NUMBER STATISTICS **************
+
+/********** NUMBER STATISTICS ***************/
 db.createCollection("statNumberContainer", {}, function(error, value){
     db.collection('statNumberContainer').remove({}, function(e, doc){
         console.log('Simulating data from robot...');
@@ -153,7 +156,6 @@ db.createCollection("statNumberContainer", {}, function(error, value){
         })
     });
 });
-*/
 
 function simulateWheels(){
     var now = Date.now();

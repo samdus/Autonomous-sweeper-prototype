@@ -4,10 +4,13 @@ Freenect::Freenect freenect;
 MongoWrapper serveur;
 Config ConfigHelper;
 
-Decodeur::Decodeur(){ }
+Decodeur::Decodeur(){ 
+    serveur.addUpdate("working", true);
+}
 
 Decodeur::~Decodeur()
 {
+    serveur.addUpdate("working", false);
     if(KinectAccessible)
     {
         device->stopDepth();
@@ -22,46 +25,56 @@ Decodeur::~Decodeur()
 
 void afficherDebug(int16_t debug[4])
 {
-	/*switch (debug[0])
+	switch (debug[0])
 	{
 	case ArduinoCommunicator::Fonction::InfoDistanceObjet:
-		cout << "Distance: " << debug[1] << endl;
+        serveur.addUpdate("distanceSonar", debug[1]);
+		//cout << "Distance: " << debug[1] << endl;
 		break;
 	case ArduinoCommunicator::Fonction::InfoOrientation:
-		cout << "Orientation: " << debug[1] << endl;
+		//cout << "Orientation: " << debug[1] << endl;
 		break;
 	case ArduinoCommunicator::Fonction::InfoVitesseMoteur:
-		if(debug[1] == 0)
-			cout << "Vitesse du moteur gauche: " << debug[2] << endl;
-		else
-			cout << "Vitesse du moteur droit: " << debug[2] << endl;
+		if(debug[1] == 0){
+            serveur.addUpdate("leftWheel", debug[2]);
+            //cout << "Vitesse du moteur gauche: " << debug[2] << endl;
+        }else{
+            serveur.addUpdate("rightWheel", debug[2]); // voir avec sam
+            //cout << "Vitesse du moteur droit: " << debug[2] << endl;
+        }
 		break;
 	case ArduinoCommunicator::Fonction::DirectionChoisie:
-		cout << debug[1];
-		EnvoiWeb += std::to_string(debug[1]);
+		//cout << debug[1];
+		//EnvoiWeb += std::to_string(debug[1]);
 		break;
 	case ArduinoCommunicator::Fonction::Erreur:
 		switch (debug[1])
 		{
 		case ArduinoCommunicator::TypeErreur::Obstacle:
-			cout << "Obstacle!!" << endl;
+            forcedStops++;
+            serveur.addUpdate("forcedStop", forcedStops); // voir avec sam
+			//cout << "Obstacle!!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::FonctionInconnue:
-			cout << "Fonction inconnue!!" << endl;
+			//cout << "Fonction inconnue!!" << endl;
+            serveur.writeConsole("Erreur de fonction du Arduinno'", "error");
 			break;
 		case ArduinoCommunicator::TypeErreur::IO:
-			cout << "Erreur de IO!" << endl;
+            serveur.writeConsole("Erreur d'entrée sortie du Arduinno'", "error");
+			//cout << "Erreur de IO!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::ErreurInitialisation:
-			cout << "Erreur d'initialisation!" << endl;
+            serveur.writeConsole("Erreur d'initialization du arduino", "error");
+			//cout << "Erreur d'initialisation!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::EntreeInconnue:
-			std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
-			cout << "Entree inconnue: " << endl << binaire << endl;
+            serveur.writeConsole("Erreur inconnue du arduino", "error");
+			//std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
+			//cout << "Entree inconnue: " << endl << binaire << endl;
 			break;
 		}
 		break;
-	}*/
+	}
 }
 
 void Decodeur::InitKinect()
@@ -96,7 +109,7 @@ void Decodeur::InitCommunicationArduino()
 void Decodeur::InitCommunicationServeur()
 {
     //if(!testdeconnection)
-    EnvoieDebug("test de connection avec le serveur\n", "error");
+    EnvoieDebug("test de connection avec le serveur\n", "info");
 }
 
 void Decodeur::InitConfiguration()
@@ -173,6 +186,7 @@ void Decodeur::UpdateCommande()
             break;
              case INVALID:
                 std::cout << "test INVALID\n";
+                serveur.writeConsole("Erreur d'interprétation de commande sur le robot", "error");
             break;
             default:
                 std::cout << "invalid\n";
@@ -184,7 +198,8 @@ void Decodeur::UpdateCommande()
 }
 
 void Decodeur::ExecuteCommande()
-{
+{   
+    serveur.addUpdate("nbCommands", actions.size());
     if(actions.size() != 0)
     {
         std::cout << "execute commande\n";
@@ -239,6 +254,8 @@ void Decodeur::Init()
     InitCommunicationArduino();
     InitCommunicationServeur();
     quantiteDeSegmentEnvironnement = convertisseur.Environnement.GetSegments().size();
+    mapIter++;
+    serveur.addUpdate("mapIter", mapIter)
     serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
     if(MultithreadActiver)
     {
@@ -273,7 +290,7 @@ void Decodeur::UpdateFPS()
         if(now - 1000000 >= FPSStarTime)
         {
             updateFPS = true;
-
+             serveur.addUpdate("kinectPolling", nbEchantillonsParSecond);
             //EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
         }
     }

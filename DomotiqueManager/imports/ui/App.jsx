@@ -36,8 +36,10 @@ class App extends Component {
               <StatNumberDisplay listenTo="leftWheel" hasGraph={true} />
               <StatNumberDisplay listenTo="rightWheel" hasGraph={true}/>
               <StatNumberDisplay listenTo="kinectPolling" hasGraph={true}/>
+              <StatNumberDisplay listenTo="distanceSonar" hasGraph={true}/>
+              <StatNumberDisplay listenTo="nbCommands" hasGraph={true}/>
               <StatNumberDisplay listenTo="forcedStop" />
-              <StatStringDisplay listenTo="currentlyIn" />
+              <StatNumberDisplay listenTo="mapIter" />
               <StatBoolDisplay listenTo="working" />
           </div>
         </div>
