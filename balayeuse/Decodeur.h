@@ -31,6 +31,8 @@ struct Action
 class Decodeur
 {
     private:
+ 
+    int mapIter=0;
     int nextSampling = 500; //millisecond
     int frame = 0;
     int nbEchantillonsParSecond = 0;
