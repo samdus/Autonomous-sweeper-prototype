@@ -102,7 +102,7 @@ void Decodeur::InitKinect()
 void Decodeur::InitCommunicationArduino()
 {
     ArduinoInitTime = std::clock();
-    ArduinoAccessible = arduinoCommunicator.init(afficherDebug);
+    ArduinoAccessible = arduinoCommunicator.init(this->afficherDebug);
     EnvoieDebug("Initialisation d'Arduino impossible\n", "error");
 }
 
