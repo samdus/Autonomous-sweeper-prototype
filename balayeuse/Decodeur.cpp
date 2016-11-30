@@ -4,9 +4,7 @@ Freenect::Freenect freenect;
 MongoWrapper serveur;
 Config ConfigHelper;
 int forcedStops = 0;
-Decodeur::Decodeur(){ 
-    serveur.addUpdate("working", true);
-}
+Decodeur::Decodeur(){ }
 
 Decodeur::~Decodeur()
 {
@@ -282,6 +280,7 @@ void Decodeur::Init()
     InitCommunicationServeur();
     quantiteDeSegmentEnvironnement = convertisseur.Environnement.GetSegments().size();
     this->mapIter++;
+    serveur.addUpdate("working", true);
     serveur.addUpdate("mapIter", this->mapIter);
     serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
     if(MultithreadActiver)
