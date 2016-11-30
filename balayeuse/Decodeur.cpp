@@ -51,8 +51,8 @@ void afficherDebug(int16_t debug[4])
 		switch (debug[1])
 		{
 		case ArduinoCommunicator::TypeErreur::Obstacle:
-            forcedStops++;
-            serveur.addUpdate("forcedStop", forcedStops); // voir avec sam
+            this->forcedStops++;
+            serveur.addUpdate("forcedStop", this->forcedStops); // voir avec sam
 			//cout << "Obstacle!!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::FonctionInconnue:
@@ -199,7 +199,7 @@ void Decodeur::UpdateCommande()
 
 void Decodeur::ExecuteCommande()
 {   
-    serveur.addUpdate("nbCommands", actions.size());
+    serveur.addUpdate("nbCommands", (int) actions.size());
     if(actions.size() != 0)
     {
         std::cout << "execute commande\n";
@@ -254,8 +254,8 @@ void Decodeur::Init()
     InitCommunicationArduino();
     InitCommunicationServeur();
     quantiteDeSegmentEnvironnement = convertisseur.Environnement.GetSegments().size();
-    mapIter++;
-    serveur.addUpdate("mapIter", mapIter)
+    this->mapIter++;
+    serveur.addUpdate("mapIter", this->mapIter);
     serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
     if(MultithreadActiver)
     {
