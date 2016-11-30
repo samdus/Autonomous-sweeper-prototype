@@ -16,6 +16,14 @@ SceneCamera::~SceneCamera(){}
 void SceneCamera::RotateY(float angle)
 {
     angleX += angle;
+    if(angleX < 0.0)
+    {
+        angleX += 360.0;
+    }
+    if(angleX >= 360.0)
+    {
+        angleX -= 360.0;
+    }
     lX = sin(angleX * DEG2RAD);
     lZ = -cos(angleX * DEG2RAD);
 

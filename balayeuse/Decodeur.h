@@ -64,7 +64,7 @@ class Decodeur
     void InitCommunicationServeur();
     void InitConfiguration();
     void UpdateCommande();
-    void ExecuteCommande();
+    void ExecuteActions();
     void PrendreEchantillonEnvironnement();
 
 
@@ -83,7 +83,7 @@ class Decodeur
     void EnvoieDebug(std::string message, std::string categorie);
     void UpdateFPS();
 
-    void UpdateCloudOfPoint();
+    bool UpdateCloudOfPoint();
 
     bool RunLoop();
 };

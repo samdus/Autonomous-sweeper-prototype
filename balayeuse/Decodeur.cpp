@@ -22,7 +22,7 @@ Decodeur::~Decodeur()
 
 void afficherDebug(int16_t debug[4])
 {
-	/*switch (debug[0])
+	switch (debug[0])
 	{
 	case ArduinoCommunicator::Fonction::InfoDistanceObjet:
 		cout << "Distance: " << debug[1] << endl;
@@ -38,7 +38,7 @@ void afficherDebug(int16_t debug[4])
 		break;
 	case ArduinoCommunicator::Fonction::DirectionChoisie:
 		cout << debug[1];
-		EnvoiWeb += std::to_string(debug[1]);
+		//EnvoiWeb += std::to_string(debug[1]);
 		break;
 	case ArduinoCommunicator::Fonction::Erreur:
 		switch (debug[1])
@@ -56,12 +56,12 @@ void afficherDebug(int16_t debug[4])
 			cout << "Erreur d'initialisation!" << endl;
 			break;
 		case ArduinoCommunicator::TypeErreur::EntreeInconnue:
-			std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
-			cout << "Entree inconnue: " << endl << binaire << endl;
+//			std::bitset<sizeof(int16_t) * 8> binaire(debug[2]);
+//			cout << "Entree inconnue: " << endl << binaire << endl;
 			break;
 		}
 		break;
-	}*/
+	}
 }
 
 void Decodeur::InitKinect()
@@ -90,13 +90,20 @@ void Decodeur::InitCommunicationArduino()
 {
     ArduinoInitTime = std::clock();
     ArduinoAccessible = arduinoCommunicator.init(afficherDebug);
-    EnvoieDebug("Initialisation d'Arduino impossible\n", "error");
+    if(!ArduinoAccessible)
+    {
+        EnvoieDebug("Initialisation d'Arduino impossible\n", "error");
+    }
+    else
+    {
+        EnvoieDebug("Initialisation d'Arduino reussi\n", "error");
+    }
 }
 
 void Decodeur::InitCommunicationServeur()
 {
     //if(!testdeconnection)
-    EnvoieDebug("test de connection avec le serveur\n", "error");
+    //EnvoieDebug("test de connection avec le serveur\n", "error");
 }
 
 void Decodeur::InitConfiguration()
@@ -117,6 +124,8 @@ void Decodeur::UpdateCommande()
 {
     //Consomme toute les commandes
     MongoCommand* commande = serveur.getCommand();
+    bool ignore = false;
+    float dotprod = 0.0;
     while(commande != NULL)
     {
         switch(commande->m_commandInfo.thecommand)
@@ -130,8 +139,25 @@ void Decodeur::UpdateCommande()
             break;
             case GOTO:
                 std::cout << "test GOTO\n";
-                //calculer la rotation a faire et le deplacement ensuite
-                actions.push_back(Action(Avancer, 25));
+                ignore = false;
+                for(Action action : actions)
+                {
+                    if(action.action == Avancer)
+                    {
+                        ignore = true;
+                        break;
+                    }
+                }
+                if(!ignore)
+                {
+                    //calculer la rotation a faire et le deplacement ensuite
+                    dotprod = Vector2(RealCam.lX, RealCam.lZ).dot(Vector2(commande->m_commandInfo.x - RealCam.position.x, commande->m_commandInfo.y - RealCam.position.z).normalize());
+                    actions.push_back(Action(Avancer, 25));
+                }
+                else
+                {
+                    std::cout << "Impossible d'ajouter une autre déplacement\n";
+                }
             break;
             case CLOSE:
                 std::cout << "test close\n";
@@ -183,15 +209,15 @@ void Decodeur::UpdateCommande()
     }
 }
 
-void Decodeur::ExecuteCommande()
+void Decodeur::ExecuteActions()
 {
     if(actions.size() != 0)
     {
-        std::cout << "execute commande\n";
+        std::cout << "execute actions\n";
         switch(actions[0].action)
         {
         case Avancer:
-            arduinoCommunicator.avancePendantXDixiemeSec(20);
+            arduinoCommunicator.avancePendantXDixiemeSec(actions[0].valeur);
             RealCam.Avance(50.0);
             PrendreEchantillonEnvironnement();
             break;
@@ -215,6 +241,7 @@ void Decodeur::PrendreEchantillonEnvironnement()
     try
     {
         device->setTiltDegrees(0.0);
+        //while(!UpdateCloudOfPoint());//doit prendre un echantillon
         UpdateCloudOfPoint();
         if(!MultithreadActiver)
         {
@@ -274,12 +301,12 @@ void Decodeur::UpdateFPS()
         {
             updateFPS = true;
 
-            //EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
+            EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
         }
     }
 }
 
-void Decodeur::UpdateCloudOfPoint()
+bool Decodeur::UpdateCloudOfPoint()
 {
     if(KinectCameraActiver /*&& Pret a l'envoie de photo au serveur*/)
     {
@@ -320,6 +347,7 @@ void Decodeur::UpdateCloudOfPoint()
         {
             ++nbEchantillonsParSecond;
         }
+        return true;
     }
     else
     {
@@ -327,9 +355,10 @@ void Decodeur::UpdateCloudOfPoint()
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
             updateCloud = true;
-            nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/2));//inutile de prendre plus de 2 image seconde
+            nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile de prendre plus de 30 image seconde
         }
     }
+    return false;
 }
 
 bool Decodeur::RunLoop()
@@ -357,7 +386,6 @@ bool Decodeur::RunLoop()
         {
             InitCommunicationArduino();
         }
-        return true;
     }
 
     if(quantiteDeSegmentEnvironnement != convertisseur.Environnement.GetSegments().size())
@@ -367,7 +395,7 @@ bool Decodeur::RunLoop()
     }
 
     UpdateFPS();
-    ExecuteCommande();
+    ExecuteActions();
 
     return true;
 }
