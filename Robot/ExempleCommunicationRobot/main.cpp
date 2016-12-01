@@ -87,15 +87,20 @@ int main(int argc, char **argv)
         return -1;
     }
 
-	static std::random_device seeder;
+
+	/*static std::random_device seeder;
 	static std::mt19937 rng(seeder());
 	static std::uniform_int_distribution<int> gen(0, 359);
-	//communicator.setDebug();
-	communicator.tourneAuDegresX(150);
-	cout << communicator.obtenirOrientation() << endl;
-	cin.get();
-	//communicator.stopDebug();
-	//communicator.avancePendantXDixiemeSec(100);
+*/
+
+	communicator.tourneAuDegresX(0);
+
+	communicator.tourneDroite(90);	
+	communicator.avancePendantXDixiemeSec(30);
+
+	communicator.reculePendantXDixiemeSec(30);
+	communicator.tourneGauche(90);
+
 	/*while (1)
 		cout << communicator.obtenirDistanceDevant() << ": " << communicator.obtenirObstacle() << endl;*/
 
