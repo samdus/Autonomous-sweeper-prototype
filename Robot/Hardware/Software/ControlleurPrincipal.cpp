@@ -73,6 +73,8 @@ void ControlleurPrincipal::calibrerMoteur()
 				_moteurGauche->setVitesse(vitesseGauche + 1);
 			}
 		}
+
+		_derniereOrientation = orientation;
 	}
 
 	if (_modeDebug && (_itDebug++ % 10) == 0)
