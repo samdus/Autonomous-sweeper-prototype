@@ -1,14 +1,15 @@
+#!/usr/bin/env python
+
 import RPi.GPIO as GPIO
 import time
 import os
 
 def callback_rouge(channel):
-    #os.system("sudo pkill ExempleCom &")
     os.system("sudo pkill balayeuse &")
     os.system("stty -F /dev/ttyACM0 -hupcl &")
 
 def callback_jaune(channel):
-    os.system("sudo ./home/pi/Desktop/Demarre-balayeuse")
+    os.system("sudo /home/pi/Desktop/Demarre-balayeuse")
     #os.system("make -C /home/pi/Documents/Projet-RepoGit/gsd/Robot run &")
 
 boutonRougePin = 19
