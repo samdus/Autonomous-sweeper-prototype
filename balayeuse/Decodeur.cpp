@@ -280,8 +280,8 @@ void Decodeur::PrendreEchantillonEnvironnement()
     try
     {
         device->setTiltDegrees(0.0);
-        //while(!UpdateCloudOfPoint());//doit prendre un echantillon
-        UpdateCloudOfPoint();
+        while(!UpdateCloudOfPoint());//doit prendre un echantillon
+        //UpdateCloudOfPoint();
         if(!MultithreadActiver)
         {
             convertisseur.Convertir(cloudBuffer);
@@ -342,7 +342,7 @@ void Decodeur::UpdateFPS()
         if(now - 10000000 >= FPSStarTime)
         {
             updateFPS = true;
-             serveur.addUpdate("kinectPolling", (float)(nbEchantillonsParSecond/10.0));
+            serveur.addUpdate("kinectPolling", (float)(nbEchantillonsParSecond/10.0));
             //EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
         }
     }
@@ -396,7 +396,7 @@ bool Decodeur::UpdateCloudOfPoint()
         clock_t now = std::clock();
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
-            updateCloud = false;
+            updateCloud = true;
             nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile de prendre plus de 30 image seconde
         }
     }
