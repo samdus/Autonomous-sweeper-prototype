@@ -5,9 +5,9 @@ import time
 import os
 
 def callback_rouge(channel):
-    #os.system("sudo pkill ExempleCom &")
     os.system("sudo pkill balayeuse &")
     os.system("stty -F /dev/ttyACM0 -hupcl &")
+    #os.system("sudo pkill ExempleCom &")
 
 def callback_jaune(channel):
     os.system("sudo /home/pi/Desktop/Demarre-balayeuse")
