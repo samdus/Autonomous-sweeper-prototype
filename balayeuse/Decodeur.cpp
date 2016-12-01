@@ -136,7 +136,7 @@ void Decodeur::UpdateCommande()
     //Consomme toute les commandes
     MongoCommand* commande = serveur.getCommand();
     bool ignore = false;
-    float dotprod = 0.0;
+    float dotprod, angleCourant = 0.0;
     while(commande != NULL)
     {
         switch(commande->m_commandInfo.thecommand)
@@ -163,6 +163,13 @@ void Decodeur::UpdateCommande()
                 {
                     //calculer la rotation a faire et le deplacement ensuite
                     dotprod = Vector2(RealCam.lX, RealCam.lZ).dot(Vector2(commande->m_commandInfo.x - RealCam.position.x, commande->m_commandInfo.y - RealCam.position.z).normalize());
+                    if(dotprod != 0.0)
+                    {
+                        angleCourant = (dotprod > 0.0 ? acos(dotprod) * RAD2DEG : -acos(dotprod) * RAD2DEG );
+                    }
+
+                    std::cout << "angleCam " RealCam.angleX << " angle trouver " << angleCourant << std::endl;
+
                     actions.push_back(Action(Avancer, 25));
                 }
                 else
