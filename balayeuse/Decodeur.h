@@ -31,7 +31,7 @@ struct Action
 class Decodeur
 {
     private:
- 
+    int lastPollingValue = -1;
     int mapIter=0;
     int nextSampling = 500; //millisecond
     int frame = 0;
