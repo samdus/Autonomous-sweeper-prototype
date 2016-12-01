@@ -73,8 +73,6 @@ void ControlleurPrincipal::calibrerMoteur()
 				_moteurGauche->setVitesse(vitesseGauche + 1);
 			}
 		}
-
-		_derniereOrientation = orientation;
 	}
 
 	if (_modeDebug && (_itDebug++ % 10) == 0)
@@ -137,6 +135,7 @@ void ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
 
     _avance = true;
 
+	_derniereOrientation = _compassDriver->getOrientation();
 	_tempMouvementLineaire = dixiemeSec * 100;
 	_resetTemps();
 	(*_executionASync) = verifierTempsMouvementLineaire;
@@ -152,6 +151,7 @@ void ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
 
     _recule = true;
 
+	_derniereOrientation = _compassDriver->getOrientation();
 	_tempMouvementLineaire = dixiemeSec * 100;
 	_resetTemps();
 	(*_executionASync) = verifierTempsMouvementLineaire;
