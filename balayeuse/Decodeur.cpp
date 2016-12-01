@@ -263,8 +263,9 @@ void Decodeur::ExecuteActions()
         switch(actions[0].action)
         {
         case Avancer:
+            std::cout << "J'avance de " << actions[0].valeur << "mm" << std::endl;
             arduinoCommunicator.avancePendantXDixiemeSec(actions[0].valeur);
-            RealCam.Avance(50.0);
+            RealCam.Avance(actions[0].valeur);
             PrendreEchantillonEnvironnement();
             break;
         case TournerDeXDegree:
@@ -285,10 +286,10 @@ void Decodeur::ExecuteActions()
 
         actions.erase(actions.begin(),actions.begin() + 1);
     }
-    else//s'il n'a rien a faire continue de prendre des echantillons de son environnement
+    /*else//s'il n'a rien a faire continue de prendre des echantillons de son environnement
     {
         PrendreEchantillonEnvironnement();
-    }
+    }*/
 }
 
 void Decodeur::PrendreEchantillonEnvironnement()
