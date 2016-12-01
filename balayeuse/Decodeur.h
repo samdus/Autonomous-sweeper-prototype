@@ -14,7 +14,7 @@
 #include "../mongoWrapper/MongoWrapper.cpp"
 #include <string>
 enum ActionEnum{
-    Avancer, Tourner
+    Avancer, TournerAuDegreeX, TournerDeXDegree
 };
 
 struct Action
@@ -43,6 +43,7 @@ class Decodeur
     clock_t CloudSamplingTime = 0;
     clock_t KinectInitTime = 0;
     clock_t ArduinoInitTime = 0;
+    clock_t EnvoieDeLaCarteTime = 0;
     MyFreenectDevice* device;
     ArduinoCommunicator arduinoCommunicator;
     float HauteurMax = 0.0;
@@ -58,7 +59,7 @@ class Decodeur
     bool KinectCameraActiver = false;
     bool ArduinoAccessible = false;
     bool ModeAutomatique = true;
-    bool EnMarche = true;
+    bool CarteServeurAJour = false;
     std::vector<Action> actions;
 
     void InitKinect();
@@ -71,6 +72,7 @@ class Decodeur
 
 
     public:
+    bool EnMarche = true;
     Convertisseur convertisseur;
     CloudPointContainer cloudBuffer = CloudPointContainer();
     SceneCamera RealCam = SceneCamera();    // Camera to simulate the kinect in the real world
@@ -83,6 +85,7 @@ class Decodeur
 
     void Init();
     void EnvoieDebug(std::string message, std::string categorie);
+    void EnvoieCarteAuServeur();
     void UpdateFPS();
 
     bool UpdateCloudOfPoint();

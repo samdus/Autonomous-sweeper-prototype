@@ -136,7 +136,7 @@ void Decodeur::UpdateCommande()
     //Consomme toute les commandes
     MongoCommand* commande = serveur.getCommand();
     bool ignore = false;
-    float dotprod, angleCourant = 0.0;
+    float dotprod, cote, angleCourant = 0.0;
     while(commande != NULL)
     {
         switch(commande->m_commandInfo.thecommand)
@@ -162,15 +162,21 @@ void Decodeur::UpdateCommande()
                 if(!ignore)
                 {
                     //calculer la rotation a faire et le deplacement ensuite
-                    dotprod = Vector2(RealCam.lX, RealCam.lZ).dot(Vector2(commande->m_commandInfo.x - RealCam.position.x, commande->m_commandInfo.y - RealCam.position.z).normalize());
+                    Vector2 directionObjectif = Vector2(-commande->m_commandInfo.x - RealCam.position.x, commande->m_commandInfo.y - RealCam.position.z).normalize();
+                    dotprod = Vector2(RealCam.lX, RealCam.lZ).dot(directionObjectif);
+                    cote = Vector2(RealCam.lX, RealCam.lZ).dot(Vector2(-directionObjectif.y, directionObjectif.x));//negatif = a gauche sinon a droite
+
                     if(dotprod != 0.0)
                     {
-                        angleCourant = (dotprod > 0.0 ? acos(dotprod) * RAD2DEG : -acos(dotprod) * RAD2DEG );
+                        angleCourant = acos(dotprod) * RAD2DEG;
+                        if(cote < 0.0)
+                        {
+                            angleCourant = -angleCourant;
+                        }
+                        actions.push_back(Action(TournerDeXDegree, angleCourant));
                     }
 
-                    std::cout << "angleCam " << RealCam.angleX << " angle trouver " << angleCourant << std::endl;
-
-                    actions.push_back(Action(Avancer, 25));
+                    actions.push_back(Action(Avancer, Vector2(RealCam.position.x, RealCam.position.z).distance(Vector2(commande->m_commandInfo.x, commande->m_commandInfo.y))));
                 }
                 else
                 {
@@ -192,18 +198,18 @@ void Decodeur::UpdateCommande()
             break;
             case SCAN:
                 std::cout << "test SCAN\n";
-                actions.push_back(Action(Tourner, 45));
-                actions.push_back(Action(Tourner, 90));
-                actions.push_back(Action(Tourner, 135));
-                actions.push_back(Action(Tourner, 180));
-                actions.push_back(Action(Tourner, 225));
-                actions.push_back(Action(Tourner, 270));
-                actions.push_back(Action(Tourner, 315));
-                actions.push_back(Action(Tourner, 0));
+                actions.push_back(Action(TournerDeXDegree, 45));
+                actions.push_back(Action(TournerDeXDegree, 45));
+                actions.push_back(Action(TournerDeXDegree, 45));
+                actions.push_back(Action(TournerDeXDegree, 45));
+                actions.push_back(Action(TournerDeXDegree, 45));
+                actions.push_back(Action(TournerDeXDegree, 45));
+                actions.push_back(Action(TournerDeXDegree, 45));
+                actions.push_back(Action(TournerDeXDegree, 45));
             break;
             case TURN:
                 std::cout << "test TURN\n";
-                actions.push_back(Action(Tourner, commande->m_commandInfo.x));
+                actions.push_back(Action(TournerDeXDegree, commande->m_commandInfo.x));
             break;
             case AUTOMATIC:
                 std::cout << "test AUTOMATIC\n";
@@ -230,9 +236,13 @@ void Decodeur::UpdateCommande()
 
 void Decodeur::ExecuteActions()
 {
-    serveur.addUpdate("nbCommands", (int) actions.size());
+    //serveur.addUpdate("nbCommands", (int) actions.size());
     if(actions.size() != 0)
     {
+        if(!ArduinoAccessible)
+        {
+            return;
+        }
         std::cout << "execute actions\n";
         switch(actions[0].action)
         {
@@ -241,8 +251,17 @@ void Decodeur::ExecuteActions()
             RealCam.Avance(50.0);
             PrendreEchantillonEnvironnement();
             break;
-        case Tourner:
-            arduinoCommunicator.tourneAuDegresX((int16_t)actions[0].valeur);
+        case TournerDeXDegree:
+            std::cout << "Je troune de " << actions[0].valeur << std::endl;
+            if(actions[0].valeur > 0.0)
+            {
+                arduinoCommunicator.tourneDroite((int16_t)actions[0].valeur);
+            }
+            else
+            {
+                arduinoCommunicator.tourneGauche((int16_t)(-actions[0].valeur));
+            }
+
             RealCam.RotateY(actions[0].valeur);
             PrendreEchantillonEnvironnement();
             break;
@@ -273,7 +292,7 @@ void Decodeur::PrendreEchantillonEnvironnement()
         freenect.deleteDevice(0);
         KinectAccessible = false;
 
-        EnvoieDebug("Error: lors de la loop principale\n", "error");
+        EnvoieDebug("Error: lors de la prise d'echantillon\n", "error");
     }
 }
 
@@ -320,10 +339,10 @@ void Decodeur::UpdateFPS()
     {
         frame++;
         clock_t now = std::clock();
-        if(now - 1000000 >= FPSStarTime)
+        if(now - 10000000 >= FPSStarTime)
         {
             updateFPS = true;
-             serveur.addUpdate("kinectPolling", nbEchantillonsParSecond);
+             serveur.addUpdate("kinectPolling", (float)(nbEchantillonsParSecond/10.0));
             //EnvoieDebug("fps: " + std::to_string(frame) + " nombre d'echantillons par seconde : " + std::to_string(nbEchantillonsParSecond) + " next sampling " + std::to_string(nextSampling) + "\n", "info");
         }
     }
@@ -377,11 +396,28 @@ bool Decodeur::UpdateCloudOfPoint()
         clock_t now = std::clock();
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
-            updateCloud = true;
+            updateCloud = false;
             nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile de prendre plus de 30 image seconde
         }
     }
     return false;
+}
+
+void Decodeur::EnvoieCarteAuServeur()
+{
+    if(CarteServeurAJour && quantiteDeSegmentEnvironnement != convertisseur.Environnement.GetSegments().size())//difference trouvee
+    {
+        CarteServeurAJour = false;
+    }
+
+    if(!CarteServeurAJour && EnvoieDeLaCarteTime < std::clock() - 5000000)
+    {
+        CarteServeurAJour = true;
+        EnvoieDeLaCarteTime = std::clock();
+        EnvoieDebug("Envoie de la carte au serveur\n", "info");
+        quantiteDeSegmentEnvironnement = convertisseur.Environnement.GetSegments().size();
+        serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
+    }
 }
 
 bool Decodeur::RunLoop()
@@ -411,12 +447,20 @@ bool Decodeur::RunLoop()
         }
     }
 
-    if(quantiteDeSegmentEnvironnement != convertisseur.Environnement.GetSegments().size())
+    try
     {
-        quantiteDeSegmentEnvironnement = convertisseur.Environnement.GetSegments().size();
-        serveur.writeMap(convertisseur.Environnement.GetSegments(), (int)RealCam.position.x,(int)RealCam.position.z);
+        device->setTiltDegrees(0.0);
+    }
+    catch(std::runtime_error e)
+    {
+        freenect.deleteDevice(0);
+        KinectAccessible = false;
+
+        EnvoieDebug("Error: lors de la prise de la stabilisation de la kinect\n", "error");
+        return true;
     }
 
+    EnvoieCarteAuServeur();
     UpdateFPS();
     ExecuteActions();
 

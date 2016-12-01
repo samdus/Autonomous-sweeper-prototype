@@ -367,6 +367,7 @@
 //
 //void keyPressed(unsigned char key, int x, int y)
 //{
+//    float dotprod =0.0;
 //    switch (key)
 //    {
 //        case  'W':
@@ -392,6 +393,7 @@
 //        case  'J':
 //        case  'j':
 //            DecodeurScene.RealCam.RotateY(45.0);
+//            //std::cout << "DOTPROD " << (dotprod > 0.0 ? acos(dotprod) * RAD2DEG : -acos(dotprod) * RAD2DEG )<< std::endl;
 //            break;
 //        case  'K':
 //        case  'k':
@@ -400,6 +402,8 @@
 //        case  'L':
 //        case  'l':
 //            DecodeurScene.RealCam.RotateY(-45.0);
+//            dotprod = Vector2(DecodeurScene.RealCam.lX, DecodeurScene.RealCam.lZ).dot(Vector2(50.0 - 0.0, 50.0 - 0.0).normalize());
+//            //std::cout << "DOTPROD " << (dotprod > 0.0 ? acos(dotprod) * RAD2DEG : -acos(dotprod) * RAD2DEG ) << std::endl;
 //            break;
 //        case  'P':
 //        case  'p':
@@ -423,10 +427,8 @@
 //        case  'Q':
 //        case  'q':
 //        case 0x1B:  // ESC
-//
-//            DecodeurScene.convertisseur.ContinuerConvertion = false;
+//            DecodeurScene.EnMarche = false;
 //            glutDestroyWindow(window);
-//
 //            exit(0);
 //    }
 //    //DecodeurScene.RealCam.DebugInfo();
