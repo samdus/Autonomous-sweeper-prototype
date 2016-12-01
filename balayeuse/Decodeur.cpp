@@ -168,7 +168,7 @@ void Decodeur::UpdateCommande()
                         angleCourant = (dotprod > 0.0 ? acos(dotprod) * RAD2DEG : -acos(dotprod) * RAD2DEG );
                     }
 
-                    std::cout << "angleCam " RealCam.angleX << " angle trouver " << angleCourant << std::endl;
+                    std::cout << "angleCam " << RealCam.angleX << " angle trouver " << angleCourant << std::endl;
 
                     actions.push_back(Action(Avancer, 25));
                 }
