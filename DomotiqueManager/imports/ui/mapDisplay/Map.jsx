@@ -122,12 +122,14 @@ class Map extends Component {
     ctx.fillStyle="#FFFFFF";
 
     //position robot?
-    ctx.fillRect((this.props.mapContainer.robotX+cadrantFixX)*scaleX, (this.props.mapContainer.robotY+cadrantFixY)*scaleY,15,15);
-
+    ctx.fillRect((this.props.mapContainer.robotX+cadrantFixX)*scaleX, (this.props.mapContainer.robotY+cadrantFixY)*scaleY,10,10);
+    //Relative 0,0
+    ctx.fillStyle="#0000FF";
+    ctx.fillRect((0+cadrantFixX)*scaleX, (0+cadrantFixY)*scaleY,5,5);
     //Position last click
     if(robotClickX != -1){
       ctx.fillStyle="#FFFF00";
-      ctx.fillRect((robotClickX+cadrantFixX)*scaleX, (robotClickY+cadrantFixY)*scaleY ,15,15);
+      ctx.fillRect((robotClickX+cadrantFixX)*scaleX, (robotClickY+cadrantFixY)*scaleY ,10,10);
     }
 
   }

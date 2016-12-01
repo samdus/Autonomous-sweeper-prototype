@@ -4,6 +4,7 @@ Freenect::Freenect freenect;
 MongoWrapper serveur;
 Config ConfigHelper;
 int forcedStops = 0;
+int incAffichage =0;
 Decodeur::Decodeur(){ }
 
 Decodeur::~Decodeur()
@@ -23,24 +24,36 @@ Decodeur::~Decodeur()
 
 void afficherDebug(int16_t debug[4])
 {
+	if(incAffichage > 200){
+        switch (debug[0])
+        {
+            case ArduinoCommunicator::Fonction::InfoDistanceObjet:
+                serveur.addUpdate("distanceSonar", debug[1]);
+                //cout << "Distance: " << debug[1] << endl;
+                break;
+            case ArduinoCommunicator::Fonction::InfoOrientation:
+                //cout << "Orientation: " << debug[1] << endl;
+                break;
+            case ArduinoCommunicator::Fonction::InfoVitesseMoteur:
+                if(debug[1] == 0){
+                    serveur.addUpdate("leftWheel", debug[2]);
+                    //cout << "Vitesse du moteur gauche: " << debug[2] << endl;
+                }else{
+                    serveur.addUpdate("rightWheel", debug[2]); // voir avec sam
+                    //cout << "Vitesse du moteur droit: " << debug[2] << endl;
+                }
+                break;
+        }
+        if(incAffichage > 204){
+            incAffichage=0;
+        }
+    }else{
+        incAffichage = incAffichage+1;
+    }
+
+
 	switch (debug[0])
 	{
-	case ArduinoCommunicator::Fonction::InfoDistanceObjet:
-        serveur.addUpdate("distanceSonar", debug[1]);
-		//cout << "Distance: " << debug[1] << endl;
-		break;
-	case ArduinoCommunicator::Fonction::InfoOrientation:
-		//cout << "Orientation: " << debug[1] << endl;
-		break;
-	case ArduinoCommunicator::Fonction::InfoVitesseMoteur:
-		if(debug[1] == 0){
-            serveur.addUpdate("leftWheel", debug[2]);
-            //cout << "Vitesse du moteur gauche: " << debug[2] << endl;
-        }else{
-            serveur.addUpdate("rightWheel", debug[2]); // voir avec sam
-            //cout << "Vitesse du moteur droit: " << debug[2] << endl;
-        }
-		break;
 	case ArduinoCommunicator::Fonction::DirectionChoisie:
 		//cout << debug[1];
 		//EnvoiWeb += std::to_string(debug[1]);
@@ -236,7 +249,10 @@ void Decodeur::UpdateCommande()
 
 void Decodeur::ExecuteActions()
 {
-    //serveur.addUpdate("nbCommands", (int) actions.size());
+    if(actions.size() != lastPollingValue){
+         serveur.addUpdate("nbCommands", (int) actions.size());
+         lastPollingValue = actions.size();
+    }
     if(actions.size() != 0)
     {
         if(!ArduinoAccessible)
