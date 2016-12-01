@@ -92,6 +92,7 @@ int main(int argc, char **argv)
 	static std::mt19937 rng(seeder());
 	static std::uniform_int_distribution<int> gen(0, 359);
 */
+	communicator.setDebug();
 	while(1)
 		communicator.avancePendantXDixiemeSec(1000);
 	/*communicator.tourneAuDegresX(0);
