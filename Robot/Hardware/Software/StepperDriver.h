@@ -20,8 +20,8 @@ private:
 	};
 	const char AVANT   [STEPPER_NB_MOTEUR] = { (char) -1, (char) -1 },
 			   DERRIERE[STEPPER_NB_MOTEUR] = { (char)  1, (char)  1 },
-			   DROITE  [STEPPER_NB_MOTEUR] = { (char) -1, (char)  1 },
-			   GAUCHE  [STEPPER_NB_MOTEUR] = { (char)  1, (char) -1 };
+			   DROITE  [STEPPER_NB_MOTEUR] = { (char)  1, (char) -1 },
+			   GAUCHE  [STEPPER_NB_MOTEUR] = { (char) -1, (char)  1 };
 
 	 unsigned short _compteur;
 	 char _direction;
@@ -48,7 +48,7 @@ public:
 	 virtual void stop();
 
 	 virtual const char getDirection() const;
-	 virtual const unsigned short getVitesse() const;
+	 virtual const unsigned short getVitesse()const;
 	 virtual bool isEnMouvement() const;
 };
 

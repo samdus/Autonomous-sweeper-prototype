@@ -31,8 +31,10 @@ StepperDriver::~StepperDriver(){}
 
  void StepperDriver::setVitesse(unsigned short vitesse)
 {
-    if (vitesse > 8)
-        vitesse = 8;
+	if (vitesse > 8)
+	{
+		vitesse = 8;
+	}
 
 	_vitesse = VITESSES[vitesse];
 }
@@ -74,13 +76,15 @@ StepperDriver::~StepperDriver(){}
 
  const unsigned short StepperDriver::getVitesse() const
 {
-	for (unsigned short i = 0; i < 7; ++i)
+	for (unsigned short i = 0; i < 8; ++i)
+	{
 		if (_vitesse == VITESSES[i])
 			return i;
+	}
 	return 8;
 }
 
- bool StepperDriver::isEnMouvement() const
+bool StepperDriver::isEnMouvement() const
 {
 	return _enMouvement;
 }

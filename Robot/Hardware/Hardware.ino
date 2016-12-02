@@ -24,8 +24,8 @@ bool retourInt;
 void(*fonctionAsync)(ControlleurPrincipal&);
 
 byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
-	{ 2,3,4,5 },
-	{ 6,7,8,9 }
+	{ 6,7,8,9 },
+	{ 2,3,4,5 }
 };
 StepperDriver moteurGauche(new StepperMotor(), STEPPER_GAUCHE),
               moteurDroit(new StepperMotor(), STEPPER_DROIT);

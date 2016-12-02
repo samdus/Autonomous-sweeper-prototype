@@ -48,11 +48,11 @@ void ControlleurPrincipal::calibrerMoteur()
 
 		unsigned short vitesseGauche = _moteurGauche->getVitesse();
 		unsigned short vitesseDroite = _moteurDroit->getVitesse();
-
+		
 		if ((difference > 1.5 && _avance) ||
 			(difference < -1.5 && _recule))
 		{
-			if (vitesseDroite == 8)
+			if (vitesseDroite == 8 && vitesseGauche != 0)
 			{
 				_moteurGauche->setVitesse(vitesseGauche - 1);
 			}
@@ -62,9 +62,9 @@ void ControlleurPrincipal::calibrerMoteur()
 			}
 		}
 		else if ((difference >  1.5 && _recule) ||
-			    (difference < -1.5 && _avance))
+			     (difference < -1.5 && _avance))
 		{
-			if (vitesseGauche == 8)
+			if (vitesseGauche == 8 && vitesseDroite != 0)
 			{
 				_moteurDroit->setVitesse(vitesseDroite - 1);
 			}
@@ -176,26 +176,18 @@ void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 	
 	if (fabs(diff) <= CTRL_PRINC_DIFF_ANGLE_ACCEPTE || fabs(diff) >= 360 - CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
 	{
-		/*_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
-		_transmettreDonnee(0, true);*/
 		return;
 	}
 	else if ((diff < 0 && diff > -180) || diff > 180)
 	{
-		/*_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
-		_transmettreDonnee(1, true);*/
-
 		_moteurGauche->gauche();
 		_moteurDroit->gauche();
 	}
 	else
 	{
-		/*_transmettreDonnee(IControlleurPrincipal::Fonction::DirectionChoisie, false);
-		_transmettreDonnee(2, true);*/
-
 		_moteurGauche->droite();
 		_moteurDroit->droite();
-	}
+	}																																																					
 
 	_moteurGauche->avance();
 	_moteurDroit->avance();

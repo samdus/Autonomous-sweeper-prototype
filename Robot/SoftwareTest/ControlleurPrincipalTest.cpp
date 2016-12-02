@@ -211,7 +211,7 @@ namespace SoftwareTest
 					TestCompassDriver() : CompassDriver(new DummyCompas()) { };
 
 					 virtual float getOrientation() {
-						if (compteur++ == 1)
+						if (compteur++ <= 2)
 						{
 							return test->orientationDepart;
 						}
