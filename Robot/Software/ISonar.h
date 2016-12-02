@@ -2,7 +2,7 @@
 #define ISONAR_H
 
 #define SONAR_MIN_DIST 7
-#define SONAR_MAX_DIST 12
+#define SONAR_MAX_DIST 10
 
 class ISonar
 {

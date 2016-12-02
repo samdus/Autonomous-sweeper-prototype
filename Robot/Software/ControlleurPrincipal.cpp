@@ -39,63 +39,52 @@ void ControlleurPrincipal::stepMoteur()
     _moteurDroit->step();
 }
 
+void ControlleurPrincipal::mettreAJourCapteurs()
+{
+	//_compassDriver->update();
+	//_sonarDriver->updateDist();
+}
+
 void ControlleurPrincipal::calibrerMoteur()
 {
 	float orientation = _compassDriver->getOrientation();
-	if (_avance || _recule)
-	{		
-		float difference = _derniereOrientation - orientation;
+	float difference = _derniereOrientation - orientation;
 
-		unsigned short vitesseGauche = _moteurGauche->getVitesse();
-		unsigned short vitesseDroite = _moteurDroit->getVitesse();
-		
-		if ((difference > 1.5 && _avance) ||
-			(difference < -1.5 && _recule))
-		{
-			if (vitesseDroite == 8 && vitesseGauche != 0)
-			{
-				_moteurGauche->setVitesse(vitesseGauche - 1);
-			}
-			else
-			{
-				_moteurDroit->setVitesse(vitesseDroite + 1);
-			}
-		}
-		else if ((difference >  1.5 && _recule) ||
-			     (difference < -1.5 && _avance))
-		{
-			if (vitesseGauche == 8 && vitesseDroite != 0)
-			{
-				_moteurDroit->setVitesse(vitesseDroite - 1);
-			}
-			else
-			{
-				_moteurGauche->setVitesse(vitesseGauche + 1);
-			}
-		}
-	}
-
-	if (_modeDebug && (_itDebug++ % 10) == 0)
+	unsigned short vitesseGauche = _moteurGauche->getVitesse();
+	unsigned short vitesseDroite = _moteurDroit->getVitesse();
+	
+	if ((difference > 1.5 && _avance) ||
+		(difference < -1.5 && _recule))
 	{
-		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoOrientation, false);
-		_transmettreDonnee((int)orientation, true);
-
-		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoVitesseMoteur, false);
-		_transmettreDonnee(STEPPER_GAUCHE, true);
-		_transmettreDonnee(_moteurGauche->getVitesse(), true);
-
-		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoVitesseMoteur, false);
-		_transmettreDonnee(STEPPER_DROIT, true);
-		_transmettreDonnee(_moteurDroit->getVitesse(), true);
+		if (vitesseDroite == 8)
+		{
+			if(vitesseGauche != 0)
+				_moteurGauche->setVitesse(vitesseGauche - 1);
+		}
+		else
+		{
+			_moteurDroit->setVitesse(vitesseDroite + 1);
+		}
 	}
+	else if ((difference >  1.5 && _recule) ||
+			 (difference < -1.5 && _avance))
+	{
+		if (vitesseGauche == 8)
+		{
+			if(vitesseDroite != 0)
+				_moteurDroit->setVitesse(vitesseDroite - 1);
+		}
+		else
+		{
+			_moteurGauche->setVitesse(vitesseGauche + 1);
+		}
+	}	
 }
 
 void ControlleurPrincipal::verifierObstacle()
 {
 	if (_avance)
 	{
-		_sonarDriver->updateDist();
-
 		if (_sonarDriver->isObstacle())
 		{
 			_erreur = true;
@@ -107,11 +96,25 @@ void ControlleurPrincipal::verifierObstacle()
 			_transmettreDonnee(IControlleurPrincipal::TypeErreur::Obstacle, true);
 		}
 	}
+}
 
-	if (_modeDebug && _itDebug % 10 == 0)
+void ControlleurPrincipal::transmettreDonneesDebug()
+{
+	if (_modeDebug)
 	{
+		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoOrientation, false);
+		_transmettreDonnee((int)_compassDriver->getOrientation(), true);
+
 		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoDistanceObjet, false);
 		_transmettreDonnee(_sonarDriver->getDist(), true);
+
+		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoVitesseMoteur, false);
+		_transmettreDonnee(STEPPER_GAUCHE, true);
+		_transmettreDonnee(_moteurGauche->getVitesse(), true);
+
+		_transmettreDonnee(IControlleurPrincipal::Fonction::InfoVitesseMoteur, false);
+		_transmettreDonnee(STEPPER_DROIT, true);
+		_transmettreDonnee(_moteurDroit->getVitesse(), true);
 	}
 }
 
@@ -130,8 +133,8 @@ void ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
     _moteurGauche->avant();
     _moteurDroit->avant();
     
-    _moteurGauche->avance();
-    _moteurDroit->avance();
+    //_moteurGauche->avance();
+    //_moteurDroit->avance();
 
     _avance = true;
 
@@ -146,8 +149,8 @@ void ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
     _moteurGauche->derriere();
     _moteurDroit->derriere();
     
-    _moteurGauche->avance();
-    _moteurDroit->avance();
+    /*_moteurGauche->avance();
+    _moteurDroit->avance();*/
 
     _recule = true;
 
@@ -171,6 +174,7 @@ bool ControlleurPrincipal::stop()
 void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 {
 	float diff;
+
 	_derniereOrientation = _compassDriver->getOrientation();
 	diff = objectif - _derniereOrientation;
 	
@@ -189,8 +193,8 @@ void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 		_moteurDroit->droite();
 	}																																																					
 
-	_moteurGauche->avance();
-	_moteurDroit->avance();
+	//_moteurGauche->avance();
+	//_moteurDroit->avance();
 
 	_destinationRotation = objectif;
 	(*_executionASync) = verifierDestinationRotation;
@@ -211,15 +215,22 @@ void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &sel
 		(*self._retourDeFonction) = new int(!self._erreur);
 		(*self._executionASync) = NULL;
 	}
+
+	self.transmettreDonneesDebug();
 }
 
 void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &self)
 {
-	if (self._obtenirTemps() >= self._tempMouvementLineaire)
+	self._sonarDriver->updateDist();
+	self.verifierObstacle();
+
+	if (self._erreur || self._obtenirTemps() >= self._tempMouvementLineaire)
 	{
 		(*self._retourDeFonction) = new int(self.stop());
 		(*self._executionASync) = NULL;
 	}
+
+	self.transmettreDonneesDebug();
 }
 
 void ControlleurPrincipal::tourneGauche(int16_t degres)
@@ -234,32 +245,6 @@ void ControlleurPrincipal::tourneDroite(int16_t degres)
     return tourneAuDegresX((int)angleFinal);
 }
 
-void ControlleurPrincipal::tourneGauchePendant(int16_t dixiemeSec)
-{
-	_moteurGauche->gauche();
-	_moteurDroit->gauche();
-
-	_moteurGauche->avance();
-	_moteurDroit->avance();
-
-	_tempMouvementLineaire = dixiemeSec * 100;
-	_resetTemps();
-	(*_executionASync) = verifierTempsMouvementLineaire;
-}
-
-void ControlleurPrincipal::tourneDroitePendant(int16_t dixiemeSec)
-{
-	_moteurGauche->droite();
-	_moteurDroit->droite();
-
-	_moteurGauche->avance();
-	_moteurDroit->avance();
-
-	_tempMouvementLineaire = dixiemeSec * 100;
-	_resetTemps();
-	(*_executionASync) = verifierTempsMouvementLineaire;
-}
-
 void ControlleurPrincipal::obtenirOrientation()
 {
 	(*_retourDeFonction) = new int(round(_compassDriver->getOrientation()));
@@ -267,17 +252,15 @@ void ControlleurPrincipal::obtenirOrientation()
 
 void ControlleurPrincipal::obtenirDistanceDevant()
 {
-	_sonarDriver->updateDist();
 	(*_retourDeFonction) = new int(round(_sonarDriver->getDist()));
 }
 
 void ControlleurPrincipal::obtenirObstacle()
 {
-	_sonarDriver->updateDist();
 	(*_retourDeFonction) = new int(_sonarDriver->isObstacle());
 }
 
- void ControlleurPrincipal::setDebug()
+void ControlleurPrincipal::setDebug()
 {
     _modeDebug = true;
 }

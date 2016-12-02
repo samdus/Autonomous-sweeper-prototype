@@ -13,8 +13,9 @@ public:
 	CompassDriver(ICompass*);
 	~CompassDriver();
 	
-	 virtual bool init();
-	 virtual float getOrientation();
+	virtual bool init();
+	virtual void update();
+	virtual float getOrientation();
 };
 
 #endif // !COMPASS_DRIVER_H

@@ -49,7 +49,7 @@ namespace SoftwareTest
 
 		TEST_METHOD(Stepper_SetGauche)
 		{
-			const char expected[2] = { 1 , -1 };
+			const char expected[2] = { -1 , 1 };
 
 			StepperDriver driver1(NULL, 0);
 			StepperDriver driver2(NULL, 1);
@@ -63,7 +63,7 @@ namespace SoftwareTest
 
 		TEST_METHOD(Stepper_SetDroite)
 		{
-			const char expected[2] = { -1 , 1 };
+			const char expected[2] = { 1 , -1 };
 
 			StepperDriver driver1(NULL, 0);
 			StepperDriver driver2(NULL, 1);
