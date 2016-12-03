@@ -41,8 +41,8 @@ void ControlleurPrincipal::stepMoteur()
 
 void ControlleurPrincipal::mettreAJourCapteurs()
 {
-	//_compassDriver->update();
-	//_sonarDriver->updateDist();
+	_compassDriver->update();
+	_sonarDriver->updateDist();
 }
 
 void ControlleurPrincipal::calibrerMoteur()
@@ -83,18 +83,16 @@ void ControlleurPrincipal::calibrerMoteur()
 
 void ControlleurPrincipal::verifierObstacle()
 {
-	if (_avance)
+	if (_avance && _sonarDriver->isObstacle())
 	{
-		if (_sonarDriver->isObstacle())
-		{
-			_erreur = true;
+		_erreur = true;
 
-			_moteurGauche->stop();
-			_moteurDroit->stop();
-
-			_transmettreDonnee(IControlleurPrincipal::Fonction::Erreur, false);
-			_transmettreDonnee(IControlleurPrincipal::TypeErreur::Obstacle, true);
-		}
+		_transmettreDonnee(IControlleurPrincipal::Fonction::Erreur, false);
+		_transmettreDonnee(IControlleurPrincipal::TypeErreur::Obstacle, true);
+	}
+	else
+	{
+		_erreur = false;
 	}
 }
 
@@ -193,8 +191,8 @@ void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 		_moteurDroit->droite();
 	}																																																					
 
-	//_moteurGauche->avance();
-	//_moteurDroit->avance();
+	/*_moteurGauche->avance();
+	_moteurDroit->avance();*/
 
 	_destinationRotation = objectif;
 	(*_executionASync) = verifierDestinationRotation;
@@ -221,13 +219,16 @@ void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &sel
 
 void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &self)
 {
-	self._sonarDriver->updateDist();
 	self.verifierObstacle();
 
 	if (self._erreur || self._obtenirTemps() >= self._tempMouvementLineaire)
 	{
 		(*self._retourDeFonction) = new int(self.stop());
 		(*self._executionASync) = NULL;
+	}
+	else
+	{
+		self.calibrerMoteur();
 	}
 
 	self.transmettreDonneesDebug();

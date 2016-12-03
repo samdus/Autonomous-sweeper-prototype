@@ -61,6 +61,7 @@ StepperDriver::~StepperDriver(){}
 
  void StepperDriver::avance()
 {
+	setVitesse(8);
 	_enMouvement = true;
 }
 
