@@ -147,8 +147,8 @@ void ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
     _moteurGauche->derriere();
     _moteurDroit->derriere();
     
-    _moteurgauche->avance();
-    _moteurdroit->avance();
+    _moteurGauche->avance();
+    _moteurDroit->avance();
 
     _recule = true;
 
