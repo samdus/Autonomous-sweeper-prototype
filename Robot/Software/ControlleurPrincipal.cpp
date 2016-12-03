@@ -67,18 +67,18 @@ void ControlleurPrincipal::calibrerMoteur()
 		}
 	}
 	else if ((difference >  1.5 && _recule) ||
-			 (difference < -1.5 && _avance))
+		(difference < -1.5 && _avance))
 	{
 		if (vitesseGauche == 8)
 		{
-			if(vitesseDroite != 0)
+			if (vitesseDroite != 0)
 				_moteurDroit->setVitesse(vitesseDroite - 1);
 		}
 		else
 		{
 			_moteurGauche->setVitesse(vitesseGauche + 1);
 		}
-	}	
+	}
 }
 
 void ControlleurPrincipal::verifierObstacle()
@@ -131,8 +131,8 @@ void ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
     _moteurGauche->avant();
     _moteurDroit->avant();
     
-    //_moteurGauche->avance();
-    //_moteurDroit->avance();
+    _moteurGauche->avance();
+    _moteurDroit->avance();
 
     _avance = true;
 
@@ -147,8 +147,8 @@ void ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
     _moteurGauche->derriere();
     _moteurDroit->derriere();
     
-    /*_moteurGauche->avance();
-    _moteurDroit->avance();*/
+    _moteurgauche->avance();
+    _moteurdroit->avance();
 
     _recule = true;
 
@@ -191,8 +191,8 @@ void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 		_moteurDroit->droite();
 	}																																																					
 
-	/*_moteurGauche->avance();
-	_moteurDroit->avance();*/
+	_moteurGauche->avance();
+	_moteurDroit->avance();
 
 	_destinationRotation = objectif;
 	(*_executionASync) = verifierDestinationRotation;
