@@ -16,6 +16,7 @@ var scaleX = 0;
 var scaleY = 0;
 var robotClickX=-1;
 var robotClickY=-1;
+var d;
 class Map extends Component {
 
    constructor(props) {
@@ -24,6 +25,9 @@ class Map extends Component {
       this.refreshMap = this.refreshMap.bind(this)
       this.calculate = this.calculate.bind(this)
       this.clickCanvas = this.clickCanvas.bind(this)
+      this.onMouseEnterHandler = this.onMouseEnterHandler.bind(this)
+      this.onMouseLeaveHandler = this.onMouseLeaveHandler.bind(this)
+      this.onMouseMoveHandler = this.onMouseMoveHandler.bind(this)
    }
 
   componentWillUnmount() {
@@ -67,6 +71,19 @@ class Map extends Component {
       if(item.y2 > maxY) maxY = item.y2;
 
     })
+    if(this.props.mapContainer.robotX > maxX){
+      maxX = this.props.mapContainer.robotX;
+    }else if(this.props.mapContainer.robotX < minX){
+      minX = this.props.mapContainer.robotX;
+    }
+
+    if(this.props.mapContainer.robotY > maxY){
+      maxY = this.props.mapContainer.robotY;
+    }else if(this.props.mapContainer.robotY < minY){
+      minY = this.props.mapContainer.robotY;
+    }
+
+
     cadrantFixX = 0;
     cadrantFixY = 0;
     if(minX<0){
@@ -75,9 +92,12 @@ class Map extends Component {
     if(minY<0){
       cadrantFixY = Math.abs(minY);
     }
+
     //Map width and height from the robot
-    robotMapWidth = maxX + cadrantFixX;
-    robotMapHeight = maxY + cadrantFixY;
+    robotMapWidth = Math.abs(maxX - minX)  //  maxX + cadrantFixX;
+    robotMapHeight = Math.abs(maxY - minY) //maxY + cadrantFixY;
+
+
 
     //Canvas width and height
      actuelHeight = 0;
@@ -88,17 +108,31 @@ class Map extends Component {
     var maxCanvasHeight =  wrapper.offsetHeight;
     
 
-    actualWidth = ctx.canvas.width  = wrapper.offsetWidth;
-    actuelHeight = ctx.canvas.height = (robotMapHeight / robotMapWidth) * actualWidth;
-
-    if(actuelHeight > maxCanvasHeight){
-      var resizeRatio = maxCanvasHeight  / actuelHeight;
-      actuelHeight = ctx.canvas.height = actuelHeight * resizeRatio;
-      actualWidth = ctx.canvas.width  = (robotMapWidth / robotMapHeight) * actuelHeight;
-      
+    if(robotMapWidth > robotMapHeight){
+      actualWidth = ctx.canvas.width  = wrapper.offsetWidth;
+      actuelHeight = ctx.canvas.height = (robotMapHeight * wrapper.offsetWidth) / robotMapWidth;
+    }else{
+      actuelHeight = ctx.canvas.height  = wrapper.offsetHeight;
+      actualWidth = ctx.canvas.width = (robotMapWidth * wrapper.offsetHeight) / robotMapHeight;
     }
+
+    /*if(actuelHeight > maxCanvasHeight){
+
+
+      var resizeRatio = maxCanvasHeight  / actuelHeight;
+
+      actuelHeight = ctx.canvas.height = actuelHeight * resizeRatio;
+      actualWidth = ctx.canvas.width = actualWidth * resizeRatio;
+      actualWidth = ctx.canvas.width  = (Math.abs((maxX - minX)) * actuelHeight /  Math.abs((maxY - minY)))
+     
+      
+    }*/
+
+
     scaleX = actualWidth / robotMapWidth;
     scaleY = actuelHeight / robotMapHeight;
+
+
 
   }
 
@@ -122,14 +156,14 @@ class Map extends Component {
     ctx.fillStyle="#FFFFFF";
 
     //position robot?
-    ctx.fillRect((this.props.mapContainer.robotX+cadrantFixX)*scaleX, (this.props.mapContainer.robotY+cadrantFixY)*scaleY,10,10);
+    ctx.fillRect(((this.props.mapContainer.robotX+cadrantFixX)*scaleX) - 5 , ((this.props.mapContainer.robotY+cadrantFixY)*scaleY) -5 ,10,10);
     //Relative 0,0
     ctx.fillStyle="#0000FF";
-    ctx.fillRect((0+cadrantFixX)*scaleX, (0+cadrantFixY)*scaleY,5,5);
+    ctx.fillRect((0+cadrantFixX)*scaleX-3, (0+cadrantFixY)*scaleY-3,5,5);
     //Position last click
     if(robotClickX != -1){
       ctx.fillStyle="#FFFF00";
-      ctx.fillRect((robotClickX+cadrantFixX)*scaleX, (robotClickY+cadrantFixY)*scaleY ,10,10);
+      ctx.fillRect((robotClickX+cadrantFixX)*scaleX -5, (robotClickY+cadrantFixY)*scaleY -5,10,10);
     }
 
   }
@@ -148,11 +182,30 @@ class Map extends Component {
     }
    
   }
+  onMouseEnterHandler() {
+      d = document.getElementById("hoverCoordWrapper");
+      d.className = "active";
+  }
+  onMouseLeaveHandler() {
+      d.className = "";
+  }
+  onMouseMoveHandler(e){
+    var mapCanvas=document.getElementById("mapCanvas");
+    var rect = mapCanvas.getBoundingClientRect();
+    var ctx = mapCanvas.getContext("2d")
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    robotClickX = (x/scaleX)-cadrantFixX;
+    robotClickY = (y/scaleY)-cadrantFixY;
+    var d = document.getElementById("hoverCoordWrapper");
+    d.innerHTML = Math.round(robotClickX) + ", " + Math.round(robotClickY);
+  }
   render() {
     if (this.props.dataReady) {
       return (
             <div className="canvas-wrapper" id="canvawrapper">
-              <canvas id="mapCanvas" width="300" height="150"  onClick={this.clickCanvas}/>
+              <span id="hoverCoordWrapper"></span>
+              <canvas id="mapCanvas" width="300" height="150" onMouseMove={this.onMouseMoveHandler}  onClick={this.clickCanvas} onMouseEnter={this.onMouseEnterHandler} onMouseLeave={this.onMouseLeaveHandler}/>
             </div>
       );
     }else{
