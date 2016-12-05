@@ -12,6 +12,11 @@ bool CompassDriver::init()
 	return _compass->init();
 }
 
+void CompassDriver::update()
+{
+	_compass->update();
+}
+
 void BubbleSort(float num[COMPAS_NB_READ])
 {
 	int i, j;

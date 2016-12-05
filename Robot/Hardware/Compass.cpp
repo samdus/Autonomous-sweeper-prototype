@@ -50,7 +50,7 @@ void Compass::update()
 	float gy = gyro_event.gyro.y * 57.2958F;
 	float gz = gyro_event.gyro.z * 57.2958F;
 	
-	// Update the filter
+	// Mettre a jour a l'aide de l'algorithme de filtre (compense les donneees du gyroscope avec ceux des autres capteurs)
 	_filter->update(gx, gy, gz,
 					accel_event.acceleration.x, accel_event.acceleration.y, accel_event.acceleration.z,
 					mx, my, mz);

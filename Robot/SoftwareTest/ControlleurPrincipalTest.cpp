@@ -211,7 +211,7 @@ namespace SoftwareTest
 					TestCompassDriver() : CompassDriver(new DummyCompas()) { };
 
 					 virtual float getOrientation() {
-						if (compteur++ == 1)
+						if (compteur++ <= 2)
 						{
 							return test->orientationDepart;
 						}
@@ -225,7 +225,17 @@ namespace SoftwareTest
 				DummyStepperDriver testStepperDriverGauche(STEPPER_GAUCHE),
 								   testStepperDriverDroit(STEPPER_DROIT);
 
-				ControlleurPrincipal controlleur(&testStepperDriverGauche, &testStepperDriverDroit, sonarDriver, &testCompasDriver, &retourFonction, &fonctionAsync);
+				class ControlleurTest : public ControlleurPrincipal
+				{
+				public:
+					ControlleurTest(StepperDriver* ste1, StepperDriver* ste2, SonarDriver* son, CompassDriver* com, int** ret, void(**executionASync)(ControlleurPrincipal&))
+						: ControlleurPrincipal(ste1, ste2, son, com, ret, executionASync) {}
+					void calibrer()
+					{
+						calibrerMoteur();
+					}
+				}
+				controlleur(&testStepperDriverGauche, &testStepperDriverDroit, sonarDriver, &testCompasDriver, &retourFonction, &fonctionAsync);
 
 				testStepperDriverGauche.setVitesse(test->forceGaucheDepart);
 				testStepperDriverDroit.setVitesse(test->forceDroitDepart);
@@ -244,7 +254,7 @@ namespace SoftwareTest
 				Assert::IsTrue(stepperGauche->getVitesse() == (unsigned short)test->forceGaucheDepart);
 				Assert::IsTrue(stepperDroit->getVitesse() == (unsigned short)test->forceDroitDepart);
 
-				controlleur.calibrerMoteur();
+				controlleur.calibrer();
 
 				Assert::AreEqual(test->forceGaucheEnsuite, (int)testStepperDriverGauche.getVitesse());
 				Assert::AreEqual(test->forceDroitEnsuite, (int)testStepperDriverDroit.getVitesse());
@@ -333,16 +343,16 @@ namespace SoftwareTest
 					Assert::IsTrue(stepGauche->isEnMouvement(), casCourant.message);
 					Assert::IsTrue(stepDroit->isEnMouvement(), casCourant.message);
 
-					Assert::AreEqual(1, (int)stepGauche->getDirection(), casCourant.message);
-					Assert::AreEqual(-1, (int)stepDroit->getDirection(), casCourant.message);
+					Assert::AreEqual(-1, (int)stepGauche->getDirection(), casCourant.message);
+					Assert::AreEqual(1, (int)stepDroit->getDirection(), casCourant.message);
 				}
 				else if (casCourant.sens == droite)
 				{
 					Assert::IsTrue(stepGauche->isEnMouvement(), casCourant.message);
 					Assert::IsTrue(stepDroit->isEnMouvement(), casCourant.message);
 
-					Assert::AreEqual(-1, (int)stepGauche->getDirection(), casCourant.message);
-					Assert::AreEqual(1, (int)stepDroit->getDirection(), casCourant.message);
+					Assert::AreEqual(1, (int)stepGauche->getDirection(), casCourant.message);
+					Assert::AreEqual(-1, (int)stepDroit->getDirection(), casCourant.message);
 				}
 				else
 				{
