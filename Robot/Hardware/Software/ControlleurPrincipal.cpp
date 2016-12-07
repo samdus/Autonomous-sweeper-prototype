@@ -66,8 +66,8 @@ void ControlleurPrincipal::calibrerMoteur()
 			_moteurDroit->setVitesse(vitesseDroite + 1);
 		}
 	}
-	else if ((difference >  1.5 && _recule) ||
-		(difference < -1.5 && _avance))
+	else if ((difference > 1.5 && _recule) ||
+			 (difference < -1.5 && _avance))
 	{
 		if (vitesseGauche == 8)
 		{
@@ -89,10 +89,6 @@ void ControlleurPrincipal::verifierObstacle()
 
 		_transmettreDonnee(IControlleurPrincipal::Fonction::Erreur, false);
 		_transmettreDonnee(IControlleurPrincipal::TypeErreur::Obstacle, true);
-	}
-	else
-	{
-		_erreur = false;
 	}
 }
 
@@ -135,6 +131,7 @@ void ControlleurPrincipal::avancePendantXDixiemeSec(int16_t dixiemeSec)
     _moteurDroit->avance();
 
     _avance = true;
+	_erreur = false;
 
 	_derniereOrientation = _compassDriver->getOrientation();
 	_tempMouvementLineaire = dixiemeSec * 100;
@@ -151,6 +148,7 @@ void ControlleurPrincipal::reculePendantXDixiemeSec(int16_t dixiemeSec)
     _moteurDroit->avance();
 
     _recule = true;
+	_erreur = false;
 
 	_derniereOrientation = _compassDriver->getOrientation();
 	_tempMouvementLineaire = dixiemeSec * 100;
@@ -194,6 +192,8 @@ void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 	_moteurGauche->avance();
 	_moteurDroit->avance();
 
+	_erreur = false;
+
 	_destinationRotation = objectif;
 	(*_executionASync) = verifierDestinationRotation;
 }
@@ -205,12 +205,9 @@ void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &sel
 	self._derniereOrientation = self._compassDriver->getOrientation();
 	diff = self._destinationRotation - self._derniereOrientation;
 	
-	if (fabs(diff) <= CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
+	if (self._erreur || fabs(diff) <= CTRL_PRINC_DIFF_ANGLE_ACCEPTE)
 	{
-		self._moteurGauche->stop();
-		self._moteurDroit->stop();
-
-		(*self._retourDeFonction) = new int(!self._erreur);
+		(*self._retourDeFonction) = new int(self.stop());
 		(*self._executionASync) = NULL;
 	}
 
@@ -274,8 +271,6 @@ void ControlleurPrincipal::setDebug()
  void ControlleurPrincipal::resetErreur()
 {
     _erreur = false;
-    _avance = false;
-    _recule = false;
 }
 
 float ControlleurPrincipal::getAngleResultant(float depart, float angle, bool gauche)
