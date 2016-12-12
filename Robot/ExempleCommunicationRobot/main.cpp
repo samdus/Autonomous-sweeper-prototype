@@ -70,11 +70,12 @@ int main(int argc, char **argv)
 	/*communicator.setDebug();*/
 
 	cout << "Commence!" << endl;
-	communicator.avancePendantXDixiemeSec(900);
-	cout << "Fin avance" << endl;
+	communicator.avancePendantXDixiemeSec(19000);
+	/*cout << "Fin avance" << endl;
 	communicator.tourneDroitePendant(60);
 	cout << "Fin tourne" << endl;
-	communicator.avancePendantXDixiemeSec(900);
+	communicator.avancePendantXDixiemeSec(900);*/
+
 	/*cout << "Commence a tourner a l'angle " << communicator.obtenirOrientation() << endl;
 	communicator.tourneDroite(120);
 	cout << "A tourne jusqu'a l'angle " << communicator.obtenirOrientation() << endl;
