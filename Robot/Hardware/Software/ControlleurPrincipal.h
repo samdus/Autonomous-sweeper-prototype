@@ -43,6 +43,7 @@ protected:
 	
 	static void verifierDestinationRotation(ControlleurPrincipal&);
 	static void verifierTempsMouvementLineaire(ControlleurPrincipal&);
+	static void verifierTempsRotation(ControlleurPrincipal&);
 
 	virtual bool stop();
 
@@ -59,6 +60,8 @@ public:
 
 	void stopAvecErreur();
 
+	virtual void tourneGauchePendantXDixiemeSec(int16_t dixiemeSec);
+	virtual void tourneDroitePendantXDixiemeSec(int16_t dixiemeSec);
 	virtual void avancePendantXDixiemeSec(int16_t dixiemeSec);
 	virtual void reculePendantXDixiemeSec(int16_t dixiemeSec);
 	virtual void tourneAuDegresX(int16_t degres);

@@ -31,6 +31,10 @@ void Compass::update()
 	sensors_event_t accel_event;
 	sensors_event_t mag_event;
 
+	/*_filter->begin(1000 / timeElapsed);
+	Serial.print("Temps: ");
+	Serial.println(timeElapsed);
+	timeElapsed = 0;*/
 	_gyro->getEvent(&gyro_event);
 	_accel->getEvent(&accel_event);
 	_mag->getEvent(&mag_event);

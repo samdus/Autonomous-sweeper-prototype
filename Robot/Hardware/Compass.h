@@ -7,11 +7,12 @@
 #include <Adafruit_LSM303_U.h>
 #include <Adafruit_L3GD20_U.h>
 #include <MadgwickAHRS.h>
+#include <elapsedMillis.h>
 
 #define DECLINATION_ANGLE 0.27
 #define SENSOR_ID 12345
 
-#define COMPASS_REFRESH_RATE_MS 268
+#define COMPASS_REFRESH_RATE_MS 270
 #define COMPASS_NB_REFRESH_PER_SEC (1000 / COMPASS_REFRESH_RATE_MS)
 
 class Compass : public ICompass
@@ -20,6 +21,8 @@ private:
 	Adafruit_L3GD20_Unified       *_gyro;
 	Adafruit_LSM303_Accel_Unified *_accel;
 	Adafruit_LSM303_Mag_Unified   *_mag;
+
+	//elapsedMillis timeElapsed = 0;
 
 	Madgwick *_filter;
 

@@ -40,10 +40,12 @@ byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
 	{ 6,7,8,9 },
 	{ 2,3,4,5 }
 };
+CompassDriver tmpCompassDriver(new Compass());
+
 ControlleurPrincipal controlleur(new StepperDriver(new StepperMotor(), STEPPER_GAUCHE),
 								 new StepperDriver(new StepperMotor(), STEPPER_DROIT),
 								 new SonarDriver(new Sonar()),
-								 new CompassDriver(new Compass()),
+								 &tmpCompassDriver,//new CompassDriver(new Compass()),
 								 &retourDeFonction, 
 								 &fonctionAsync);
 
@@ -86,11 +88,19 @@ void setup()
 	Timer1.attachInterrupt(stepMoteur);
 
 	Serial.write(IControlleurPrincipal::Fonction::FinInit);
+
+	/*retourInt = false;
+	controlleur.avancePendantXDixiemeSec(1000);*/
 }
 
 void loop()
 {
 	controlleur.mettreAJourCapteurs();	
+	/*Serial.print("Temps: ");
+	Serial.println(obtenirTemps());
+	resetTemps();*/
+	/*Serial.print("Angle: ");
+	Serial.println(tmpCompassDriver.getOrientation());*/
 	envoyerRetourFonctionSiExisant();
 	executerFonctionAsyncSiDisponible();
 	lectureCommandeAExecuter();
@@ -146,7 +156,7 @@ unsigned long obtenirTemps()
 
 void stepMoteur()
 {
-    controlleur.stepMoteur();
+	controlleur.stepMoteur();
 }
 
 void envoyerRetourFonctionSiExisant()
@@ -226,6 +236,16 @@ void lectureCommandeAExecuter()
 		case IControlleurPrincipal::Fonction::Droite:
 			retourInt = false;
 			controlleur.tourneDroite(lireInt());
+			break;
+
+		case IControlleurPrincipal::Fonction::DroitePendant:
+			retourInt = false;
+			controlleur.tourneDroitePendantXDixiemeSec(lireInt());
+			break;
+
+		case IControlleurPrincipal::Fonction::GauchePendant:
+			retourInt = false;
+			controlleur.tourneGauchePendantXDixiemeSec(lireInt());
 			break;
 
 		case IControlleurPrincipal::Fonction::SetDebug:
