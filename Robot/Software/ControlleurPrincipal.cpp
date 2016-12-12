@@ -47,7 +47,7 @@ void ControlleurPrincipal::mettreAJourCapteurs()
 
 void ControlleurPrincipal::calibrerMoteur()
 {
-	const int threshold = 20;
+	const int threshold = 10;
 	float orientation = _compassDriver->getOrientation();
 	float difference = _derniereOrientation - orientation;
 
@@ -239,7 +239,7 @@ void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &
 	self.transmettreDonneesDebug();
 
 	//On calibre une fois sur 100
-	calibrer = (calibrer + 1) % 100;
+	calibrer = (calibrer + 1) % 50;
 }
 
 void ControlleurPrincipal::tourneGauche(int16_t degres)

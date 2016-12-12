@@ -59,15 +59,15 @@ int main(int argc, char **argv)
         return -1;
     }
 	
-	/*while (1)
-		cout << "Angle: " << communicator.obtenirOrientation() << endl;*/
+	while (1)
+		cout << "Angle: " << communicator.obtenirOrientation() << endl;
 	/*while (1)
 		cout << "Dist: " << communicator.obtenirDistanceDevant() << endl;*/
 	
-	communicator.setDebug();
+	/*communicator.setDebug();
 
 	cout << "Commence!" << endl;
-	communicator.avancePendantXDixiemeSec(900);
+	communicator.avancePendantXDixiemeSec(900);*/
 	/*cout << "Commence a tourner a l'angle " << communicator.obtenirOrientation() << endl;
 	communicator.tourneDroite(120);
 	cout << "A tourne jusqu'a l'angle " << communicator.obtenirOrientation() << endl;
