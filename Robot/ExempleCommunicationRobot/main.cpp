@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 	/*while (1)
 		cout << "Dist: " << communicator.obtenirDistanceDevant() << endl;*/
 
-	communicator.avancePendantXDixiemeSec(50000);
+	communicator.avancePendantXDixiemeSec(500);
 	communicator.tourneDroite(120);
 	communicator.avancePendantXDixiemeSec(500);
 	return 0;
