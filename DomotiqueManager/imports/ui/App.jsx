@@ -29,7 +29,7 @@ class App extends Component {
         return (
         <div className="container">
           <header className="appHeader">
-            <h1>Vaccum cleaner (definetly not a spy robot)</h1>
+            <h1>Vaccum cleaner</h1>
             <ContainerManager/>
           </header>
           <div className="statPanel">
