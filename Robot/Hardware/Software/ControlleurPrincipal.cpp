@@ -42,7 +42,7 @@ void ControlleurPrincipal::stepMoteur()
 void ControlleurPrincipal::mettreAJourCapteurs()
 {
 	_compassDriver->update();
-	_sonarDriver->updateDist();
+	_sonarDriver->updateDist();	
 }
 
 void ControlleurPrincipal::calibrerMoteur()
@@ -165,6 +165,11 @@ bool ControlleurPrincipal::stop()
     _moteurDroit->stop();
 
     return !_erreur;
+}
+
+void ControlleurPrincipal::stopAvecErreur()
+{
+	_erreur = true;
 }
 
 void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)

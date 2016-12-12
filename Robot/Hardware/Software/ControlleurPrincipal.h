@@ -57,6 +57,8 @@ public:
 	bool isErreur() const;
 	bool isDebug() const;
 
+	void stopAvecErreur();
+
 	virtual void avancePendantXDixiemeSec(int16_t dixiemeSec);
 	virtual void reculePendantXDixiemeSec(int16_t dixiemeSec);
 	virtual void tourneAuDegresX(int16_t degres);
