@@ -47,14 +47,15 @@ void ControlleurPrincipal::mettreAJourCapteurs()
 
 void ControlleurPrincipal::calibrerMoteur()
 {
+	const int threshold = 20;
 	float orientation = _compassDriver->getOrientation();
 	float difference = _derniereOrientation - orientation;
 
 	unsigned short vitesseGauche = _moteurGauche->getVitesse();
 	unsigned short vitesseDroite = _moteurDroit->getVitesse();
 	
-	if ((difference > 1.5 && _avance) ||
-		(difference < -1.5 && _recule))
+	if ((difference > threshold && _avance) ||
+		(difference < -threshold && _recule))
 	{
 		if (vitesseDroite == 8)
 		{
@@ -66,8 +67,8 @@ void ControlleurPrincipal::calibrerMoteur()
 			_moteurDroit->setVitesse(vitesseDroite + 1);
 		}
 	}
-	else if ((difference > 1.5 && _recule) ||
-			 (difference < -1.5 && _avance))
+	else if ((difference > threshold && _recule) ||
+			 (difference < -threshold && _avance))
 	{
 		if (vitesseGauche == 8)
 		{

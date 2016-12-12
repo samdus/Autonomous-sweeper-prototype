@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 		cout << "Angle: " << communicator.obtenirOrientation() << endl;*/
 	/*while (1)
 		cout << "Dist: " << communicator.obtenirDistanceDevant() << endl;*/
-
+	
 	communicator.setDebug();
 
 	cout << "Commence!" << endl;
