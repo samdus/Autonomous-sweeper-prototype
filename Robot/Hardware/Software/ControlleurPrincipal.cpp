@@ -222,6 +222,8 @@ void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &sel
 
 void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &self)
 {
+	static int calibrer = 0;
+
 	self.verifierObstacle();
 
 	if (self._erreur || self._obtenirTemps() >= self._tempMouvementLineaire)
@@ -229,12 +231,15 @@ void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &
 		(*self._retourDeFonction) = new int(self.stop());
 		(*self._executionASync) = NULL;
 	}
-	else
+	else if(!calibrer)
 	{
 		self.calibrerMoteur();
 	}
 
 	self.transmettreDonneesDebug();
+
+	//On calibre une fois sur 100
+	calibrer = (calibrer + 1) % 100;
 }
 
 void ControlleurPrincipal::tourneGauche(int16_t degres)
