@@ -42,19 +42,20 @@ void ControlleurPrincipal::stepMoteur()
 void ControlleurPrincipal::mettreAJourCapteurs()
 {
 	_compassDriver->update();
-	_sonarDriver->updateDist();
+	_sonarDriver->updateDist();	
 }
 
 void ControlleurPrincipal::calibrerMoteur()
 {
+	const int threshold = 10;
 	float orientation = _compassDriver->getOrientation();
 	float difference = _derniereOrientation - orientation;
 
 	unsigned short vitesseGauche = _moteurGauche->getVitesse();
 	unsigned short vitesseDroite = _moteurDroit->getVitesse();
 	
-	if ((difference > 1.5 && _avance) ||
-		(difference < -1.5 && _recule))
+	if ((difference > threshold && _avance) ||
+		(difference < -threshold && _recule))
 	{
 		if (vitesseDroite == 8)
 		{
@@ -66,8 +67,8 @@ void ControlleurPrincipal::calibrerMoteur()
 			_moteurDroit->setVitesse(vitesseDroite + 1);
 		}
 	}
-	else if ((difference > 1.5 && _recule) ||
-			 (difference < -1.5 && _avance))
+	else if ((difference > threshold && _recule) ||
+			 (difference < -threshold && _avance))
 	{
 		if (vitesseGauche == 8)
 		{
@@ -167,6 +168,11 @@ bool ControlleurPrincipal::stop()
     return !_erreur;
 }
 
+void ControlleurPrincipal::stopAvecErreur()
+{
+	_erreur = true;
+}
+
 void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 {
 	float diff;
@@ -216,6 +222,8 @@ void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &sel
 
 void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &self)
 {
+	static int calibrer = 0;
+
 	self.verifierObstacle();
 
 	if (self._erreur || self._obtenirTemps() >= self._tempMouvementLineaire)
@@ -223,12 +231,15 @@ void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &
 		(*self._retourDeFonction) = new int(self.stop());
 		(*self._executionASync) = NULL;
 	}
-	else
+	else if(!calibrer)
 	{
 		self.calibrerMoteur();
 	}
 
 	self.transmettreDonneesDebug();
+
+	//On calibre une fois sur 100
+	calibrer = (calibrer + 1) % 50;
 }
 
 void ControlleurPrincipal::tourneGauche(int16_t degres)

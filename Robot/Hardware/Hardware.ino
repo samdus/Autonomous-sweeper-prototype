@@ -40,11 +40,10 @@ byte pinsMoteurs[STEPPER_NB_MOTEUR][4] = {
 	{ 6,7,8,9 },
 	{ 2,3,4,5 }
 };
-
 ControlleurPrincipal controlleur(new StepperDriver(new StepperMotor(), STEPPER_GAUCHE),
 								 new StepperDriver(new StepperMotor(), STEPPER_DROIT),
 								 new SonarDriver(new Sonar()),
-								 new CompassDriver(new Compass()), 
+								 new CompassDriver(new Compass()),
 								 &retourDeFonction, 
 								 &fonctionAsync);
 
@@ -91,8 +90,7 @@ void setup()
 
 void loop()
 {
-	controlleur.mettreAJourCapteurs();
-
+	controlleur.mettreAJourCapteurs();	
 	envoyerRetourFonctionSiExisant();
 	executerFonctionAsyncSiDisponible();
 	lectureCommandeAExecuter();
@@ -236,6 +234,9 @@ void lectureCommandeAExecuter()
 
 		case IControlleurPrincipal::Fonction::StopDebug:
 			controlleur.stopDebug();
+			break;
+		case IControlleurPrincipal::Fonction::Stop:
+			controlleur.stopAvecErreur();
 			break;
 
 		default:
