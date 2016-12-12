@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 	cout << "Commence!" << endl;
 	communicator.avancePendantXDixiemeSec(900);
 	cout << "Fin avance" << endl;
-	communicator.tourneDroitePendant(55);
+	communicator.tourneDroitePendant(70);
 	cout << "Fin tourne" << endl;
 	communicator.avancePendantXDixiemeSec(900);
 	/*cout << "Commence a tourner a l'angle " << communicator.obtenirOrientation() << endl;
