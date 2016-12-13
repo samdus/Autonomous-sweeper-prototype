@@ -263,6 +263,7 @@ void ControlleurPrincipal::verifierTempsRotation(ControlleurPrincipal &self)
 
 void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &self)
 {
+	//TODO: Faire en sorte que ça calibre (on ne veut pas calibrer à chaque vérification)
 	//static int calibrer = 0;
 
 	self.verifierObstacle();
