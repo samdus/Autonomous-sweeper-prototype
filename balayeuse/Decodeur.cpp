@@ -212,17 +212,10 @@ void Decodeur::UpdateCommande()
             case SCAN:
                 std::cout << "test SCAN\n";
                 actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
             break;
             case TURN:
                 std::cout << "test TURN\n";
-                actions.push_back(Action(TournerDeXDegree, commande->m_commandInfo.x));
+                actions.push_back(Action(TournerDeXDegree, (int)commande->m_commandInfo.x));
             break;
             case AUTOMATIC:
                 std::cout << "test AUTOMATIC\n";
