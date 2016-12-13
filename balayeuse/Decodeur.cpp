@@ -272,11 +272,11 @@ void Decodeur::ExecuteActions()
             std::cout << "Je troune de " << actions[0].valeur << std::endl;
             if(actions[0].valeur > 0.0)
             {
-                arduinoCommunicator.tourneDroite((int16_t)actions[0].valeur);
+                arduinoCommunicator.tourneDroitePendant((int16_t)actions[0].valeur);
             }
             else
             {
-                arduinoCommunicator.tourneGauche((int16_t)(-actions[0].valeur));
+                arduinoCommunicator.tourneGauchePendant((int16_t)(actions[0].valeur));
             }
 
             RealCam.RotateY(actions[0].valeur);
@@ -286,10 +286,10 @@ void Decodeur::ExecuteActions()
 
         actions.erase(actions.begin(),actions.begin() + 1);
     }
-    /*else//s'il n'a rien a faire continue de prendre des echantillons de son environnement
+    else//s'il n'a rien a faire continue de prendre des echantillons de son environnement
     {
         PrendreEchantillonEnvironnement();
-    }*/
+    }
 }
 
 void Decodeur::PrendreEchantillonEnvironnement()
