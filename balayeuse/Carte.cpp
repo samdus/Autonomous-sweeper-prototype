@@ -63,7 +63,19 @@ void Carte::FusionCarte(std::vector<segment>& nouveauSegments)
         for(size_t j = 0; j < segments.size(); ++j)
         {
             if(j == i) continue;
+            //fusion du debut
+            if(segments[i].debut.distanceFast(segments[j].debut) < RayonDeFusion2)
+            {
+                Vector2 PointCommun = (segments[i].debut - segments[j].debut) / 2 + segments[j].debut;
+                segments[j].debut = segments[i].debut = PointCommun;
+            }
+            if(segments[i].debut.distanceFast(segments[j].fin) < RayonDeFusion2)
+            {
+                Vector2 PointCommun = (segments[i].debut - segments[j].fin) / 2 + segments[j].fin;
+                segments[j].fin = segments[i].debut = PointCommun;
+            }
 
+            //fusion de la fin
             if(segments[i].fin.distanceFast(segments[j].debut) < RayonDeFusion2)
             {
                 Vector2 PointCommun = (segments[i].fin - segments[j].debut) / 2 + segments[j].debut;

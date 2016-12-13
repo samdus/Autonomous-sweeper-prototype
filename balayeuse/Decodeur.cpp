@@ -215,7 +215,7 @@ void Decodeur::UpdateCommande()
             break;
             case TURN:
                 std::cout << "test TURN\n";
-                actions.push_back(Action(TournerDeXDegree, (int)commande->m_commandInfo.x));
+                actions.push_back(Action(TournerDeXDegree, commande->m_commandInfo.x));
             break;
             case AUTOMATIC:
                 std::cout << "test AUTOMATIC\n";
@@ -407,7 +407,7 @@ bool Decodeur::UpdateCloudOfPoint()
         if(now - nextSampling * 1000 >= CloudSamplingTime)
         {
             updateCloud = true;
-            nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1000/30));//inutile de prendre plus de 30 image seconde
+            nextSampling = std::max(nextSampling - nextSampling / CLOUD_POINT_CIRCULAR_BUFFER, (1/15));//inutile de prendre plus de 30 image seconde
         }
     }
     return false;
