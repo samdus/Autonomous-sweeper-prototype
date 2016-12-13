@@ -65,7 +65,7 @@ class CommandDisplay extends Component {
   }
   handleTurnSubmit(e){
     if (e.key === 'Enter') {
-      this.handleTurn(e.target.value)
+      this.handleTurn(Number(e.target.value));
       e.target.value= ""
       this.closeInput("turnInput")
     }
