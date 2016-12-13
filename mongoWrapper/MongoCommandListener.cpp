@@ -59,8 +59,10 @@ class MongoCommandListener : public Mythread
                     if(gox){
                     thecommand.x = gox.get_int32();
                     }
-                    if(goy){
-                    thecommand.y = goy.get_int32();
+                    if(thecommand.command == "goto"){
+                        if(goy){
+                            thecommand.y = goy.get_int32();
+                        }
                     }
                     m_queue.add(new MongoCommand(thecommand));
                     this->fromTime = newFromTime.get_double();
