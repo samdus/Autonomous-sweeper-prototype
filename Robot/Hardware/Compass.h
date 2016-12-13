@@ -15,6 +15,7 @@
 #define COMPASS_REFRESH_RATE_MS 270
 #define COMPASS_NB_REFRESH_PER_SEC (1000 / COMPASS_REFRESH_RATE_MS)
 
+//TODO: Trouver une façon de dynamiser le refresh rate
 class Compass : public ICompass
 {
 private:

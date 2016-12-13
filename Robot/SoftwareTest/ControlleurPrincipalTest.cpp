@@ -32,6 +32,7 @@ namespace SoftwareTest
             float compasOrientation = 0;
 			virtual bool init() { return true; }
 			virtual float read() { return compasOrientation; }
+			virtual void update() {}
         };
 
 		class DummyStepperDriver : public StepperDriver

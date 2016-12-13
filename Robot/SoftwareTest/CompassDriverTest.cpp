@@ -16,6 +16,7 @@ namespace SoftwareTest
 			{
 				virtual bool init() { return true; }
 				 virtual float read() { return expected; }
+				 virtual void update() {}
 			} compas;
 
 			CompassDriver driver(&compas);
@@ -33,6 +34,7 @@ namespace SoftwareTest
 				int it = 0;
 				virtual bool init() { return true; }
 				virtual float read() { return lectures[it++]; }
+				virtual void update() {}
 			} compas;
 
 			CompassDriver driver(&compas);

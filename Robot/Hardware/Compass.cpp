@@ -31,6 +31,7 @@ void Compass::update()
 	sensors_event_t accel_event;
 	sensors_event_t mag_event;
 
+	//TODO: Dynamiser le refresh rate
 	/*_filter->begin(1000 / timeElapsed);
 	Serial.print("Temps: ");
 	Serial.println(timeElapsed);

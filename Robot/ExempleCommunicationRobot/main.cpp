@@ -4,6 +4,7 @@
 
 using namespace std;
 
+//Fonction qui servira d'affichage
 void afficherDebug(int16_t debug[4])
 {
 	switch (debug[0])
@@ -49,8 +50,10 @@ void afficherDebug(int16_t debug[4])
 
 int main(int argc, char **argv)
 {
+	//Déclaration du communicator pour communiquer avec le Arduino
 	ArduinoCommunicator communicator;
 
+	//Initialisation (il faut indiquer la fonction qui servira d'affichage)
     if (!communicator.init(afficherDebug))
     {
 		cout << endl << "Erreur lors de l'ouverture du port..." << endl;
@@ -59,28 +62,35 @@ int main(int argc, char **argv)
         return -1;
     }
 	
-	/*while (1)
-		cout << "Angle: " << communicator.obtenirOrientation() << endl;*/
-	/*while (1)
-		cout << "Dist: " << communicator.obtenirDistanceDevant() << endl;*/
+	/*
+	Différentes commandes sont possibles:
+	------------------------------------------------------
+
+	// - Afficher l'angle à l'infini
+	while (1)
+		cout << "Angle: " << communicator.obtenirOrientation() << endl;
+	
+	// - Afficher la distance de l'objet devant à l'infini
+	while (1)
+		cout << "Dist: " << communicator.obtenirDistanceDevant() << endl;
+
+	// - Afficher s'il y a un obstacle ou non (à l'infini)
 	//while (1)
 	//	cout << "Obstacle: " << (communicator.obtenirObstacle() ? "Oui" : "Non") << endl;
-	/*communicator.tourneDroitePendant(55);
-	communicator.tourneGauchePendant(55);*/
-	/*communicator.setDebug();*/
 
-	cout << "Commence!" << endl;
+	// - Tourner pendant un certain temps
+	communicator.tourneDroitePendant(55);
+	communicator.tourneGauchePendant(55);
+
+	// - Activer le debug
+	communicator.setDebug();
+
+	// - Avancer pendant un certain temps
 	communicator.avancePendantXDixiemeSec(19000);
-	/*cout << "Fin avance" << endl;
-	communicator.tourneDroitePendant(60);
-	cout << "Fin tourne" << endl;
-	communicator.avancePendantXDixiemeSec(900);*/
 
-	/*cout << "Commence a tourner a l'angle " << communicator.obtenirOrientation() << endl;
+	// - Tourner à un certain angle (ne fonctionne pas dans l'état actuel)
 	communicator.tourneDroite(120);
-	cout << "A tourne jusqu'a l'angle " << communicator.obtenirOrientation() << endl;
-	communicator.avancePendantXDixiemeSec(500);*/
-	cout << "Fin" << endl;
+	*/
 
 	return 0;
 }

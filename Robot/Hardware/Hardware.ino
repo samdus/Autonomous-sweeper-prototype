@@ -88,18 +88,20 @@ void setup()
 	Timer1.attachInterrupt(stepMoteur);
 
 	Serial.write(IControlleurPrincipal::Fonction::FinInit);
-
-	/*retourInt = false;
-	controlleur.avancePendantXDixiemeSec(1000);*/
 }
 
 void loop()
 {
 	controlleur.mettreAJourCapteurs();	
-	/*Serial.print("Temps: ");
+	/*
+	//TODO: S'assurer que le temps soit toujours égal, ou dynamiser l'algorithme de la bousolle
+	Serial.print("Temps: ");
 	Serial.println(obtenirTemps());
-	resetTemps();*/
-	/*Serial.print("Angle: ");
+	resetTemps();
+	*/
+	/*
+	//Permet d'obtenir l'angle dans le moniteur
+	Serial.print("Angle: ");
 	Serial.println(tmpCompassDriver.getOrientation());*/
 	envoyerRetourFonctionSiExisant();
 	executerFonctionAsyncSiDisponible();
