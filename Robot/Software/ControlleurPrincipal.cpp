@@ -173,6 +173,36 @@ void ControlleurPrincipal::stopAvecErreur()
 	_erreur = true;
 }
 
+void ControlleurPrincipal::ControlleurPrincipal::tourneGauchePendantXDixiemeSec(int16_t dixiemeSec)
+{
+	_moteurGauche->droite();
+	_moteurDroit->droite();
+
+	_moteurGauche->avance();
+	_moteurDroit->avance();
+
+	_erreur = false;
+
+	_tempMouvementLineaire = dixiemeSec * 100;
+	_resetTemps();
+	(*_executionASync) = verifierTempsRotation;
+}
+
+void ControlleurPrincipal::tourneDroitePendantXDixiemeSec(int16_t dixiemeSec)
+{
+	_moteurGauche->gauche();
+	_moteurDroit->gauche();
+
+	_moteurGauche->avance();
+	_moteurDroit->avance();
+
+	_erreur = false;
+
+	_tempMouvementLineaire = dixiemeSec * 100;
+	_resetTemps();
+	(*_executionASync) = verifierTempsRotation;
+}
+
 void ControlleurPrincipal::tourneAuDegresX(int16_t objectif)
 {
 	float diff;
@@ -220,9 +250,20 @@ void ControlleurPrincipal::verifierDestinationRotation(ControlleurPrincipal &sel
 	self.transmettreDonneesDebug();
 }
 
+void ControlleurPrincipal::verifierTempsRotation(ControlleurPrincipal &self)
+{
+	if (self._erreur || self._obtenirTemps() >= self._tempMouvementLineaire)
+	{
+		(*self._retourDeFonction) = new int(self.stop());
+		(*self._executionASync) = NULL;
+	}
+
+	self.transmettreDonneesDebug();
+}
+
 void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &self)
 {
-	static int calibrer = 0;
+	//static int calibrer = 0;
 
 	self.verifierObstacle();
 
@@ -231,15 +272,15 @@ void ControlleurPrincipal::verifierTempsMouvementLineaire(ControlleurPrincipal &
 		(*self._retourDeFonction) = new int(self.stop());
 		(*self._executionASync) = NULL;
 	}
-	else if(!calibrer)
+	/*else if(!calibrer)
 	{
 		self.calibrerMoteur();
-	}
+	}*/
 
 	self.transmettreDonneesDebug();
 
 	//On calibre une fois sur 100
-	calibrer = (calibrer + 1) % 50;
+	//calibrer = (calibrer + 1) % 50;
 }
 
 void ControlleurPrincipal::tourneGauche(int16_t degres)

@@ -212,17 +212,10 @@ void Decodeur::UpdateCommande()
             case SCAN:
                 std::cout << "test SCAN\n";
                 actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
-                actions.push_back(Action(TournerDeXDegree, 45));
             break;
             case TURN:
                 std::cout << "test TURN\n";
-                actions.push_back(Action(TournerDeXDegree, commande->m_commandInfo.x));
+                actions.push_back(Action(TournerDeXDegree, (int)commande->m_commandInfo.x));
             break;
             case AUTOMATIC:
                 std::cout << "test AUTOMATIC\n";
@@ -272,24 +265,24 @@ void Decodeur::ExecuteActions()
             std::cout << "Je troune de " << actions[0].valeur << std::endl;
             if(actions[0].valeur > 0.0)
             {
-                arduinoCommunicator.tourneDroite((int16_t)actions[0].valeur);
+                arduinoCommunicator.tourneDroitePendant((int16_t)actions[0].valeur);
             }
             else
             {
-                arduinoCommunicator.tourneGauche((int16_t)(-actions[0].valeur));
+                arduinoCommunicator.tourneGauchePendant((int16_t)(actions[0].valeur));
             }
 
-            RealCam.RotateY(actions[0].valeur);
+            RealCam.RotateY(-actions[0].valeur);//negative since the cam is upside down
             PrendreEchantillonEnvironnement();
             break;
         }
 
         actions.erase(actions.begin(),actions.begin() + 1);
     }
-    /*else//s'il n'a rien a faire continue de prendre des echantillons de son environnement
+    else//s'il n'a rien a faire continue de prendre des echantillons de son environnement
     {
         PrendreEchantillonEnvironnement();
-    }*/
+    }
 }
 
 void Decodeur::PrendreEchantillonEnvironnement()
