@@ -272,7 +272,7 @@ void Decodeur::ExecuteActions()
                 arduinoCommunicator.tourneGauchePendant((int16_t)(actions[0].valeur));
             }
 
-            RealCam.RotateY(actions[0].valeur);
+            RealCam.RotateY(-actions[0].valeur);//negative since the cam is upside down
             PrendreEchantillonEnvironnement();
             break;
         }
